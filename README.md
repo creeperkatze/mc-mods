@@ -24,11 +24,3 @@ Any installed JDK can launch `./gradlew`. Gradle runs itself on JDK 25 and compi
 | `./gradlew build`            | Build all mods                                       |
 | `./gradlew :<mod>:runClient` | Launch a development client with the mod             |
 | `./gradlew genSources`       | Decompile Minecraft for browsing its code            |
-
-```
-build-logic/                          Shared Gradle plugins (mc-mods.mod and mc-mods.publish)
-gradle/libs.versions.toml             Minecraft, dependency and Gradle plugin versions
-<mod>/                                One mod
-```
-
-To add a mod, create a folder with a `gradle.properties`, a `build.gradle.kts` applying `id("mc-mods.mod")`, a `CHANGELOG.md`, a `LICENSE` and `src/main/`. Add it with `include("<mod>")` in `settings.gradle.kts` and to the **Which mod?** dropdowns in `.github/ISSUE_TEMPLATE/`.
