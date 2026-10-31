@@ -1,0 +1,29 @@
+version: 2
+
+updates:
+  - package-ecosystem: 'gradle'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    # Their versions are tied to a Minecraft version, bump them by hand when updating Minecraft
+    ignore:
+      - dependency-name: 'net.fabricmc.fabric-api:fabric-api'
+    groups:
+      gradle-minor-patch:
+        update-types:
+          - 'minor'
+          - 'patch'
+    commit-message:
+      prefix: 'deps(gradle)'
+
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    groups:
+      actions-minor-patch:
+        update-types:
+          - 'minor'
+          - 'patch'
+    commit-message:
+      prefix: 'deps(actions)'
