@@ -1,0 +1,42 @@
+name: 🐛 Bug report
+description: Report a bug to help improve a mod
+labels: ['bug']
+body:
+  - type: dropdown
+    id: mod
+    attributes:
+      label: Which mod?
+      options:
+        - Speed Dial
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Mod and Minecraft version
+      description: The exact versions from your launcher's mod list or the mod's filename.
+      placeholder: 1.0.0+26.3
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is. Include screenshots if applicable.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+      description: Steps to reproduce the behavior.
+      placeholder: |
+        1. Join a world
+        2. Do '...'
+        3. See error
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Logs
+      description: Upload `logs/latest.log` (and the crash report if the game crashed) to [mclo.gs](https://mclo.gs) and paste the link here.
+    validations:
+      required: false

@@ -11,7 +11,9 @@ All my Minecraft mods in one place.
 
 ## 📦 Mods
 
-No mods yet.
+| Mod                                           | Description                                              | Minecraft | Loader |
+|-----------------------------------------------|----------------------------------------------------------|-----------|--------|
+| [Speed Dial](speed-dial/)                     | Dial spectator and creative flight speed up to 100× | 26.3      | Fabric |
 
 ## 🛠️ Development
 
