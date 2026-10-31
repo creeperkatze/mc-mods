@@ -3,7 +3,6 @@ package dev.creeperkatze.speeddial.mixin;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import dev.creeperkatze.speeddial.FlightSpeed;
-import dev.creeperkatze.speeddial.SpeedDial;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
 import org.spongepowered.asm.mixin.Mixin;
@@ -29,7 +28,7 @@ public class MouseHandlerMixin {
 	@WrapOperation(method = "onScroll", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/ScrollWheelHandler;getNextScrollWheelSelection(DII)I"))
 	private int speedDial$creativeScrollSpeed(double wheel, int currentSlot, int slotCount, Operation<Integer> original) {
 		var player = Minecraft.getInstance().player;
-		if (!FlightSpeed.isActive(player) || !player.getAbilities().flying || !SpeedDial.isModifierDown()) {
+		if (!FlightSpeed.canChange(player)) {
 			return original.call(wheel, currentSlot, slotCount);
 		}
 		FlightSpeed.updateCreativeBoost(player);

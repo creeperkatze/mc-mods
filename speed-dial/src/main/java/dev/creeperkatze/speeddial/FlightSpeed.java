@@ -47,9 +47,9 @@ public final class FlightSpeed {
 		return player != null && (player.isSpectator() || player.isCreative()) && Minecraft.getInstance().hasSingleplayerServer();
 	}
 
-	/** In creative the speed only applies while the modifier is held. */
+	/** In creative the speed only changes while flying with the modifier held. */
 	public static boolean canChange(@Nullable LocalPlayer player) {
-		return isActive(player) && (player.isSpectator() || SpeedDial.isModifierDown());
+		return isActive(player) && (player.isSpectator() || (player.getAbilities().flying && SpeedDial.isModifierDown()));
 	}
 
 	/** Positive steps are faster. */
@@ -124,7 +124,7 @@ public final class FlightSpeed {
 		updateCreativeBoost(player);
 	}
 
-	/** Creative flight and its speed message go back to normal as soon as the modifier is released. */
+	/** Creative flight goes back to normal when the modifier is released. The message also hides on landing. */
 	public static void updateCreativeBoost(@Nullable LocalPlayer player) {
 		SpeedDialConfig config = SpeedDial.config();
 		boolean boost = isActive(player) && player.isCreative() && SpeedDial.isModifierDown();
@@ -136,7 +136,7 @@ public final class FlightSpeed {
 		}
 		HudAccessor hud = (HudAccessor) Minecraft.getInstance().gui.hud;
 		if (lastMessage != null && hud.speedDial$getOverlayMessage() == lastMessage && player != null && player.isCreative()) {
-			hud.speedDial$setOverlayMessageTime(boost ? MESSAGE_TICKS : 0);
+			hud.speedDial$setOverlayMessageTime(boost && player.getAbilities().flying ? MESSAGE_TICKS : 0);
 		}
 	}
 
