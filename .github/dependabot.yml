@@ -8,6 +8,7 @@ updates:
     # Their versions are tied to a Minecraft version, bump them by hand when updating Minecraft
     ignore:
       - dependency-name: 'net.fabricmc.fabric-api:fabric-api'
+      - dependency-name: 'com.terraformersmc:modmenu'
     groups:
       gradle-minor-patch:
         update-types:
