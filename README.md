@@ -11,9 +11,9 @@ All my Minecraft mods in one place.
 
 ## 📦 Mods
 
-| Mod                       | Description                                         | Minecraft | Loader           |
-| ------------------------- | --------------------------------------------------- | --------- | ---------------- |
-| [Speed Dial](speed-dial/) | Dial spectator and creative flight speed up to 100× | 26.3      | Fabric, NeoForge |
+| Mod                       | Description                                                                               | Minecraft | Loader           |
+| ------------------------- | ----------------------------------------------------------------------------------------- | --------- | ---------------- |
+| [Speed Dial](speed-dial/) | Increase and configure your spectator and creative flight speed to fly up to 100× faster. | 26.3      | Fabric, NeoForge |
 
 ## 🛠️ Development
 
