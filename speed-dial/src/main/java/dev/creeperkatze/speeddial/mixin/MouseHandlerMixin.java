@@ -20,7 +20,7 @@ public class MouseHandlerMixin {
 		float current = player.getAbilities().getFlyingSpeed();
 		int steps = Math.round((value - current) / FlightSpeed.VANILLA_STEP);
 		float speed = FlightSpeed.scroll(current, steps);
-		FlightSpeed.onChanged(current, speed);
+		FlightSpeed.onChanged(speed);
 		return speed;
 	}
 

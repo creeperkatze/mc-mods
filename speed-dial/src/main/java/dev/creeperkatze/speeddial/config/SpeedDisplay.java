@@ -10,8 +10,7 @@ public enum SpeedDisplay {
 	BLOCKS_PER_SECOND,
 	KILOMETERS_PER_HOUR,
 	MACH,
-	CHUNKS_PER_SECOND,
-	G_FORCE;
+	CHUNKS_PER_SECOND;
 
 	public String key() {
 		return this.name().toLowerCase(Locale.ROOT);

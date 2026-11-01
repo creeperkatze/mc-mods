@@ -21,8 +21,6 @@ public final class FlightSpeed {
 
 	// Blocks per second at flying speed 1 without sprinting
 	private static final float BLOCKS_PER_SECOND = 20.0F * 0.98F / 0.09F;
-	// Turns a speed change into g
-	private static final float G_FORCE = 0.98F * 20.0F * 20.0F / 9.81F;
 	private static final float SPEED_OF_SOUND = 343.0F;
 	private static final int OVERLAY_MESSAGE_TICKS = 60;
 
@@ -89,18 +87,17 @@ public final class FlightSpeed {
 	}
 
 	private static void set(LocalPlayer player, float speed) {
-		float oldSpeed = player.getAbilities().getFlyingSpeed();
 		player.getAbilities().setFlyingSpeed(speed);
-		onChanged(oldSpeed, speed);
+		onChanged(speed);
 	}
 
-	public static void onChanged(float oldSpeed, float speed) {
+	public static void onChanged(float speed) {
 		SpeedDialConfig config = SpeedDial.config();
 		if (config.rememberSpeed) {
 			config.rememberedSpeed = speed / DEFAULT_SPEED;
 			rememberedSpeedChanged = true;
 		}
-		showSpeed(oldSpeed, speed);
+		showSpeed(speed);
 	}
 
 	public static void onAbilitiesUpdated() {
@@ -144,8 +141,7 @@ public final class FlightSpeed {
 
 	private static void updateCreativeMessage(@Nullable LocalPlayer player, boolean show) {
 		if (show && !creativeMessageShown) {
-			float speed = player.getAbilities().getFlyingSpeed();
-			showSpeed(speed, speed);
+			showSpeed(player.getAbilities().getFlyingSpeed());
 		} else if (show && isShowingOwnMessage()) {
 			hud().speedDial$setOverlayMessageTime(OVERLAY_MESSAGE_TICKS);
 		} else if (!show && creativeMessageShown) {
@@ -169,7 +165,7 @@ public final class FlightSpeed {
 		return (HudAccessor) Minecraft.getInstance().gui.hud;
 	}
 
-	private static void showSpeed(float oldSpeed, float speed) {
+	private static void showSpeed(float speed) {
 		SpeedDisplay display = SpeedDial.config().speedDisplay;
 		if (display == SpeedDisplay.OFF) {
 			return;
@@ -183,7 +179,6 @@ public final class FlightSpeed {
 			case KILOMETERS_PER_HOUR -> speedMessage(display, format(blocksPerSecond * 3.6F));
 			case MACH -> speedMessage(display, String.format(Locale.ROOT, "%.2f", blocksPerSecond / SPEED_OF_SOUND));
 			case CHUNKS_PER_SECOND -> speedMessage(display, String.format(Locale.ROOT, "%.1f", blocksPerSecond / 16.0F));
-			case G_FORCE -> speedMessage(display, multiplier, format(Math.abs(speed - oldSpeed) * sprint * G_FORCE));
 			case MULTIPLIER, OFF -> speedMessage(SpeedDisplay.MULTIPLIER, multiplier);
 		};
 		lastMessage = message;

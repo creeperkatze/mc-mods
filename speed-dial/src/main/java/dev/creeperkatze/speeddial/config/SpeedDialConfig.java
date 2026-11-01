@@ -16,7 +16,7 @@ public class SpeedDialConfig {
 			.build();
 
 	@SerialEntry
-	public float maxSpeed = 100.0F;
+	public float maxSpeed = 50.0F;
 	@SerialEntry
 	public StepMode stepMode = StepMode.PROGRESSIVE;
 	@SerialEntry
@@ -29,8 +29,6 @@ public class SpeedDialConfig {
 	public boolean matchVerticalSpeed = false;
 	@SerialEntry
 	public boolean rememberSpeed = false;
-	@SerialEntry
-	public boolean pickBlockResetsSpeed = false;
 	@SerialEntry
 	public float rememberedSpeed = 1.0F;
 }

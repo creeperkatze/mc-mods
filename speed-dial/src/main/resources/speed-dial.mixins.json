@@ -7,7 +7,6 @@
 		"HudAccessor",
 		"HudMixin",
 		"LocalPlayerMixin",
-		"MinecraftMixin",
 		"MouseHandlerMixin"
 	],
 	"injectors": {
