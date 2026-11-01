@@ -16,6 +16,8 @@ import net.minecraft.util.Util;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 public final class ListDrag {
 	private static final int DRAG_THRESHOLD = 4;
@@ -25,6 +27,8 @@ public final class ListDrag {
 	private static final int GAP_COLOR = 0x40FFFFFF;
 	private static final int OUTLINE_COLOR = 0xFFFFFFFF;
 	private static final int BACKGROUND_COLOR = 0xFF000000;
+	// Milliseconds for an entry to cover about two thirds of the way to its place
+	private static final double ANIMATION_TIME = 40.0;
 
 	// The drag in progress, drawn above the whole screen
 	private static @Nullable ListDrag active;
@@ -45,6 +49,9 @@ public final class ListDrag {
 	private long lastFrame;
 	private boolean overTransfer;
 	private int transferSlot;
+	private final Map<LayoutElement, Double> shownY = new WeakHashMap<>();
+	private @Nullable Double shownGap;
+	private long lastAnimation;
 
 	public ListDrag(AbstractSelectionList<?> list, Reorder reorder) {
 		this.list = list;
@@ -247,40 +254,71 @@ public final class ListDrag {
 		return this.dragged != null && this.overTransfer && this.transferSlot >= 0 && this.move.transfer().list() == list;
 	}
 
-	// Runs before a list draws its entries and moves them to make room for the dragged entry
+	// Runs before a list draws its entries, makes room for the dragged entry and eases every entry towards its place
 	public static void beforeItems(AbstractSelectionList<?> list) {
 		ListDrag own = of(list);
-		if (own != null && own.dragged != null) {
-			own.dragged.setY(HIDDEN_Y);
-			// Over another list the entry has left this one, so its gap closes
-			if (own.overTransfer) {
-				shift(list, entries(list).indexOf(own.dragged) + 1, -own.dragged.getHeight());
-			}
+		if (own == null) {
+			return;
 		}
 		ListDrag drag = active;
-		if (drag != null && drag.targets(list)) {
+		boolean targeted = drag != null && drag.targets(list);
+		Integer gapY = targeted ? gapY(list, drag.transferSlot) : null;
+		// Over another list the entry has left this one, so its gap closes
+		if (own.dragged != null && own.overTransfer) {
+			shift(list, entries(list).indexOf(own.dragged) + 1, -own.dragged.getHeight());
+		}
+		if (targeted) {
 			shift(list, drag.transferSlot, drag.dragged.getHeight());
+		}
+		own.animate(gapY);
+		if (own.dragged != null) {
+			own.dragged.setY(HIDDEN_Y);
 		}
 	}
 
 	// Runs after a list drew its entries, puts them back and outlines the gap
 	public static void afterItems(AbstractSelectionList<?> list, GuiGraphicsExtractor graphics) {
 		ListDrag own = of(list);
-		ListDrag drag = active;
-		boolean dragging = own != null && own.dragged != null;
-		boolean targeted = drag != null && drag.targets(list);
-		if (!dragging && !targeted) {
+		if (own == null) {
 			return;
 		}
 		((DraggableList) list).rearrange$repositionEntries();
-		if (dragging && !own.overTransfer) {
-			LayoutElement dragged = own.dragged;
-			graphics.outline(dragged.getX(), dragged.getY(), dragged.getWidth(), dragged.getHeight(), GAP_COLOR);
+		LayoutElement dragged = own.dragged;
+		if (dragged != null && !own.overTransfer) {
+			graphics.outline(dragged.getX(), own.shownY(dragged), dragged.getWidth(), dragged.getHeight(), GAP_COLOR);
 		}
-		if (targeted) {
+		ListDrag drag = active;
+		if (own.shownGap != null && drag != null && drag.targets(list)) {
 			LayoutElement row = entries(list).getFirst();
-			graphics.outline(row.getX(), gapY(list, drag.transferSlot), row.getWidth(), drag.dragged.getHeight(), GAP_COLOR);
+			graphics.outline(row.getX(), own.origin() + (int) Math.round(own.shownGap), row.getWidth(), drag.dragged.getHeight(), GAP_COLOR);
 		}
+	}
+
+	// Positions are kept relative to the top of the content, so scrolling doesn't animate
+	private void animate(@Nullable Integer gapY) {
+		long now = Util.getMillis();
+		double progress = 1.0 - Math.exp(-(now - this.lastAnimation) / ANIMATION_TIME);
+		this.lastAnimation = now;
+		int origin = this.origin();
+		for (LayoutElement entry : this.entries()) {
+			double y = ease(this.shownY.get(entry), entry.getY() - origin, progress);
+			this.shownY.put(entry, y);
+			entry.setY(origin + (int) Math.round(y));
+		}
+		this.shownGap = gapY == null ? null : ease(this.shownGap, gapY - origin, progress);
+	}
+
+	private static double ease(@Nullable Double shown, double target, double progress) {
+		return shown == null || Math.abs(target - shown) < 0.5 ? target : shown + (target - shown) * progress;
+	}
+
+	private int origin() {
+		return this.list.getY() - (int) this.list.scrollAmount();
+	}
+
+	private int shownY(LayoutElement entry) {
+		Double shown = this.shownY.get(entry);
+		return shown == null ? entry.getY() : this.origin() + (int) Math.round(shown);
 	}
 
 	private static void shift(AbstractSelectionList<?> list, int from, int distance) {
