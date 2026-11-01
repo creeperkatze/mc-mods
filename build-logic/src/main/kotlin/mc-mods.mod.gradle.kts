@@ -38,6 +38,9 @@ loom {
 		if (optionalModProperty("mod_environment") == "client") {
 			remove(getByName("server"))
 		}
+		named("client") {
+			programArgs("--quickPlaySingleplayer", "New World")
+		}
 	}
 }
 
