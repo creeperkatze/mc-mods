@@ -5,11 +5,11 @@
 	"name": "${mod_name}",
 	"description": "${mod_description}",
 	"authors": [
-		"creeperkatze"
+		"Creeperkatze"
 	],
 	"contact": {
 		"homepage": "https://modrinth.com/mod/MEVdpviL",
-		"sources": "https://github.com/creeperkatze/mc-mods",
+		"sources": "https://github.com/creeperkatze/mc-mods/tree/main/${mod_id}",
 		"issues": "https://github.com/creeperkatze/mc-mods/issues"
 	},
 	"license": "${mod_license}",
@@ -34,5 +34,13 @@
 	},
 	"suggests": {
 		"modmenu": "*"
+	},
+	"custom": {
+		"modmenu": {
+			"links": {
+				"modmenu.discord": "https://discord.gg/Qds5QMrnDv",
+				"modmenu.donate": "https://ko-fi.com/creeperkatze"
+			}
+		}
 	}
 }
