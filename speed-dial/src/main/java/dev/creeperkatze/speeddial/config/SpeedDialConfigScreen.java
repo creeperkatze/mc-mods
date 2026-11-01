@@ -1,98 +1,99 @@
 package dev.creeperkatze.speeddial.config;
 
-import com.mojang.serialization.Codec;
-import dev.creeperkatze.speeddial.SpeedDial;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.OptionInstance;
-import net.minecraft.client.Options;
+import dev.isxander.yacl3.api.ConfigCategory;
+import dev.isxander.yacl3.api.Option;
+import dev.isxander.yacl3.api.OptionDescription;
+import dev.isxander.yacl3.api.YetAnotherConfigLib;
+import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
+import dev.isxander.yacl3.api.controller.EnumControllerBuilder;
+import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.Mth;
 
-import java.util.List;
 import java.util.Locale;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
-public class SpeedDialConfigScreen extends OptionsSubScreen {
-	private static final int MIN_SPEED = 1;
-	private static final int MAX_SPEED = 100;
-	private static final int MIN_PROGRESSIVE_STEP = 101;
-	private static final int MAX_PROGRESSIVE_STEP = 200;
-	private static final int MIN_LINEAR_STEP = 1;
-	private static final int MAX_LINEAR_STEP = 100;
-
-	public SpeedDialConfigScreen(Screen lastScreen) {
-		super(lastScreen, Minecraft.getInstance().options, Component.translatable("speed-dial.config.title"));
+public final class SpeedDialConfigScreen {
+	private SpeedDialConfigScreen() {
 	}
 
-	@Override
-	protected void addOptions() {
-		SpeedDialConfig config = SpeedDial.config();
-		this.list.addBig(slider(
-				"max_speed", MIN_SPEED, MAX_SPEED, Math.round(config.maxSpeed),
-				value -> Component.translatable("speed-dial.config.multiplier", value),
-				value -> config.maxSpeed = value
-		));
-		this.list.addBig(cycle("step_mode", StepMode.values(), config.stepMode, StepMode::caption, value -> config.stepMode = value));
-		this.list.addSmall(
-				slider(
-						"progressive_step", MIN_PROGRESSIVE_STEP, MAX_PROGRESSIVE_STEP, Math.round(config.progressiveMultiplier * 100.0F),
-						value -> Component.translatable("speed-dial.config.times", String.format(Locale.ROOT, "%.2f", value / 100.0F)),
-						value -> config.progressiveMultiplier = value / 100.0F
-				),
-				slider(
-						"linear_step", MIN_LINEAR_STEP, MAX_LINEAR_STEP, Math.round(config.linearStep * 10.0F),
-						value -> Component.translatable("speed-dial.config.plus", formatTenths(value)),
-						value -> config.linearStep = value / 10.0F
-				)
-		);
-		this.list.addSmall(
-				cycle("speed_display", SpeedDisplay.values(), config.speedDisplay, SpeedDisplay::caption, value -> config.speedDisplay = value),
-				toggle("match_vertical_speed", config.matchVerticalSpeed, value -> config.matchVerticalSpeed = value),
-				toggle("remember_speed", config.rememberSpeed, value -> config.rememberSpeed = value),
-				toggle("pick_block_resets_speed", config.pickBlockResetsSpeed, value -> config.pickBlockResetsSpeed = value)
-		);
+	public static Screen create(Screen parent) {
+		SpeedDialConfig defaults = SpeedDialConfig.HANDLER.defaults();
+		SpeedDialConfig config = SpeedDialConfig.HANDLER.instance();
+		return YetAnotherConfigLib.createBuilder()
+				.title(Component.translatable("speed-dial.config.title"))
+				.category(ConfigCategory.createBuilder()
+						.name(Component.translatable("speed-dial.config.title"))
+						.option(Option.<Float>createBuilder()
+								.name(name("max_speed"))
+								.description(description("max_speed"))
+								.binding(defaults.maxSpeed, () -> config.maxSpeed, value -> config.maxSpeed = value)
+								.controller(option -> FloatSliderControllerBuilder.create(option)
+										.range(1.0F, 100.0F)
+										.step(1.0F)
+										.formatValue(value -> Component.translatable("speed-dial.config.multiplier", Math.round(value))))
+								.build())
+						.option(cycle("step_mode", StepMode.class, StepMode::caption, defaults.stepMode, () -> config.stepMode, value -> config.stepMode = value))
+						.option(Option.<Float>createBuilder()
+								.name(name("progressive_step"))
+								.description(description("progressive_step"))
+								.binding(defaults.progressiveMultiplier, () -> config.progressiveMultiplier, value -> config.progressiveMultiplier = value)
+								.controller(option -> FloatSliderControllerBuilder.create(option)
+										.range(1.01F, 2.0F)
+										.step(0.01F)
+										.formatValue(value -> Component.translatable("speed-dial.config.times", String.format(Locale.ROOT, "%.2f", value))))
+								.build())
+						.option(Option.<Float>createBuilder()
+								.name(name("linear_step"))
+								.description(description("linear_step"))
+								.binding(defaults.linearStep, () -> config.linearStep, value -> config.linearStep = value)
+								.controller(option -> FloatSliderControllerBuilder.create(option)
+										.range(0.1F, 10.0F)
+										.step(0.1F)
+										.formatValue(value -> Component.translatable("speed-dial.config.plus", formatTenths(value))))
+								.build())
+						.option(cycle("speed_display", SpeedDisplay.class, SpeedDisplay::caption, defaults.speedDisplay, () -> config.speedDisplay, value -> config.speedDisplay = value))
+						.option(toggle("match_vertical_speed", defaults.matchVerticalSpeed, () -> config.matchVerticalSpeed, value -> config.matchVerticalSpeed = value))
+						.option(toggle("remember_speed", defaults.rememberSpeed, () -> config.rememberSpeed, value -> config.rememberSpeed = value))
+						.option(toggle("pick_block_resets_speed", defaults.pickBlockResetsSpeed, () -> config.pickBlockResetsSpeed, value -> config.pickBlockResetsSpeed = value))
+						.build())
+				.save(SpeedDialConfig.HANDLER::save)
+				.build()
+				.generateScreen(parent);
 	}
 
-	@Override
-	public void removed() {
-		super.removed();
-		SpeedDial.config().save();
+	private static String formatTenths(float value) {
+		int tenths = Math.round(value * 10.0F);
+		return tenths % 10 == 0 ? String.valueOf(tenths / 10) : String.format(Locale.ROOT, "%.1f", tenths / 10.0F);
 	}
 
-	private static String formatTenths(int value) {
-		return value % 10 == 0 ? String.valueOf(value / 10) : String.format(Locale.ROOT, "%.1f", value / 10.0F);
+	private static <T extends Enum<T>> Option<T> cycle(String key, Class<T> type, Function<T, Component> caption, T defaultValue, Supplier<T> getter, Consumer<T> setter) {
+		return Option.<T>createBuilder()
+				.name(name(key))
+				.description(description(key))
+				.binding(defaultValue, getter, setter)
+				.controller(option -> EnumControllerBuilder.create(option)
+						.enumClass(type)
+						.formatValue(caption::apply))
+				.build();
 	}
 
-	private static OptionInstance<Integer> slider(String key, int min, int max, int initialValue, Function<Integer, Component> label, OptionInstance.ValueUpdateListener<Integer> onValueUpdate) {
-		return new OptionInstance<>(
-				"speed-dial.config." + key,
-				tooltip(key),
-				(caption, value) -> Options.genericValueLabel(caption, label.apply(value)),
-				new OptionInstance.IntRange(min, max),
-				Mth.clamp(initialValue, min, max),
-				onValueUpdate
-		);
+	private static Option<Boolean> toggle(String key, boolean defaultValue, Supplier<Boolean> getter, Consumer<Boolean> setter) {
+		return Option.<Boolean>createBuilder()
+				.name(name(key))
+				.description(description(key))
+				.binding(defaultValue, getter, setter)
+				.controller(option -> BooleanControllerBuilder.create(option).onOffFormatter())
+				.build();
 	}
 
-	private static <T extends Enum<T>> OptionInstance<T> cycle(String key, T[] values, T initialValue, Function<T, Component> caption, OptionInstance.ValueUpdateListener<T> onValueUpdate) {
-		Codec<T> codec = Codec.STRING.xmap(name -> Enum.valueOf(initialValue.getDeclaringClass(), name), Enum::name);
-		return new OptionInstance<>(
-				"speed-dial.config." + key,
-				tooltip(key),
-				(optionCaption, value) -> caption.apply(value),
-				new OptionInstance.Enum<>(List.of(values), codec),
-				initialValue,
-				onValueUpdate
-		);
+	private static Component name(String key) {
+		return Component.translatable("speed-dial.config." + key);
 	}
 
-	private static OptionInstance<Boolean> toggle(String key, boolean initialValue, OptionInstance.ValueUpdateListener<Boolean> onValueUpdate) {
-		return OptionInstance.createBoolean("speed-dial.config." + key, tooltip(key), initialValue, onValueUpdate);
-	}
-
-	private static <T> OptionInstance.TooltipSupplier<T> tooltip(String key) {
-		return OptionInstance.cachedConstantTooltip(Component.translatable("speed-dial.config." + key + ".tooltip"));
+	private static OptionDescription description(String key) {
+		return OptionDescription.of(Component.translatable("speed-dial.config." + key + ".tooltip"));
 	}
 }

@@ -110,7 +110,7 @@ public final class FlightSpeed {
 	public static void saveRememberedSpeed() {
 		if (rememberedSpeedChanged) {
 			rememberedSpeedChanged = false;
-			SpeedDial.config().save();
+			SpeedDialConfig.HANDLER.save();
 		}
 	}
 

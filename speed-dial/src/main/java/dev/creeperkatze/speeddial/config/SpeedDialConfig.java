@@ -1,63 +1,36 @@
 package dev.creeperkatze.speeddial.config;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParseException;
 import dev.creeperkatze.speeddial.SpeedDial;
+import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
+import dev.isxander.yacl3.config.v2.api.SerialEntry;
+import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import net.fabricmc.loader.api.FabricLoader;
-
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import net.minecraft.resources.Identifier;
 
 public class SpeedDialConfig {
-	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+	public static final ConfigClassHandler<SpeedDialConfig> HANDLER = ConfigClassHandler.createBuilder(SpeedDialConfig.class)
+			.id(Identifier.fromNamespaceAndPath(SpeedDial.MOD_ID, "config"))
+			.serializer(handler -> GsonConfigSerializerBuilder.create(handler)
+					.setPath(FabricLoader.getInstance().getConfigDir().resolve(SpeedDial.MOD_ID + ".json"))
+					.build())
+			.build();
 
+	@SerialEntry
 	public float maxSpeed = 100.0F;
+	@SerialEntry
 	public StepMode stepMode = StepMode.PROGRESSIVE;
+	@SerialEntry
 	public float progressiveMultiplier = 1.15F;
+	@SerialEntry
 	public float linearStep = 1.0F;
+	@SerialEntry
 	public SpeedDisplay speedDisplay = SpeedDisplay.MULTIPLIER;
+	@SerialEntry
 	public boolean matchVerticalSpeed = false;
+	@SerialEntry
 	public boolean rememberSpeed = false;
+	@SerialEntry
 	public boolean pickBlockResetsSpeed = false;
+	@SerialEntry
 	public float rememberedSpeed = 1.0F;
-
-	public static SpeedDialConfig load() {
-		Path path = path();
-		SpeedDialConfig config = null;
-		if (Files.exists(path)) {
-			try (Reader reader = Files.newBufferedReader(path)) {
-				config = GSON.fromJson(reader, SpeedDialConfig.class);
-			} catch (IOException | JsonParseException e) {
-				SpeedDial.LOGGER.warn("Failed to read {}, using defaults", path, e);
-			}
-		}
-		if (config == null) {
-			config = new SpeedDialConfig();
-		}
-		if (config.speedDisplay == null) {
-			config.speedDisplay = SpeedDisplay.MULTIPLIER;
-		}
-		if (config.stepMode == null) {
-			config.stepMode = StepMode.PROGRESSIVE;
-		}
-		config.save();
-		return config;
-	}
-
-	public void save() {
-		Path path = path();
-		try (Writer writer = Files.newBufferedWriter(path)) {
-			GSON.toJson(this, writer);
-		} catch (IOException e) {
-			SpeedDial.LOGGER.warn("Failed to write {}", path, e);
-		}
-	}
-
-	private static Path path() {
-		return FabricLoader.getInstance().getConfigDir().resolve(SpeedDial.MOD_ID + ".json");
-	}
 }

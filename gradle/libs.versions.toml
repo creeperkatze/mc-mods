@@ -5,6 +5,8 @@ fabric-loader = "0.20.1"
 # Update together with minecraft
 fabric-api = "0.165.0+26.3"
 modmenu = "21.0.0"
+# Update together with minecraft
+yacl = "3.9.7+26.3-fabric"
 loom = "1.19.3"
 mod-publish = "2.2.1"
 
@@ -12,5 +14,6 @@ mod-publish = "2.2.1"
 fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
 fabric-api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric-api" }
 modmenu = { module = "com.terraformersmc:modmenu", version.ref = "modmenu" }
+yacl = { module = "dev.isxander:yet-another-config-lib", version.ref = "yacl" }
 loom-plugin = { module = "net.fabricmc:fabric-loom", version.ref = "loom" }
 mod-publish-plugin = { module = "me.modmuss50.mod-publish-plugin:me.modmuss50.mod-publish-plugin.gradle.plugin", version.ref = "mod-publish" }

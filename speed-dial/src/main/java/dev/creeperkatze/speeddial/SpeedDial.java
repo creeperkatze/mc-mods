@@ -19,12 +19,11 @@ public class SpeedDial implements ClientModInitializer {
 
 	private static final KeyMapping.Category KEY_CATEGORY = KeyMapping.Category.register(Identifier.fromNamespaceAndPath(MOD_ID, "main"));
 
-	private static SpeedDialConfig config = new SpeedDialConfig();
 	private static KeyMapping modifier;
 
 	@Override
 	public void onInitializeClient() {
-		config = SpeedDialConfig.load();
+		SpeedDialConfig.HANDLER.load();
 
 		KeyMapping faster = register("faster", InputConstants.KEY_PAGEUP);
 		KeyMapping slower = register("slower", InputConstants.KEY_PAGEDOWN);
@@ -68,6 +67,6 @@ public class SpeedDial implements ClientModInitializer {
 	}
 
 	public static SpeedDialConfig config() {
-		return config;
+		return SpeedDialConfig.HANDLER.instance();
 	}
 }
