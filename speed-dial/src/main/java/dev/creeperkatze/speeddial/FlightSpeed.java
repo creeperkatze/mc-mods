@@ -41,7 +41,7 @@ public final class FlightSpeed {
 	}
 
 	public static boolean canChange(@Nullable LocalPlayer player) {
-		return isActive(player) && (player.isSpectator() || (player.getAbilities().flying && SpeedDial.isModifierDown()));
+		return isActive(player) && (player.isSpectator() || (player.getAbilities().flying && SpeedDialKeybinds.isModifierDown()));
 	}
 
 	public static float scroll(float speed, int steps) {
@@ -127,7 +127,7 @@ public final class FlightSpeed {
 	}
 
 	public static void updateCreativeBoost(@Nullable LocalPlayer player) {
-		boolean boost = isActive(player) && player.isCreative() && SpeedDial.isModifierDown();
+		boolean boost = isActive(player) && player.isCreative() && SpeedDialKeybinds.isModifierDown();
 		if (boost != creativeBoost) {
 			creativeBoost = boost;
 			if (player != null) {

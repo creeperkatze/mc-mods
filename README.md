@@ -11,16 +11,16 @@ All my Minecraft mods in one place.
 
 ## 📦 Mods
 
-| Mod                                           | Description                                              | Minecraft | Loader |
-|-----------------------------------------------|----------------------------------------------------------|-----------|--------|
-| [Speed Dial](speed-dial/)                     | Dial spectator and creative flight speed up to 100× | 26.3      | Fabric |
+| Mod                       | Description                                         | Minecraft | Loader           |
+| ------------------------- | --------------------------------------------------- | --------- | ---------------- |
+| [Speed Dial](speed-dial/) | Dial spectator and creative flight speed up to 100× | 26.3      | Fabric, NeoForge |
 
 ## 🛠️ Development
 
 Any installed JDK can launch `./gradlew`. Gradle runs itself on JDK 25 and compiles the mods with the JDK set as `java` in `gradle/libs.versions.toml`, downloading either if missing.
 
-| Command                      | What it does                                         |
-|------------------------------|------------------------------------------------------|
-| `./gradlew build`            | Build all mods                                       |
-| `./gradlew :<mod>:runClient` | Launch a development client with the mod             |
-| `./gradlew genSources`       | Decompile Minecraft for browsing its code            |
+| Command                                           | What it does                              |
+| ------------------------------------------------- | ----------------------------------------- |
+| `./gradlew build`                                 | Build all mods                            |
+| `./gradlew :<mod>:<minecraft>-<loader>:runClient` | Launch a development client               |
+| `./gradlew :<mod>:<minecraft>-fabric:genSources`  | Decompile Minecraft for browsing its code |

@@ -3,14 +3,14 @@ import org.gradle.language.jvm.tasks.ProcessResources
 
 plugins {
 	`java-library`
-	id("net.fabricmc.fabric-loom")
 }
 
 val modId = modProperty("mod_id")
 val javaVersion = catalog.version("java").toInt()
+val releaseVersion = "${modProperty("mod_version")}+$minecraftVersion"
 
 group = modProperty("maven_group")
-version = "${modProperty("mod_version")}+$minecraftVersion"
+version = "$releaseVersion-$loader"
 base.archivesName = modId
 
 java {
@@ -20,28 +20,9 @@ java {
 
 repositories {
 	mavenCentral()
-}
-
-dependencies {
-	"minecraft"("com.mojang:minecraft:$minecraftVersion")
-	implementation(catalog.library("fabric-loader"))
-	implementation(catalog.library("fabric-api"))
-}
-
-loom {
-	mods {
-		register(modId) {
-			sourceSet(sourceSets["main"])
-		}
-	}
-	runs {
-		if (optionalModProperty("mod_environment") == "client") {
-			remove(getByName("server"))
-		}
-		named("client") {
-			programArgs("--quickPlaySingleplayer", "New World")
-		}
-	}
+	maven("https://maven.terraformersmc.com/releases/")
+	maven("https://maven.isxander.dev/releases/")
+	maven("https://maven.quiltmc.org/repository/release/")
 }
 
 tasks.withType<JavaCompile>().configureEach {
@@ -56,26 +37,26 @@ tasks.withType<AbstractArchiveTask>().configureEach {
 
 tasks.withType<Jar>().configureEach {
 	val licenseName = "LICENSE_$modId"
-	from("LICENSE") {
+	from(modDirectory.file("LICENSE")) {
 		rename { licenseName }
 	}
 }
 
 tasks.named<ProcessResources>("processResources") {
 	val properties = mapOf(
-		"version" to version.toString(),
+		"version" to releaseVersion,
 		"mod_id" to modId,
+		"neoforge_mod_id" to modId.replace('-', '_'),
 		"mod_name" to modProperty("mod_name"),
 		"mod_description" to modProperty("mod_description"),
 		"mod_license" to modProperty("mod_license"),
 		"minecraft_version" to minecraftVersion,
-		"fabric_loader_version" to catalog.version("fabric-loader")
+		"fabric_loader_version" to mcVersion("fabric-loader"),
+		"neoforge_version" to mcVersion("neoforge"),
+		"yacl_version" to mcVersion("yacl-$loader").removeSuffix("-$loader")
 	)
 	inputs.properties(properties)
-	filesMatching("fabric.mod.json") {
+	filesMatching(listOf("fabric.mod.json", "META-INF/neoforge.mods.toml")) {
 		expand(properties)
 	}
 }
-
-// Applied last, it needs the jar tasks registered above
-pluginManager.apply("mc-mods.publish")

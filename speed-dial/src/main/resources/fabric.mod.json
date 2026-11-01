@@ -17,7 +17,7 @@
 	"environment": "client",
 	"entrypoints": {
 		"client": [
-			"dev.creeperkatze.speeddial.SpeedDial"
+			"dev.creeperkatze.speeddial.loaders.fabric.SpeedDialFabric"
 		],
 		"modmenu": [
 			"dev.creeperkatze.speeddial.compat.modmenu.SpeedDialModMenuCompat"

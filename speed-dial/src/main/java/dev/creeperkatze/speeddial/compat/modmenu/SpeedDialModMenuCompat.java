@@ -1,3 +1,4 @@
+/*? if fabric {*/
 package dev.creeperkatze.speeddial.compat.modmenu;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
@@ -10,3 +11,4 @@ public class SpeedDialModMenuCompat implements ModMenuApi {
 		return SpeedDialConfigScreen::create;
 	}
 }
+/*?}*/

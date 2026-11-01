@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
 	implementation(libs.loom.plugin)
+	implementation(libs.moddev.plugin)
 	implementation(libs.mod.publish.plugin)
 }
 

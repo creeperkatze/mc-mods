@@ -1,0 +1,60 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run client",
+			"type": "shell",
+			"command": "./gradlew :${input:mod}:${input:target}:runClient",
+			"group": "test",
+			"presentation": {
+				"reveal": "always",
+				"panel": "dedicated"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Build all",
+			"type": "shell",
+			"command": "./gradlew build",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Build mod",
+			"type": "shell",
+			"command": "./gradlew :${input:mod}:build",
+			"group": "build",
+			"problemMatcher": []
+		},
+		{
+			"label": "Generate sources",
+			"type": "shell",
+			"command": "./gradlew genSources",
+			"problemMatcher": []
+		}
+	],
+	"inputs": [
+		{
+			"id": "mod",
+			"type": "pickString",
+			"description": "Mod",
+			"options": [
+				"speed-dial"
+			],
+			"default": "speed-dial"
+		},
+		{
+			"id": "target",
+			"type": "pickString",
+			"description": "Minecraft version and loader",
+			"options": [
+				"26.3-fabric",
+				"26.3-neoforge"
+			],
+			"default": "26.3-fabric"
+		}
+	]
+}

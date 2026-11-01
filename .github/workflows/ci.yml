@@ -48,6 +48,6 @@ jobs:
         with:
           name: jars
           path: |
-            */build/libs/*.jar
+            */versions/*/build/libs/*.jar
             !build-logic/**
           if-no-files-found: error
