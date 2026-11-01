@@ -11,14 +11,14 @@ val Project.modDirectory: Directory
 	get() = requireNotNull(parent).layout.projectDirectory
 
 fun Project.readModProperties(directory: Directory = modDirectory): Map<String, String> {
-	val contents = providers.fileContents(directory.file("gradle.properties")).asText.get()
+	val contents = providers.fileContents(directory.file("mod.properties")).asText.get()
 	val properties = Properties().apply { contents.reader().use(::load) }
 	return properties.stringPropertyNames().associateWith(properties::getProperty)
 }
 
 fun Project.modProperty(key: String): String =
 	requireNotNull(optionalModProperty(key).takeIf(String::isNotBlank)) {
-		"Missing $key in ${requireNotNull(parent).name}/gradle.properties"
+		"Missing $key in ${requireNotNull(parent).name}/mod.properties"
 	}
 
 fun Project.optionalModProperty(key: String): String = readModProperties()[key].orEmpty()
