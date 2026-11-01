@@ -1,0 +1,5 @@
+{
+	"rearrange.reset_world_order": "Reset World Order",
+	"rearrange.reset_world_order.title": "Reset the world order?",
+	"rearrange.reset_world_order.message": "Your worlds will be sorted by when you last played them again."
+}

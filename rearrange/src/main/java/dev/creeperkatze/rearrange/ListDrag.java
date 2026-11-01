@@ -8,6 +8,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractSelectionList;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.layouts.LayoutElement;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.util.Mth;
@@ -25,17 +26,25 @@ public final class ListDrag {
 	private static final int OUTLINE_COLOR = 0xFFFFFFFF;
 	private static final int BACKGROUND_COLOR = 0xFF000000;
 
+	// The drag in progress, drawn above the whole screen
+	private static @Nullable ListDrag active;
+
 	private final AbstractSelectionList<?> list;
 	private final Reorder reorder;
 	private @Nullable LayoutElement pressed;
 	private int pressedIndex;
+	private double pressX;
 	private double pressY;
 	private @Nullable LayoutElement dragged;
 	private Reorder.@Nullable Move move;
 	private int from;
-	private double grabOffset;
+	private double grabOffsetX;
+	private double grabOffsetY;
+	private double mouseX;
 	private double mouseY;
 	private long lastFrame;
+	private boolean overTransfer;
+	private int transferSlot;
 
 	public ListDrag(AbstractSelectionList<?> list, Reorder reorder) {
 		this.list = list;
@@ -46,17 +55,17 @@ public final class ListDrag {
 		return widget instanceof DraggableList list ? list.rearrange$drag() : null;
 	}
 
-	private DraggableList draggable() {
-		return (DraggableList) this.list;
+	private static List<LayoutElement> entries(AbstractSelectionList<?> list) {
+		return ((DraggableList) list).rearrange$entries();
 	}
 
 	private List<LayoutElement> entries() {
-		return this.draggable().rearrange$entries();
+		return entries(this.list);
 	}
 
 	public void press(MouseButtonEvent event) {
 		this.reset();
-		if (event.button() != InputConstants.MOUSE_BUTTON_LEFT || this.draggable().rearrange$isOverScrollbar(event.x(), event.y())) {
+		if (event.button() != InputConstants.MOUSE_BUTTON_LEFT || ((DraggableList) this.list).rearrange$isOverScrollbar(event.x(), event.y())) {
 			return;
 		}
 		List<LayoutElement> entries = this.entries();
@@ -64,6 +73,7 @@ public final class ListDrag {
 			if (entries.get(i).getRectangle().containsPoint((int) event.x(), (int) event.y())) {
 				this.pressed = entries.get(i);
 				this.pressedIndex = i;
+				this.pressX = event.x();
 				this.pressY = event.y();
 				return;
 			}
@@ -72,7 +82,7 @@ public final class ListDrag {
 
 	public boolean drag(MouseButtonEvent event) {
 		if (this.dragged == null) {
-			if (this.pressed == null || Math.abs(event.y() - this.pressY) < DRAG_THRESHOLD) {
+			if (this.pressed == null || Math.abs(event.y() - this.pressY) < DRAG_THRESHOLD && Math.abs(event.x() - this.pressX) < DRAG_THRESHOLD) {
 				return false;
 			}
 			if (!this.start()) {
@@ -80,6 +90,7 @@ public final class ListDrag {
 				return false;
 			}
 		}
+		this.mouseX = event.x();
 		this.mouseY = event.y();
 		this.update();
 		return true;
@@ -96,21 +107,32 @@ public final class ListDrag {
 		}
 		this.dragged = this.pressed;
 		this.from = this.pressedIndex;
-		this.grabOffset = this.pressY - this.dragged.getY();
+		this.grabOffsetX = this.pressX - this.dragged.getX();
+		this.grabOffsetY = this.pressY - this.dragged.getY();
 		this.lastFrame = Util.getMillis();
+		this.overTransfer = false;
+		active = this;
 		return true;
 	}
 
 	public void release() {
 		LayoutElement dragged = this.dragged;
 		Reorder.Move move = this.move;
-		int from = this.from;
+		boolean overTransfer = this.overTransfer;
+		int transferSlot = this.transferSlot;
 		this.reset();
-		if (dragged != null && move != null) {
-			int to = this.entries().indexOf(dragged);
-			if (to >= 0 && to != from) {
-				move.drop(to);
+		if (dragged == null || move == null) {
+			return;
+		}
+		if (overTransfer) {
+			if (transferSlot >= 0) {
+				move.transfer().drop(transferSlot);
 			}
+			return;
+		}
+		int to = this.entries().indexOf(dragged);
+		if (to >= 0 && to != this.from) {
+			move.drop(to);
 		}
 	}
 
@@ -118,9 +140,12 @@ public final class ListDrag {
 		this.pressed = null;
 		this.dragged = null;
 		this.move = null;
+		if (active == this) {
+			active = null;
+		}
 	}
 
-	public void frame(int mouseY) {
+	public void frame(int mouseX, int mouseY) {
 		if (this.dragged == null) {
 			return;
 		}
@@ -133,14 +158,16 @@ public final class ListDrag {
 		long now = Util.getMillis();
 		long elapsed = now - this.lastFrame;
 		this.lastFrame = now;
+		this.mouseX = mouseX;
 		this.mouseY = mouseY;
 
-		int top = this.list.getY() + SCROLL_EDGE;
-		int bottom = this.list.getBottom() - SCROLL_EDGE;
+		AbstractSelectionList<?> scrolled = this.overTransfer ? this.move.transfer().list() : this.list;
+		int top = scrolled.getY() + SCROLL_EDGE;
+		int bottom = scrolled.getBottom() - SCROLL_EDGE;
 		double depth = mouseY < top ? mouseY - top : mouseY > bottom ? mouseY - bottom : 0;
 		if (depth != 0) {
 			double speed = Mth.clamp(depth / SCROLL_EDGE, -1.0, 1.0) * SCROLL_SPEED;
-			this.list.setScrollAmount(this.list.scrollAmount() + speed * elapsed);
+			scrolled.setScrollAmount(scrolled.scrollAmount() + speed * elapsed);
 		}
 		this.update();
 	}
@@ -150,6 +177,13 @@ public final class ListDrag {
 		int current = entries.indexOf(this.dragged);
 		if (current < 0) {
 			this.reset();
+			return;
+		}
+
+		Reorder.Transfer transfer = this.move.transfer();
+		this.overTransfer = transfer != null && transfer.list().isMouseOver(this.mouseX, this.mouseY);
+		if (this.overTransfer) {
+			this.transferSlot = this.transferSlot(transfer);
 			return;
 		}
 
@@ -174,39 +208,118 @@ public final class ListDrag {
 		if (target != current) {
 			entries.remove(current);
 			entries.add(target, dragged);
-			this.draggable().rearrange$repositionEntries();
+			((DraggableList) this.list).rearrange$repositionEntries();
 		}
+	}
+
+	// Returns the allowed gap between entries of the other list closest to the mouse, or -1
+	private int transferSlot(Reorder.Transfer transfer) {
+		List<LayoutElement> entries = entries(transfer.list());
+		int target = -1;
+		double closest = Double.MAX_VALUE;
+		for (int slot = 0; slot <= entries.size(); slot++) {
+			double distance = Math.abs(gapY(transfer.list(), slot) - this.mouseY);
+			if (distance < closest && transfer.canDrop(slot)) {
+				closest = distance;
+				target = slot;
+			}
+		}
+		return target;
+	}
+
+	private static int gapY(AbstractSelectionList<?> list, int slot) {
+		List<LayoutElement> entries = entries(list);
+		if (slot < entries.size()) {
+			return entries.get(slot).getY();
+		}
+		return entries.isEmpty() ? list.getY() : entries.getLast().getY() + entries.getLast().getHeight();
 	}
 
 	private double floatingY() {
-		return Mth.clamp(this.mouseY - this.grabOffset, this.list.getY(), this.list.getBottom() - this.dragged.getHeight());
+		// Entries that can move to another list are free to leave their own
+		boolean free = this.move.transfer() != null;
+		int top = free ? 0 : this.list.getY();
+		int bottom = free ? Minecraft.getInstance().getWindow().getGuiScaledHeight() : this.list.getBottom();
+		return Mth.clamp(this.mouseY - this.grabOffsetY, top, bottom - this.dragged.getHeight());
 	}
 
-	public void hideDragged() {
-		if (this.dragged != null) {
-			this.dragged.setY(HIDDEN_Y);
+	private boolean targets(AbstractSelectionList<?> list) {
+		return this.dragged != null && this.overTransfer && this.transferSlot >= 0 && this.move.transfer().list() == list;
+	}
+
+	// Runs before a list draws its entries and moves them to make room for the dragged entry
+	public static void beforeItems(AbstractSelectionList<?> list) {
+		ListDrag own = of(list);
+		if (own != null && own.dragged != null) {
+			own.dragged.setY(HIDDEN_Y);
+			// Over another list the entry has left this one, so its gap closes
+			if (own.overTransfer) {
+				shift(list, entries(list).indexOf(own.dragged) + 1, -own.dragged.getHeight());
+			}
+		}
+		ListDrag drag = active;
+		if (drag != null && drag.targets(list)) {
+			shift(list, drag.transferSlot, drag.dragged.getHeight());
 		}
 	}
 
-	public void extractDragged(GuiGraphicsExtractor graphics, float a) {
-		if (this.dragged == null) {
+	// Runs after a list drew its entries, puts them back and outlines the gap
+	public static void afterItems(AbstractSelectionList<?> list, GuiGraphicsExtractor graphics) {
+		ListDrag own = of(list);
+		ListDrag drag = active;
+		boolean dragging = own != null && own.dragged != null;
+		boolean targeted = drag != null && drag.targets(list);
+		if (!dragging && !targeted) {
 			return;
 		}
-		this.draggable().rearrange$repositionEntries();
-		int x = this.dragged.getX();
-		int width = this.dragged.getWidth();
-		int height = this.dragged.getHeight();
-		int slotY = this.dragged.getY();
-		graphics.outline(x, slotY, width, height, GAP_COLOR);
+		((DraggableList) list).rearrange$repositionEntries();
+		if (dragging && !own.overTransfer) {
+			LayoutElement dragged = own.dragged;
+			graphics.outline(dragged.getX(), dragged.getY(), dragged.getWidth(), dragged.getHeight(), GAP_COLOR);
+		}
+		if (targeted) {
+			LayoutElement row = entries(list).getFirst();
+			graphics.outline(row.getX(), gapY(list, drag.transferSlot), row.getWidth(), drag.dragged.getHeight(), GAP_COLOR);
+		}
+	}
 
+	private static void shift(AbstractSelectionList<?> list, int from, int distance) {
+		List<LayoutElement> entries = entries(list);
+		for (int i = Math.max(from, 0); i < entries.size(); i++) {
+			entries.get(i).setY(entries.get(i).getY() + distance);
+		}
+	}
+
+	public static void extractActive(Screen screen, GuiGraphicsExtractor graphics, float a) {
+		ListDrag drag = active;
+		if (drag == null) {
+			return;
+		}
+		if (!screen.children().contains(drag.list)) {
+			drag.reset();
+			return;
+		}
+		drag.extractFloating(graphics, a);
+	}
+
+	private void extractFloating(GuiGraphicsExtractor graphics, float a) {
+		Reorder.Transfer transfer = this.move.transfer();
 		graphics.nextStratum();
+		LayoutElement dragged = this.dragged;
+		int slotX = dragged.getX();
+		int slotY = dragged.getY();
+		int x = transfer == null ? slotX : (int) (this.mouseX - this.grabOffsetX);
 		int y = (int) this.floatingY();
-		this.dragged.setY(y);
+		int width = dragged.getWidth();
+		int height = dragged.getHeight();
+		dragged.setX(x);
+		dragged.setY(y);
 		graphics.fill(x, y, x + width, y + height, OUTLINE_COLOR);
 		graphics.fill(x + 1, y + 1, x + width - 1, y + height - 1, BACKGROUND_COLOR);
 		// A mouse position off the entry keeps its hover buttons and tooltips hidden
-		((ObjectSelectionList.Entry<?>) this.dragged).extractContent(graphics, -1, -1, false, a);
-		this.dragged.setY(slotY);
-		graphics.requestCursor(CursorTypes.RESIZE_NS);
+		((ObjectSelectionList.Entry<?>) dragged).extractContent(graphics, -1, -1, false, a);
+		dragged.setX(slotX);
+		dragged.setY(slotY);
+		graphics.requestCursor(transfer == null ? CursorTypes.RESIZE_NS : CursorTypes.RESIZE_ALL);
 	}
 }

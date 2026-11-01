@@ -19,6 +19,19 @@ public interface Reorder {
 		boolean canDrop(int index);
 
 		void drop(int index);
+
+		// Another list the entry can be dropped into
+		default @Nullable Transfer transfer() {
+			return null;
+		}
+	}
+
+	interface Transfer {
+		AbstractSelectionList<?> list();
+
+		boolean canDrop(int index);
+
+		void drop(int index);
 	}
 
 	static @Nullable Reorder of(AbstractSelectionList<?> list) {

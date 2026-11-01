@@ -61,6 +61,19 @@ public final class WorldOrder {
 		}
 	}
 
+	public static boolean hasOrder() {
+		return !worlds().isEmpty();
+	}
+
+	public static void reset() {
+		worlds = List.of();
+		try {
+			Files.deleteIfExists(path());
+		} catch (IOException e) {
+			Rearrange.LOGGER.warn("Couldn't reset the world order", e);
+		}
+	}
+
 	private static List<String> worlds() {
 		if (worlds == null) {
 			worlds = load();

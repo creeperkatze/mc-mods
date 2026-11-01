@@ -3,36 +3,54 @@ package dev.creeperkatze.rearrange.reorder;
 import dev.creeperkatze.rearrange.Reorder;
 import dev.creeperkatze.rearrange.mixin.EntryBaseInvoker;
 import dev.creeperkatze.rearrange.mixin.PackEntryAccessor;
+import dev.creeperkatze.rearrange.mixin.PackSelectionScreenAccessor;
+import dev.creeperkatze.rearrange.mixin.TransferableSelectionListAccessor;
 import net.minecraft.client.gui.screens.packs.PackSelectionModel;
 import net.minecraft.client.gui.screens.packs.TransferableSelectionList;
 import net.minecraft.server.packs.repository.Pack;
 import org.jspecify.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 // The first entry of a pack list is its header, so pack i is at index i + 1
 public record PackReorder(TransferableSelectionList list) implements Reorder {
 	@Override
 	public @Nullable Move pickUp(int index) {
 		if (!(this.list.children().get(index) instanceof TransferableSelectionList.PackEntry entry)
-				|| !(((PackEntryAccessor) entry).rearrange$getPack() instanceof PackSelectionModel.EntryBase pack)
-				|| !pack.isSelected()
-				|| pack.isFixedPosition()) {
+				|| !(((PackEntryAccessor) entry).rearrange$getPack() instanceof PackSelectionModel.EntryBase pack)) {
+			return null;
+		}
+		TransferableSelectionList other = this.otherList();
+		if (!pack.isSelected()) {
+			return other == null ? null : new AvailableMove(new Select(other, entry, pack));
+		}
+		if (pack.isFixedPosition() && !pack.canUnselect()) {
 			return null;
 		}
 		List<Pack> packs = ((EntryBaseInvoker) pack).rearrange$getSelfList();
-		// The search box hides packs from the list
-		if (this.list.children().size() - 1 != packs.size()) {
-			return null;
-		}
-		return new PackMove(pack, packs, index);
+		Transfer unselect = other == null || !pack.canUnselect() ? null : Unselect.of(other, entry, pack);
+		return new SelectedMove(pack, packs, index, matchesModel(this.list, packs), unselect);
 	}
 
-	private record PackMove(PackSelectionModel.EntryBase pack, List<Pack> packs, int from) implements Move {
+	private @Nullable TransferableSelectionList otherList() {
+		PackSelectionScreenAccessor screen = (PackSelectionScreenAccessor) ((TransferableSelectionListAccessor) this.list).rearrange$getScreen();
+		TransferableSelectionList available = screen.rearrange$getAvailablePackList();
+		return available == this.list ? screen.rearrange$getSelectedPackList() : available;
+	}
+
+	// The search box hides packs from the list, then its entries no longer match the model
+	private static boolean matchesModel(TransferableSelectionList list, List<Pack> packs) {
+		return list.children().size() - 1 == packs.size();
+	}
+
+	private record SelectedMove(PackSelectionModel.EntryBase pack, List<Pack> packs, int from, boolean unfiltered, @Nullable Transfer transfer) implements Move {
 		// Packs with a fixed position can't be moved past
 		@Override
 		public boolean canDrop(int index) {
-			if (index < 1) {
+			if (!this.unfiltered || this.pack.isFixedPosition() || index < 1) {
 				return false;
 			}
 			for (int i = Math.min(this.from, index); i <= Math.max(this.from, index); i++) {
@@ -46,6 +64,80 @@ public record PackReorder(TransferableSelectionList list) implements Reorder {
 		@Override
 		public void drop(int index) {
 			((EntryBaseInvoker) this.pack).rearrange$move(index - this.from);
+		}
+	}
+
+	private record AvailableMove(Transfer transfer) implements Move {
+		@Override
+		public boolean canDrop(int index) {
+			return false;
+		}
+
+		@Override
+		public void drop(int index) {
+		}
+	}
+
+	private record Select(TransferableSelectionList list, TransferableSelectionList.PackEntry entry, PackSelectionModel.EntryBase pack) implements Transfer {
+		// A new pack goes between the packs fixed to the top and bottom of the selected list
+		@Override
+		public boolean canDrop(int index) {
+			List<Pack> selected = ((EntryBaseInvoker) this.pack).rearrange$getOtherList();
+			if (index < 1 || !matchesModel(this.list, selected)) {
+				return false;
+			}
+			int top = 0;
+			while (top < selected.size() && selected.get(top).isFixedPosition()) {
+				top++;
+			}
+			int bottom = selected.size();
+			while (bottom > top && selected.get(bottom - 1).isFixedPosition()) {
+				bottom--;
+			}
+			return index - 1 >= top && index - 1 <= bottom;
+		}
+
+		// Vanilla selects the pack at its default position, or asks first for an incompatible pack
+		@Override
+		public void drop(int index) {
+			this.entry.keyboardSelection();
+			// The lists were rebuilt, so the pack has a new entry at index i
+			List<TransferableSelectionList.Entry> children = this.list.children();
+			for (int i = 0; i < children.size(); i++) {
+				if (children.get(i) instanceof TransferableSelectionList.PackEntry selected
+						&& selected.getPackId().equals(this.pack.getId())
+						&& ((PackEntryAccessor) selected).rearrange$getPack() instanceof PackSelectionModel.EntryBase selectedPack) {
+					((EntryBaseInvoker) selectedPack).rearrange$move(index - i);
+					return;
+				}
+			}
+		}
+	}
+
+	// Unselected packs have no order of their own, so the pack can only land where vanilla puts it
+	private record Unselect(TransferableSelectionList list, TransferableSelectionList.PackEntry entry, int landing) implements Transfer {
+		private static @Nullable Unselect of(TransferableSelectionList list, TransferableSelectionList.PackEntry entry, PackSelectionModel.EntryBase pack) {
+			EntryBaseInvoker invoker = (EntryBaseInvoker) pack;
+			Pack self = invoker.rearrange$getSelfList().stream().filter(p -> p.getId().equals(pack.getId())).findFirst().orElse(null);
+			if (self == null) {
+				return null;
+			}
+			List<Pack> available = new ArrayList<>(invoker.rearrange$getOtherList());
+			int index = self.getDefaultPosition().insert(available, self, Pack::selectionConfig, true);
+			// The search box can hide packs above it
+			Set<String> visible = list.children().stream().map(TransferableSelectionList.Entry::getPackId).collect(Collectors.toSet());
+			int above = (int) available.subList(0, index).stream().filter(p -> visible.contains(p.getId())).count();
+			return new Unselect(list, entry, above + 1);
+		}
+
+		@Override
+		public boolean canDrop(int index) {
+			return index == this.landing;
+		}
+
+		@Override
+		public void drop(int index) {
+			this.entry.keyboardSelection();
 		}
 	}
 }

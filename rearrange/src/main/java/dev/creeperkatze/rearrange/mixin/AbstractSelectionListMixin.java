@@ -69,23 +69,17 @@ public abstract class AbstractSelectionListMixin extends AbstractContainerWidget
 	private void rearrange$frame(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci) {
 		ListDrag drag = this.rearrange$drag();
 		if (drag != null) {
-			drag.frame(mouseY);
+			drag.frame(mouseX, mouseY);
 		}
 	}
 
 	@Inject(method = "extractListItems", at = @At("HEAD"))
-	private void rearrange$hideDragged(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci) {
-		ListDrag drag = this.rearrange$drag();
-		if (drag != null) {
-			drag.hideDragged();
-		}
+	private void rearrange$openGap(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci) {
+		ListDrag.beforeItems((AbstractSelectionList<?>) (Object) this);
 	}
 
 	@Inject(method = "extractListItems", at = @At("TAIL"))
-	private void rearrange$extractDragged(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci) {
-		ListDrag drag = this.rearrange$drag();
-		if (drag != null) {
-			drag.extractDragged(graphics, a);
-		}
+	private void rearrange$closeGap(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a, CallbackInfo ci) {
+		ListDrag.afterItems((AbstractSelectionList<?>) (Object) this, graphics);
 	}
 }

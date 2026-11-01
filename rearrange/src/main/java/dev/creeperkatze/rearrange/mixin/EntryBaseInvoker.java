@@ -12,6 +12,9 @@ public interface EntryBaseInvoker {
 	@Invoker("getSelfList")
 	List<Pack> rearrange$getSelfList();
 
+	@Invoker("getOtherList")
+	List<Pack> rearrange$getOtherList();
+
 	@Invoker("move")
 	void rearrange$move(int direction);
 }

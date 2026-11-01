@@ -8,8 +8,12 @@
 		"EntryBaseInvoker",
 		"MouseHandlerAccessor",
 		"PackEntryAccessor",
+		"PackSelectionScreenAccessor",
+		"ScreenMixin",
+		"SelectWorldScreenMixin",
 		"ServerListAccessor",
 		"ServerSelectionListAccessor",
+		"TransferableSelectionListAccessor",
 		"WorldSelectionListAccessor",
 		"WorldSelectionListMixin"
 	],
