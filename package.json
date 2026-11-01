@@ -5,7 +5,11 @@
 	"scripts": {
 		"fmt": "oxfmt",
 		"fmt:check": "oxfmt --check",
-		"vscode:sync": "node scripts/sync-vscode-tasks.mjs"
+		"vscode:sync": "node scripts/sync-vscode-tasks.mjs",
+		"release": "node scripts/release.mjs",
+		"release:patch": "node scripts/release.mjs patch",
+		"release:minor": "node scripts/release.mjs minor",
+		"release:major": "node scripts/release.mjs major"
 	},
 	"devDependencies": {
 		"oxfmt": "^0.75.0"

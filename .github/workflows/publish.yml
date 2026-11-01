@@ -1,6 +1,17 @@
 name: Publish
 
 on:
+  workflow_call:
+    inputs:
+      tag:
+        type: string
+        required: true
+      modrinth:
+        type: boolean
+        default: true
+      curseforge:
+        type: boolean
+        default: true
   workflow_dispatch:
     inputs:
       tag:
@@ -21,6 +32,7 @@ permissions:
 jobs:
   ci:
     name: CI
+    if: github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/ci.yml
     with:
       ref: ${{ inputs.tag }}
@@ -28,6 +40,7 @@ jobs:
   publish:
     name: Publish
     needs: ci
+    if: ${{ !cancelled() && needs.ci.result != 'failure' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
