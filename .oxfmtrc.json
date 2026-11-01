@@ -21,7 +21,7 @@
 		"**/build/",
 		"**/bin/",
 		"run/",
-		"speed-dial/versions/",
+		"*/versions/",
 		"**/package.json",
 		"pnpm-lock.yaml",
 		"**/*.mods.toml"

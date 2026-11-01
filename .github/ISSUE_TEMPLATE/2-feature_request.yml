@@ -8,6 +8,7 @@ body:
       label: Which mod?
       options:
         - Speed Dial
+        - Rearrange
     validations:
       required: true
   - type: textarea
