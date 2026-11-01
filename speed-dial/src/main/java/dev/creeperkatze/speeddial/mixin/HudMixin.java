@@ -13,7 +13,6 @@ public class HudMixin {
 	@Shadow
 	private Component overlayMessageString;
 
-	/** Keeps the speed message fully visible until it disappears instead of fading out. */
 	@ModifyVariable(method = "extractOverlayMessage", at = @At("STORE"), ordinal = 0)
 	private int speedDial$noFade(int alpha) {
 		return alpha > 0 && this.overlayMessageString == FlightSpeed.lastMessage() ? 255 : alpha;

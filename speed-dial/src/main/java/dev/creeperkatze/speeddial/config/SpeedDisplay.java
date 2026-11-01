@@ -4,7 +4,6 @@ import net.minecraft.network.chat.Component;
 
 import java.util.Locale;
 
-/** What the action bar shows after changing the flight speed. */
 public enum SpeedDisplay {
 	OFF,
 	MULTIPLIER,
@@ -12,7 +11,6 @@ public enum SpeedDisplay {
 	KILOMETERS_PER_HOUR,
 	MACH,
 	CHUNKS_PER_SECOND,
-	/** The jolt of the change, since g-force is zero at a steady speed. */
 	G_FORCE;
 
 	public String key() {

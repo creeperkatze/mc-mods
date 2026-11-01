@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,22 +32,19 @@ public class SpeedDial implements ClientModInitializer {
 		modifier = register("modifier", InputConstants.KEY_LCONTROL);
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
-			FlightSpeed.tick(client.player);
-			boolean active = FlightSpeed.canChange(client.player);
-			while (faster.consumeClick()) {
-				if (active) {
-					FlightSpeed.change(client.player, 1);
-				}
+			LocalPlayer player = client.player;
+			FlightSpeed.tick(player);
+
+			int steps = clicks(faster) - clicks(slower);
+			boolean resetPressed = clicks(reset) > 0;
+			if (!FlightSpeed.canChange(player)) {
+				return;
 			}
-			while (slower.consumeClick()) {
-				if (active) {
-					FlightSpeed.change(client.player, -1);
-				}
+			if (steps != 0) {
+				FlightSpeed.change(player, steps);
 			}
-			while (reset.consumeClick()) {
-				if (active) {
-					FlightSpeed.reset(client.player);
-				}
+			if (resetPressed) {
+				FlightSpeed.reset(player);
 			}
 		});
 		ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> FlightSpeed.saveRememberedSpeed());
@@ -57,7 +55,14 @@ public class SpeedDial implements ClientModInitializer {
 		return KeyMappingHelper.registerKeyMapping(new KeyMapping("key." + MOD_ID + "." + name, key, KEY_CATEGORY));
 	}
 
-	/** Held while scrolling in creative to change the flight speed instead of the hotbar slot. */
+	private static int clicks(KeyMapping key) {
+		int count = 0;
+		while (key.consumeClick()) {
+			count++;
+		}
+		return count;
+	}
+
 	public static boolean isModifierDown() {
 		return modifier != null && modifier.isDown();
 	}
