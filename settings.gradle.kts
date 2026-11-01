@@ -13,5 +13,4 @@ plugins {
 
 rootProject.name = "mc-mods"
 
-// One line per mod
 include("speed-dial")

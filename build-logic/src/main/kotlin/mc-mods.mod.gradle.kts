@@ -7,15 +7,14 @@ plugins {
 }
 
 val modId = modProperty("mod_id")
-val modName = modProperty("mod_name")
 val javaVersion = catalog.version("java").toInt()
 
 group = modProperty("maven_group")
 version = "${modProperty("mod_version")}+$minecraftVersion"
-base.archivesName.set(modId)
+base.archivesName = modId
 
 java {
-	toolchain.languageVersion.set(JavaLanguageVersion.of(javaVersion))
+	toolchain.languageVersion = JavaLanguageVersion.of(javaVersion)
 	withSourcesJar()
 }
 
@@ -25,8 +24,8 @@ repositories {
 
 dependencies {
 	"minecraft"("com.mojang:minecraft:$minecraftVersion")
-	implementation(catalog.findLibrary("fabric-loader").get())
-	implementation(catalog.findLibrary("fabric-api").get())
+	implementation(catalog.library("fabric-loader"))
+	implementation(catalog.library("fabric-api"))
 }
 
 loom {
@@ -44,7 +43,7 @@ loom {
 
 tasks.withType<JavaCompile>().configureEach {
 	options.encoding = "UTF-8"
-	options.release.set(javaVersion)
+	options.release = javaVersion
 }
 
 tasks.withType<AbstractArchiveTask>().configureEach {
@@ -59,19 +58,16 @@ tasks.withType<Jar>().configureEach {
 	}
 }
 
-// Named like the matching gradle.properties and catalog entries
-val resourceProperties = mapOf(
-	"version" to version.toString(),
-	"mod_id" to modId,
-	"mod_name" to modName,
-	"mod_description" to modProperty("mod_description"),
-	"mod_license" to modProperty("mod_license"),
-	"minecraft_version" to minecraftVersion,
-	"fabric_loader_version" to catalog.version("fabric-loader")
-)
-
 tasks.named<ProcessResources>("processResources") {
-	val properties = resourceProperties
+	val properties = mapOf(
+		"version" to version.toString(),
+		"mod_id" to modId,
+		"mod_name" to modProperty("mod_name"),
+		"mod_description" to modProperty("mod_description"),
+		"mod_license" to modProperty("mod_license"),
+		"minecraft_version" to minecraftVersion,
+		"fabric_loader_version" to catalog.version("fabric-loader")
+	)
 	inputs.properties(properties)
 	filesMatching("fabric.mod.json") {
 		expand(properties)

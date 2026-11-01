@@ -8,7 +8,6 @@ plugins {
 val modId = modProperty("mod_id")
 val modVersion = modProperty("mod_version")
 val clientOnly = optionalModProperty("mod_environment") == "client"
-// A platform is only set up when the mod has a project id for it
 val modrinthId = optionalModProperty("publish_modrinth")
 val curseforgeId = optionalModProperty("publish_curseforge")
 val requiredMods = modPropertyList("publish_dependencies")
@@ -42,7 +41,7 @@ publishMods {
 			minecraftVersions.add(project.minecraftVersion)
 			environment = if (clientOnly) ModrinthEnvironment.CLIENT_ONLY else ModrinthEnvironment.CLIENT_AND_SERVER
 			additionalFile(sourcesJar) {
-				type.set(SOURCES_JAR)
+				type = SOURCES_JAR
 			}
 			requiredMods.forEach { requires(it) }
 		}
@@ -61,7 +60,7 @@ publishMods {
 	}
 }
 
-// Fail before uploading anything when the changelog section is missing
+// Fails before uploading anything if the changelog section is missing
 tasks.withType<PublishModTask>().configureEach {
 	val changelog = releaseChangelog
 	doFirst { changelog.get() }

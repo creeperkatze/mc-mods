@@ -5,7 +5,7 @@ updates:
     directory: '/'
     schedule:
       interval: 'weekly'
-    # Their versions are tied to a Minecraft version, bump them by hand when updating Minecraft
+    # Tied to the Minecraft version and bumped by hand
     ignore:
       - dependency-name: 'net.fabricmc.fabric-api:fabric-api'
       - dependency-name: 'com.terraformersmc:modmenu'
