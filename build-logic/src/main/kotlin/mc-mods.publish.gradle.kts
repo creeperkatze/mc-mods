@@ -20,14 +20,19 @@ fun requiredMods(loader: String) = "${modValue("publish_dependencies")},${modVal
 
 val targetProjects = childProjects.values.sortedBy { it.name }.onEach { evaluationDependsOn(it.path) }
 
-val releaseChangelog = providers.fileContents(layout.projectDirectory.file("CHANGELOG.md")).asText.map { contents ->
-	val lines = contents.lines()
-	val heading = Regex("^## \\[${Regex.escape(modVersion)}\\](?: - \\d{4}-\\d{2}-\\d{2})?\\s*$")
-	val start = lines.indexOfFirst { heading.matches(it) }
-	require(start >= 0) { "Missing changelog section for $modId $modVersion" }
-	val notes = lines.drop(start + 1).takeWhile { !it.startsWith("## ") }.joinToString("\n").trim()
-	require(notes.isNotBlank()) { "Empty changelog section for $modId $modVersion" }
-	notes
+// Local copies, so the lambda does not capture the script and stays configuration cache safe
+val releaseChangelog = run {
+	val id = modId
+	val version = modVersion
+	providers.fileContents(layout.projectDirectory.file("CHANGELOG.md")).asText.map { contents ->
+		val lines = contents.lines()
+		val heading = Regex("^## \\[${Regex.escape(version)}\\](?: - \\d{4}-\\d{2}-\\d{2})?\\s*$")
+		val start = lines.indexOfFirst { heading.matches(it) }
+		require(start >= 0) { "Missing changelog section for $id $version" }
+		val notes = lines.drop(start + 1).takeWhile { !it.startsWith("## ") }.joinToString("\n").trim()
+		require(notes.isNotBlank()) { "Empty changelog section for $id $version" }
+		notes
+	}
 }
 
 tasks.register("assemble") {
