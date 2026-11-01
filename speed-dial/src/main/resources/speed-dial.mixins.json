@@ -2,12 +2,7 @@
 	"required": true,
 	"package": "dev.creeperkatze.speeddial.mixin",
 	"compatibilityLevel": "JAVA_25",
-	"client": [
-		"ClientPacketListenerMixin",
-		"HudAccessor",
-		"HudMixin",
-		"MouseHandlerMixin"
-	],
+	"client": ["ClientPacketListenerMixin", "HudAccessor", "HudMixin", "MouseHandlerMixin"],
 	"injectors": {
 		"defaultRequire": 1
 	},

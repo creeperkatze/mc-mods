@@ -1,0 +1,8 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"plugins": ["unicorn", "oxc"],
+	"env": {
+		"node": true
+	},
+	"ignorePatterns": ["**/build/", "**/bin/", "run/", "speed-dial/versions/"]
+}
