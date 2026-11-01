@@ -11,7 +11,7 @@ val releaseVersion = "${modProperty("mod_version")}+$minecraftVersion"
 
 group = modProperty("maven_group")
 version = "$releaseVersion-$loader"
-base.archivesName = modId
+base.archivesName = modDirectory.asFile.name
 
 java {
 	toolchain.languageVersion = JavaLanguageVersion.of(javaVersion)
@@ -46,7 +46,7 @@ tasks.named<ProcessResources>("processResources") {
 	val properties = mapOf(
 		"version" to releaseVersion,
 		"mod_id" to modId,
-		"neoforge_mod_id" to modId.replace('-', '_'),
+		"mod_folder" to modDirectory.asFile.name,
 		"mod_name" to modProperty("mod_name"),
 		"mod_description" to modProperty("mod_description"),
 		"mod_license" to modProperty("mod_license"),

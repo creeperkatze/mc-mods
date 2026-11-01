@@ -184,7 +184,7 @@ public final class FlightSpeed {
 	}
 
 	private static Component speedMessage(SpeedDisplay display, Object... args) {
-		return Component.translatable("speed-dial.speed." + display.key(), args);
+		return Component.translatable("speed_dial.speed." + display.key(), args);
 	}
 
 	private static String format(float value) {

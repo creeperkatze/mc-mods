@@ -23,9 +23,9 @@ public final class SpeedDialConfigScreen {
 		SpeedDialConfig defaults = SpeedDialConfig.HANDLER.defaults();
 		SpeedDialConfig config = SpeedDialConfig.HANDLER.instance();
 		return YetAnotherConfigLib.createBuilder()
-				.title(Component.translatable("speed-dial.config.title"))
+				.title(Component.translatable("speed_dial.config.title"))
 				.category(ConfigCategory.createBuilder()
-						.name(Component.translatable("speed-dial.config.title"))
+						.name(Component.translatable("speed_dial.config.title"))
 						.option(Option.<Float>createBuilder()
 								.name(name("max_speed"))
 								.description(description("max_speed"))
@@ -33,7 +33,7 @@ public final class SpeedDialConfigScreen {
 								.controller(option -> FloatSliderControllerBuilder.create(option)
 										.range(1.0F, 100.0F)
 										.step(1.0F)
-										.formatValue(value -> Component.translatable("speed-dial.config.multiplier", Math.round(value))))
+										.formatValue(value -> Component.translatable("speed_dial.config.multiplier", Math.round(value))))
 								.build())
 						.option(cycle("step_mode", StepMode.class, StepMode::caption, defaults.stepMode, () -> config.stepMode, value -> config.stepMode = value))
 						.option(Option.<Float>createBuilder()
@@ -43,7 +43,7 @@ public final class SpeedDialConfigScreen {
 								.controller(option -> FloatSliderControllerBuilder.create(option)
 										.range(1.01F, 2.0F)
 										.step(0.01F)
-										.formatValue(value -> Component.translatable("speed-dial.config.times", String.format(Locale.ROOT, "%.2f", value))))
+										.formatValue(value -> Component.translatable("speed_dial.config.times", String.format(Locale.ROOT, "%.2f", value))))
 								.build())
 						.option(Option.<Float>createBuilder()
 								.name(name("linear_step"))
@@ -52,7 +52,7 @@ public final class SpeedDialConfigScreen {
 								.controller(option -> FloatSliderControllerBuilder.create(option)
 										.range(0.1F, 10.0F)
 										.step(0.1F)
-										.formatValue(value -> Component.translatable("speed-dial.config.plus", formatTenths(value))))
+										.formatValue(value -> Component.translatable("speed_dial.config.plus", formatTenths(value))))
 								.build())
 						.option(cycle("speed_display", SpeedDisplay.class, SpeedDisplay::caption, defaults.speedDisplay, () -> config.speedDisplay, value -> config.speedDisplay = value))
 						.option(toggle("remember_speed", defaults.rememberSpeed, () -> config.rememberSpeed, value -> config.rememberSpeed = value))						.build())
@@ -87,10 +87,10 @@ public final class SpeedDialConfigScreen {
 	}
 
 	private static Component name(String key) {
-		return Component.translatable("speed-dial.config." + key);
+		return Component.translatable("speed_dial.config." + key);
 	}
 
 	private static OptionDescription description(String key) {
-		return OptionDescription.of(Component.translatable("speed-dial.config." + key + ".tooltip"));
+		return OptionDescription.of(Component.translatable("speed_dial.config." + key + ".tooltip"));
 	}
 }

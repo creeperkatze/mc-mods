@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class SpeedDial {
-	public static final String MOD_ID = "speed-dial";
+	public static final String MOD_ID = "speed_dial";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	private SpeedDial() {

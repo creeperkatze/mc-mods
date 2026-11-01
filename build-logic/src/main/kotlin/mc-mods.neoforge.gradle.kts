@@ -12,7 +12,7 @@ val targetMinecraft = minecraftVersion
 neoForge {
 	version = mcVersion("neoforge")
 	mods {
-		register(modId.replace('-', '_')) {
+		register(modId) {
 			sourceSet(sourceSets["main"])
 		}
 	}

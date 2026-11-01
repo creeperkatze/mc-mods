@@ -17,12 +17,9 @@ import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.event.GameShuttingDownEvent;
 
-@EventBusSubscriber(modid = SpeedDialNeoForge.MOD_ID, value = Dist.CLIENT)
-@Mod(value = SpeedDialNeoForge.MOD_ID, dist = Dist.CLIENT)
+@EventBusSubscriber(modid = SpeedDial.MOD_ID, value = Dist.CLIENT)
+@Mod(value = SpeedDial.MOD_ID, dist = Dist.CLIENT)
 public class SpeedDialNeoForge {
-	// NeoForge mod ids can not contain hyphens
-	public static final String MOD_ID = "speed_dial";
-
 	public SpeedDialNeoForge(ModContainer container) {
 		SpeedDial.init();
 		container.registerExtensionPoint(IConfigScreenFactory.class, (client, parent) -> SpeedDialConfigScreen.create(parent));

@@ -7,17 +7,17 @@
 	"authors": ["Creeperkatze"],
 	"contact": {
 		"homepage": "https://modrinth.com/mod/MEVdpviL",
-		"sources": "https://github.com/creeperkatze/mc-mods/tree/main/${mod_id}",
+		"sources": "https://github.com/creeperkatze/mc-mods/tree/main/${mod_folder}",
 		"issues": "https://github.com/creeperkatze/mc-mods/issues"
 	},
 	"license": "${mod_license}",
-	"icon": "assets/speed-dial/icon.png",
+	"icon": "assets/speed_dial/icon.png",
 	"environment": "client",
 	"entrypoints": {
 		"client": ["dev.creeperkatze.speeddial.loaders.fabric.SpeedDialFabric"],
 		"modmenu": ["dev.creeperkatze.speeddial.compat.modmenu.SpeedDialModMenuCompat"]
 	},
-	"mixins": ["speed-dial.mixins.json"],
+	"mixins": ["speed_dial.mixins.json"],
 	"depends": {
 		"fabricloader": ">=${fabric_loader_version}",
 		"minecraft": "~${minecraft_version}",

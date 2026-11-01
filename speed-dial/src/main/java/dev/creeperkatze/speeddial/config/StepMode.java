@@ -9,6 +9,6 @@ public enum StepMode {
 	LINEAR;
 
 	public Component caption() {
-		return Component.translatable("speed-dial.config.step_mode." + this.name().toLowerCase(Locale.ROOT));
+		return Component.translatable("speed_dial.config.step_mode." + this.name().toLowerCase(Locale.ROOT));
 	}
 }

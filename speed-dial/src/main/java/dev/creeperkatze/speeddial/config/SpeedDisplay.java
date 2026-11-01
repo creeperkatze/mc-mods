@@ -17,6 +17,6 @@ public enum SpeedDisplay {
 	}
 
 	public Component caption() {
-		return Component.translatable("speed-dial.config.speed_display." + this.key());
+		return Component.translatable("speed_dial.config.speed_display." + this.key());
 	}
 }
