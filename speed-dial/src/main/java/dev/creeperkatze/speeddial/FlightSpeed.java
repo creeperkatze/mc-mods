@@ -32,6 +32,8 @@ public final class FlightSpeed {
 	private static boolean restorePending;
 	private static boolean rememberedSpeedChanged;
 	private static boolean creativeBoost;
+	private static boolean creativeMessageShown;
+	private static boolean wasSpectator;
 	private static @Nullable Component lastMessage;
 
 	private FlightSpeed() {
@@ -121,10 +123,17 @@ public final class FlightSpeed {
 				player.getAbilities().setFlyingSpeed(rememberedSpeed());
 			}
 		}
+
+		boolean spectator = player != null && player.isSpectator();
+		if (wasSpectator && !spectator) {
+			hideMessage();
+		}
+		wasSpectator = spectator;
+
 		updateCreativeBoost(player);
 	}
 
-	/** Creative flight goes back to normal when the modifier is released. The message also hides on landing. */
+	/** Creative flight goes back to normal when the modifier is released. */
 	public static void updateCreativeBoost(@Nullable LocalPlayer player) {
 		SpeedDialConfig config = SpeedDial.config();
 		boolean boost = isActive(player) && player.isCreative() && SpeedDial.isModifierDown();
@@ -134,10 +143,31 @@ public final class FlightSpeed {
 				player.getAbilities().setFlyingSpeed(boost && config.rememberSpeed ? rememberedSpeed() : DEFAULT_SPEED);
 			}
 		}
+		updateCreativeMessage(player, boost && player.getAbilities().flying);
+	}
+
+	/** The speed stays on screen the whole time the modifier is held while flying. */
+	private static void updateCreativeMessage(@Nullable LocalPlayer player, boolean show) {
 		HudAccessor hud = (HudAccessor) Minecraft.getInstance().gui.hud;
-		if (lastMessage != null && hud.speedDial$getOverlayMessage() == lastMessage && player != null && player.isCreative()) {
-			hud.speedDial$setOverlayMessageTime(boost && player.getAbilities().flying ? MESSAGE_TICKS : 0);
+		boolean ownMessage = lastMessage != null && hud.speedDial$getOverlayMessage() == lastMessage;
+		if (show && !creativeMessageShown) {
+			float speed = player.getAbilities().getFlyingSpeed();
+			showSpeed(speed, speed);
+		} else if (show && ownMessage) {
+			hud.speedDial$setOverlayMessageTime(MESSAGE_TICKS);
+		} else if (!show && creativeMessageShown) {
+			hideMessage();
 		}
+		creativeMessageShown = show;
+	}
+
+	/** Hides the speed message right away, unless something else has replaced it. */
+	private static void hideMessage() {
+		HudAccessor hud = (HudAccessor) Minecraft.getInstance().gui.hud;
+		if (lastMessage != null && hud.speedDial$getOverlayMessage() == lastMessage) {
+			hud.speedDial$setOverlayMessageTime(0);
+		}
+		lastMessage = null;
 	}
 
 	private static float rememberedSpeed() {
