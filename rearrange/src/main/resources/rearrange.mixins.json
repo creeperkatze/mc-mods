@@ -1,0 +1,22 @@
+{
+	"required": true,
+	"package": "dev.creeperkatze.rearrange.mixin",
+	"compatibilityLevel": "JAVA_25",
+	"client": [
+		"AbstractContainerWidgetMixin",
+		"AbstractSelectionListMixin",
+		"EntryBaseInvoker",
+		"MouseHandlerAccessor",
+		"PackEntryAccessor",
+		"ServerListAccessor",
+		"ServerSelectionListAccessor",
+		"WorldSelectionListAccessor",
+		"WorldSelectionListMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}

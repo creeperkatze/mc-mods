@@ -17,7 +17,8 @@ plugins {
 rootProject.name = "mc-mods"
 
 val modTargets = mapOf(
-	"speed-dial" to listOf("26.3")
+	"speed-dial" to listOf("26.3"),
+	"rearrange" to listOf("26.3")
 )
 
 dependencyResolutionManagement {

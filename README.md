@@ -14,6 +14,7 @@ All my Minecraft mods in one place.
 | Mod                       | Description                                                                               | Minecraft | Loader           |
 | ------------------------- | ----------------------------------------------------------------------------------------- | --------- | ---------------- |
 | [Speed Dial](speed-dial/) | Increase and configure your spectator and creative flight speed to fly up to 100× faster. | 26.3      | Fabric, NeoForge |
+| [Rearrange](rearrange/)   | Drag and drop to reorder your servers, worlds, resource packs and data packs.             | 26.3      | Fabric, NeoForge |
 
 ## 🛠️ Development
 
