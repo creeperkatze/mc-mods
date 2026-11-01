@@ -16,8 +16,6 @@ public final class FlightSpeed {
 	public static final float DEFAULT_SPEED = 0.05F;
 	public static final float VANILLA_STEP = 0.005F;
 	public static final float VANILLA_MAX = 0.2F;
-	// Makes climbing as fast as flying forwards
-	public static final float VERTICAL_FACTOR = (0.98F * 0.4F) / (0.09F * 3.0F);
 
 	// Blocks per second at flying speed 1 without sprinting
 	private static final float BLOCKS_PER_SECOND = 20.0F * 0.98F / 0.09F;

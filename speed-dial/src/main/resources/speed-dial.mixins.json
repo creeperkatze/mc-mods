@@ -6,7 +6,6 @@
 		"ClientPacketListenerMixin",
 		"HudAccessor",
 		"HudMixin",
-		"LocalPlayerMixin",
 		"MouseHandlerMixin"
 	],
 	"injectors": {

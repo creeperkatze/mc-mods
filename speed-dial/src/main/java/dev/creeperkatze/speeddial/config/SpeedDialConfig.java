@@ -26,8 +26,6 @@ public class SpeedDialConfig {
 	@SerialEntry
 	public SpeedDisplay speedDisplay = SpeedDisplay.MULTIPLIER;
 	@SerialEntry
-	public boolean matchVerticalSpeed = false;
-	@SerialEntry
 	public boolean rememberSpeed = false;
 	@SerialEntry
 	public float rememberedSpeed = 1.0F;

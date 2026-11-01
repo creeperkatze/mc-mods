@@ -55,7 +55,6 @@ public final class SpeedDialConfigScreen {
 										.formatValue(value -> Component.translatable("speed-dial.config.plus", formatTenths(value))))
 								.build())
 						.option(cycle("speed_display", SpeedDisplay.class, SpeedDisplay::caption, defaults.speedDisplay, () -> config.speedDisplay, value -> config.speedDisplay = value))
-						.option(toggle("match_vertical_speed", defaults.matchVerticalSpeed, () -> config.matchVerticalSpeed, value -> config.matchVerticalSpeed = value))
 						.option(toggle("remember_speed", defaults.rememberSpeed, () -> config.rememberSpeed, value -> config.rememberSpeed = value))						.build())
 				.save(SpeedDialConfig.HANDLER::save)
 				.build()

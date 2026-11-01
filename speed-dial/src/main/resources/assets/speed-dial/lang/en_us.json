@@ -26,8 +26,6 @@
 	"speed-dial.config.speed_display.kilometers_per_hour": "km/h",
 	"speed-dial.config.speed_display.mach": "Mach",
 	"speed-dial.config.speed_display.chunks_per_second": "Chunks/s",
-	"speed-dial.config.match_vertical_speed": "Match Vertical Speed",
-	"speed-dial.config.match_vertical_speed.tooltip": "Fly up and down as fast as forwards, including when sprinting. Vanilla climbs and sinks slower.",
 	"speed-dial.config.remember_speed": "Remember Speed",
 	"speed-dial.config.remember_speed.tooltip": "Keep your speed when rejoining, respawning or switching game modes, instead of resetting to 1×. In creative, every hold of the modifier starts at your last speed.",
 	"key.category.speed-dial.main": "Speed Dial",
