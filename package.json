@@ -3,15 +3,12 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"lint": "oxlint",
-		"lint:fix": "oxlint --fix",
 		"fmt": "oxfmt",
 		"fmt:check": "oxfmt --check",
 		"vscode:sync": "node scripts/sync-vscode-tasks.mjs"
 	},
 	"devDependencies": {
-		"oxfmt": "^0.75.0",
-		"oxlint": "^1.90.0"
+		"oxfmt": "^0.75.0"
 	},
 	"packageManager": "pnpm@11.27.0"
 }
