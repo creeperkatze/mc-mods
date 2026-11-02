@@ -11,11 +11,11 @@ All my Minecraft mods in one place.
 
 ## 📦 Mods
 
-| Mod                       | Description                                                                               | Minecraft | Loader                  |
-| ------------------------- | ----------------------------------------------------------------------------------------- | --------- | ----------------------- |
-| [Accelerate](accelerate/) | Increase and configure your spectator and creative flight speed to fly up to 100× faster. | 26.3      | Fabric, Quilt, NeoForge |
-| [Rearrange](rearrange/)   | Drag and drop to reorder your servers, worlds, resource packs and data packs.             | 26.3      | Fabric, Quilt, NeoForge |
-| [Organize](organize/)     | Organize your resource packs into folders and browse them in the pack screen.             | 26.3      | Fabric, Quilt, NeoForge |
+| Mod                       | Description                                                                               | Downloads                                                                                                                                                                                                                                                    | Minecraft | Loader                  |
+| ------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------- | ----------------------- |
+| [Accelerate](accelerate/) | Increase and configure your spectator and creative flight speed to fly up to 100× faster. | [![Modrinth](https://modfolio.creeperkatze.dev/modrinth/project/MEVdpviL/downloads)](https://modrinth.com/mod/MEVdpviL) [![CurseForge](https://modfolio.creeperkatze.dev/curseforge/project/1778908/downloads)](https://www.curseforge.com/projects/1778908) | 26.3      | Fabric, Quilt, NeoForge |
+| [Rearrange](rearrange/)   | Drag and drop to reorder your servers, worlds, resource packs and data packs.             | [![Modrinth](https://modfolio.creeperkatze.dev/modrinth/project/LI06Bzs9/downloads)](https://modrinth.com/mod/LI06Bzs9) [![CurseForge](https://modfolio.creeperkatze.dev/curseforge/project/1780189/downloads)](https://www.curseforge.com/projects/1780189) | 26.3      | Fabric, Quilt, NeoForge |
+| [Organize](organize/)     | Organize your resource packs into folders and browse them in the pack screen.             | [![Modrinth](https://modfolio.creeperkatze.dev/modrinth/project/JC5JBj2W/downloads)](https://modrinth.com/mod/JC5JBj2W) [![CurseForge](https://modfolio.creeperkatze.dev/curseforge/project/1780188/downloads)](https://www.curseforge.com/projects/1780188) | 26.3      | Fabric, Quilt, NeoForge |
 
 ## 🛠️ Development
 
