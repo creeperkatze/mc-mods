@@ -1,0 +1,23 @@
+{
+	"required": true,
+	"package": "dev.creeperkatze.gather.mixin",
+	"compatibilityLevel": "JAVA_25",
+	"client": [
+		"ClientPacketListenerMixin",
+		"CommandsMixin",
+		"IntegratedPlayerListMixin",
+		"IntegratedServerAccessor",
+		"IntegratedServerMixin",
+		"MinecraftServerMixin",
+		"PlayerListMixin",
+		"ServerGamePacketListenerImplMixin",
+		"ServerLoginPacketListenerImplMixin",
+		"WorldOptionsScreenMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}

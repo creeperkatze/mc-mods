@@ -10,6 +10,7 @@ body:
         - Accelerate
         - Rearrange
         - Organize
+        - Gather
     validations:
       required: true
   - type: textarea

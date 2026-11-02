@@ -19,7 +19,8 @@ rootProject.name = "mc-mods"
 val modTargets = mapOf(
 	"accelerate" to listOf("26.3"),
 	"rearrange" to listOf("26.3"),
-	"organize" to listOf("26.3")
+	"organize" to listOf("26.3"),
+	"gather" to listOf("26.3")
 )
 
 dependencyResolutionManagement {
