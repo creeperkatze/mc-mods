@@ -18,6 +18,7 @@ import java.util.List;
 // A folder of resource packs, or the way back up, in the available pack list
 public class PackFolderEntry extends TransferableSelectionList.Entry {
 	private static final Identifier DEFAULT_ICON = Identifier.fromNamespaceAndPath(Organize.MOD_ID, "pack_folder");
+	private static final Identifier BACK_ICON = Identifier.fromNamespaceAndPath(Organize.MOD_ID, "pack_folder_back");
 	private static final Identifier OPEN_SPRITE = Identifier.withDefaultNamespace("transferable_list/select");
 	private static final Identifier OPEN_HIGHLIGHTED_SPRITE = Identifier.withDefaultNamespace("transferable_list/select_highlighted");
 	private static final Identifier BACK_SPRITE = Identifier.withDefaultNamespace("transferable_list/unselect");
@@ -85,7 +86,7 @@ public class PackFolderEntry extends TransferableSelectionList.Entry {
 		if (this.icon != null) {
 			graphics.blit(RenderPipelines.GUI_TEXTURED, this.icon, x, y, 0.0F, 0.0F, ICON_SIZE, ICON_SIZE, ICON_SIZE, ICON_SIZE);
 		} else {
-			graphics.blitSprite(RenderPipelines.GUI_TEXTURED, DEFAULT_ICON, x, y, ICON_SIZE, ICON_SIZE);
+			graphics.blitSprite(RenderPipelines.GUI_TEXTURED, this.isBack() ? BACK_ICON : DEFAULT_ICON, x, y, ICON_SIZE, ICON_SIZE);
 		}
 		if (hovered || this.list.getSelected() == this && this.list.isFocused()) {
 			graphics.fill(x, y, x + ICON_SIZE, y + ICON_SIZE, HOVER_COLOR);
