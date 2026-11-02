@@ -6,7 +6,7 @@
 	"description": "${mod_description}",
 	"authors": ["Creeperkatze"],
 	"contact": {
-		"homepage": "https://github.com/creeperkatze/mc-mods/tree/main/${mod_folder}",
+		"homepage": "https://modrinth.com/mod/JC5JBj2W",
 		"sources": "https://github.com/creeperkatze/mc-mods/tree/main/${mod_folder}",
 		"issues": "https://github.com/creeperkatze/mc-mods/issues"
 	},
