@@ -99,6 +99,15 @@ public final class PackFolders {
 		rows.add(index, entry);
 	}
 
+	// Each pack goes to the top of the selected list, so going backwards keeps their order
+	public static void selectAll(List<PackSelectionModel.Entry> packs) {
+		for (PackSelectionModel.Entry pack : packs.reversed()) {
+			if (pack.canSelect() && pack.getCompatibility().isCompatible()) {
+				pack.select();
+			}
+		}
+	}
+
 	public static void open(PackSelectionScreen screen, String folder) {
 		((PackFolderScreen) screen).organize$setFolder(folder);
 		PackSelectionScreenAccessor accessor = (PackSelectionScreenAccessor) screen;

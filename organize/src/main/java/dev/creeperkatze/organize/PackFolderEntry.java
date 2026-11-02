@@ -18,12 +18,15 @@ import java.util.List;
 // A folder of resource packs, or the way back up, in the available pack list
 public class PackFolderEntry extends TransferableSelectionList.Entry {
 	private static final Identifier DEFAULT_ICON = Identifier.fromNamespaceAndPath(Organize.MOD_ID, "pack_folder");
-	private static final Identifier SELECT_SPRITE = Identifier.withDefaultNamespace("transferable_list/select");
-	private static final Identifier SELECT_HIGHLIGHTED_SPRITE = Identifier.withDefaultNamespace("transferable_list/select_highlighted");
+	private static final Identifier OPEN_SPRITE = Identifier.withDefaultNamespace("transferable_list/select");
+	private static final Identifier OPEN_HIGHLIGHTED_SPRITE = Identifier.withDefaultNamespace("transferable_list/select_highlighted");
 	private static final Identifier BACK_SPRITE = Identifier.withDefaultNamespace("transferable_list/unselect");
 	private static final Identifier BACK_HIGHLIGHTED_SPRITE = Identifier.withDefaultNamespace("transferable_list/unselect_highlighted");
-	private static final Component SELECT_ALL = Component.translatable("organize.select_all");
+	private static final Identifier SELECT_ALL_SPRITE = Identifier.fromNamespaceAndPath(Organize.MOD_ID, "select_all");
+	private static final Identifier SELECT_ALL_HIGHLIGHTED_SPRITE = Identifier.fromNamespaceAndPath(Organize.MOD_ID, "select_all_highlighted");
+	private static final Component SELECT_ALL_HINT = Component.translatable("organize.select_all");
 	private static final int ICON_SIZE = 32;
+	private static final int BACK_ARROW_OFFSET = 6;
 	private static final int TEXT_WIDTH = 157;
 	private static final int HOVER_COLOR = 0xA0909090;
 	private static final int DESCRIPTION_COLOR = 0xFF808080;
@@ -44,7 +47,7 @@ public class PackFolderEntry extends TransferableSelectionList.Entry {
 		this.screen = screen;
 		this.folder = folder;
 		this.icon = icon;
-		this.packs = packs;
+		this.packs = List.copyOf(packs);
 		this.name = name;
 		Minecraft minecraft = Minecraft.getInstance();
 		this.nameWidget = new StringWidget(name, minecraft.font);
@@ -55,7 +58,7 @@ public class PackFolderEntry extends TransferableSelectionList.Entry {
 		Component description = packs.size() == 1
 				? Component.translatable("organize.one_pack")
 				: Component.translatable("organize.packs", packs.size());
-		return new PackFolderEntry(list, screen, folder, icon, List.copyOf(packs), Component.literal(name), description);
+		return new PackFolderEntry(list, screen, folder, icon, packs, Component.literal(name), description);
 	}
 
 	public static PackFolderEntry back(TransferableSelectionList list, PackSelectionScreen screen, String parent) {
@@ -87,12 +90,19 @@ public class PackFolderEntry extends TransferableSelectionList.Entry {
 		if (hovered || this.list.getSelected() == this && this.list.isFocused()) {
 			graphics.fill(x, y, x + ICON_SIZE, y + ICON_SIZE, HOVER_COLOR);
 			boolean overIcon = this.isOverIcon(mouseX, mouseY);
-			Identifier sprite = this.isBack()
-					? overIcon ? BACK_HIGHLIGHTED_SPRITE : BACK_SPRITE
-					: overIcon ? SELECT_HIGHLIGHTED_SPRITE : SELECT_SPRITE;
-			graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, x, y, ICON_SIZE, ICON_SIZE);
+			Identifier sprite;
+			if (this.isBack()) {
+				sprite = overIcon ? BACK_HIGHLIGHTED_SPRITE : BACK_SPRITE;
+			} else if (Minecraft.getInstance().hasShiftDown()) {
+				sprite = overIcon ? SELECT_ALL_HIGHLIGHTED_SPRITE : SELECT_ALL_SPRITE;
+			} else {
+				sprite = overIcon ? OPEN_HIGHLIGHTED_SPRITE : OPEN_SPRITE;
+			}
+			// Vanilla draws the back arrow on the left half of the icon, this mirrors the open arrow
+			int spriteX = this.isBack() ? x + BACK_ARROW_OFFSET : x;
+			graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, spriteX, y, ICON_SIZE, ICON_SIZE);
 			if (overIcon && !this.isBack()) {
-				graphics.setTooltipForNextFrame(SELECT_ALL, mouseX, mouseY);
+				graphics.setTooltipForNextFrame(SELECT_ALL_HINT, mouseX, mouseY);
 			}
 		}
 		int textWidth = TEXT_WIDTH - (this.list.maxScrollAmount() > 0 ? this.list.scrollbarWidth() : 0);
@@ -104,11 +114,11 @@ public class PackFolderEntry extends TransferableSelectionList.Entry {
 		this.descriptionWidget.extractRenderState(graphics, mouseX, mouseY, a);
 	}
 
-	// Like a pack, a click on the icon selects, and a click on the rest of the row opens the folder
+	// A click opens the folder, a shift click selects all of its packs
 	@Override
 	public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
-		if (!this.isBack() && this.isOverIcon(event.x(), event.y())) {
-			this.selectAll();
+		if (!this.isBack() && event.hasShiftDown()) {
+			PackFolders.selectAll(this.packs);
 		} else {
 			PackFolders.open(this.screen, this.folder);
 		}
@@ -122,15 +132,6 @@ public class PackFolderEntry extends TransferableSelectionList.Entry {
 			return true;
 		}
 		return super.keyPressed(event);
-	}
-
-	// Each pack goes to the top of the selected list, so going backwards keeps the folder's order
-	private void selectAll() {
-		for (PackSelectionModel.Entry pack : this.packs.reversed()) {
-			if (pack.canSelect() && pack.getCompatibility().isCompatible()) {
-				pack.select();
-			}
-		}
 	}
 
 	// Opening or selecting rebuilds the list, so this entry is gone afterwards
