@@ -29,7 +29,8 @@ loom {
 			isIdeConfigGenerated = true
 			configName = "$modName Fabric ${name.replaceFirstChar { it.titlecase() }}"
 			ideConfigFolder.set(modName)
-			runDir(rootProject.file("run/$modId/$targetMinecraft/fabric/$name").relativeTo(project.projectDir).invariantSeparatorsPath)
+			// Shared by all mods, so settings and worlds carry over between them
+			runDir(rootProject.file("run/$targetMinecraft/fabric/$name").relativeTo(project.projectDir).invariantSeparatorsPath)
 		}
 		named("client") {
 			programArgs("--quickPlaySingleplayer", "New World")
