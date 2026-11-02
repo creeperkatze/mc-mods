@@ -9,6 +9,7 @@ body:
       options:
         - Speed Dial
         - Rearrange
+        - Organize
     validations:
       required: true
   - type: input

@@ -18,7 +18,8 @@ rootProject.name = "mc-mods"
 
 val modTargets = mapOf(
 	"speed-dial" to listOf("26.3"),
-	"rearrange" to listOf("26.3")
+	"rearrange" to listOf("26.3"),
+	"organize" to listOf("26.3")
 )
 
 dependencyResolutionManagement {

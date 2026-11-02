@@ -124,10 +124,11 @@ public record PackReorder(TransferableSelectionList list) implements Reorder {
 			}
 			List<Pack> available = new ArrayList<>(invoker.rearrange$getOtherList());
 			int index = self.getDefaultPosition().insert(available, self, Pack::selectionConfig, true);
-			// The search box can hide packs above it
+			// The search box and folders can hide packs above it, and the header and folders come first
 			Set<String> visible = list.children().stream().map(TransferableSelectionList.Entry::getPackId).collect(Collectors.toSet());
 			int above = (int) available.subList(0, index).stream().filter(p -> visible.contains(p.getId())).count();
-			return new Unselect(list, entry, above + 1);
+			int first = (int) list.children().stream().filter(row -> !(row instanceof TransferableSelectionList.PackEntry)).count();
+			return new Unselect(list, entry, first + above);
 		}
 
 		@Override

@@ -1,0 +1,17 @@
+{
+	"required": true,
+	"package": "dev.creeperkatze.organize.mixin",
+	"compatibilityLevel": "JAVA_25",
+	"client": [
+		"AbstractSelectionListAccessor",
+		"FolderRepositorySourceMixin",
+		"PackSelectionScreenAccessor",
+		"PackSelectionScreenMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}
