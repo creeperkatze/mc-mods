@@ -7,7 +7,7 @@ body:
     attributes:
       label: Which mod?
       options:
-        - Speed Dial
+        - Accelerate
         - Rearrange
         - Organize
     validations:

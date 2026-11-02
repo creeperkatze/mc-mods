@@ -41,8 +41,8 @@
 			"id": "mod",
 			"type": "pickString",
 			"description": "Mod",
-			"options": ["speed-dial", "rearrange", "organize"],
-			"default": "speed-dial"
+			"options": ["accelerate", "rearrange", "organize"],
+			"default": "accelerate"
 		},
 		{
 			"id": "target",

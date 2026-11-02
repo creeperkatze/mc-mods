@@ -1,0 +1,193 @@
+package dev.creeperkatze.accelerate;
+
+import dev.creeperkatze.accelerate.config.AccelerateConfig;
+import dev.creeperkatze.accelerate.config.SpeedDisplay;
+import dev.creeperkatze.accelerate.config.StepMode;
+import dev.creeperkatze.accelerate.mixin.HudAccessor;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
+import org.jspecify.annotations.Nullable;
+
+import java.util.Locale;
+
+public final class FlightSpeed {
+	public static final float DEFAULT_SPEED = 0.05F;
+	public static final float VANILLA_STEP = 0.005F;
+	public static final float VANILLA_MAX = 0.2F;
+
+	// Blocks per second at flying speed 1 without sprinting
+	private static final float BLOCKS_PER_SECOND = 20.0F * 0.98F / 0.09F;
+	private static final float SPEED_OF_SOUND = 343.0F;
+	private static final int OVERLAY_MESSAGE_TICKS = 60;
+
+	private static boolean restorePending;
+	private static boolean rememberedSpeedChanged;
+	private static boolean creativeBoost;
+	private static boolean creativeMessageShown;
+	private static boolean wasSpectator;
+	private static @Nullable Component lastMessage;
+
+	private FlightSpeed() {
+	}
+
+	public static @Nullable Component lastMessage() {
+		return lastMessage;
+	}
+
+	public static boolean isActive(@Nullable LocalPlayer player) {
+		return player != null && (player.isSpectator() || player.isCreative()) && Minecraft.getInstance().hasSingleplayerServer();
+	}
+
+	public static boolean canChange(@Nullable LocalPlayer player) {
+		return isActive(player) && (player.isSpectator() || (player.getAbilities().flying && AccelerateKeybinds.isModifierDown()));
+	}
+
+	public static float scroll(float speed, int steps) {
+		AccelerateConfig config = Accelerate.config();
+		if (config.stepMode == StepMode.LINEAR) {
+			speed += steps * Math.max(config.linearStep, 0.1F) * DEFAULT_SPEED;
+		} else {
+			for (int i = 0; i < Math.abs(steps); i++) {
+				speed = steps > 0 ? faster(speed) : slower(speed);
+			}
+		}
+		return Mth.clamp(speed, 0.0F, maxSpeed());
+	}
+
+	private static float faster(float speed) {
+		return speed < VANILLA_MAX ? Math.min(speed + VANILLA_STEP, VANILLA_MAX) : speed * progressiveFactor();
+	}
+
+	private static float slower(float speed) {
+		return speed > VANILLA_MAX ? Math.max(speed / progressiveFactor(), VANILLA_MAX) : Math.max(speed - VANILLA_STEP, 0.0F);
+	}
+
+	private static float progressiveFactor() {
+		return Math.max(Accelerate.config().progressiveMultiplier, 1.01F);
+	}
+
+	private static float maxSpeed() {
+		return Math.max(Accelerate.config().maxSpeed, 0.0F) * DEFAULT_SPEED;
+	}
+
+	private static float rememberedSpeed() {
+		return Mth.clamp(Accelerate.config().rememberedSpeed * DEFAULT_SPEED, 0.0F, maxSpeed());
+	}
+
+	public static void change(LocalPlayer player, int steps) {
+		set(player, scroll(player.getAbilities().getFlyingSpeed(), steps));
+	}
+
+	public static void reset(LocalPlayer player) {
+		set(player, DEFAULT_SPEED);
+	}
+
+	private static void set(LocalPlayer player, float speed) {
+		player.getAbilities().setFlyingSpeed(speed);
+		onChanged(speed);
+	}
+
+	public static void onChanged(float speed) {
+		AccelerateConfig config = Accelerate.config();
+		if (config.rememberSpeed) {
+			config.rememberedSpeed = speed / DEFAULT_SPEED;
+			rememberedSpeedChanged = true;
+		}
+		showSpeed(speed);
+	}
+
+	public static void onAbilitiesUpdated() {
+		restorePending = true;
+	}
+
+	public static void saveRememberedSpeed() {
+		if (rememberedSpeedChanged) {
+			rememberedSpeedChanged = false;
+			AccelerateConfig.HANDLER.save();
+		}
+	}
+
+	public static void tick(@Nullable LocalPlayer player) {
+		if (restorePending) {
+			restorePending = false;
+			if (Accelerate.config().rememberSpeed && isActive(player) && player.isSpectator()) {
+				player.getAbilities().setFlyingSpeed(rememberedSpeed());
+			}
+		}
+
+		boolean spectator = player != null && player.isSpectator();
+		if (wasSpectator && !spectator) {
+			hideMessage();
+		}
+		wasSpectator = spectator;
+
+		updateCreativeBoost(player);
+	}
+
+	public static void updateCreativeBoost(@Nullable LocalPlayer player) {
+		boolean boost = isActive(player) && player.isCreative() && AccelerateKeybinds.isModifierDown();
+		if (boost != creativeBoost) {
+			creativeBoost = boost;
+			if (player != null) {
+				player.getAbilities().setFlyingSpeed(boost && Accelerate.config().rememberSpeed ? rememberedSpeed() : DEFAULT_SPEED);
+			}
+		}
+		updateCreativeMessage(player, boost && player.getAbilities().flying);
+	}
+
+	private static void updateCreativeMessage(@Nullable LocalPlayer player, boolean show) {
+		if (show && !creativeMessageShown) {
+			showSpeed(player.getAbilities().getFlyingSpeed());
+		} else if (show && isShowingOwnMessage()) {
+			hud().accelerate$setOverlayMessageTime(OVERLAY_MESSAGE_TICKS);
+		} else if (!show && creativeMessageShown) {
+			hideMessage();
+		}
+		creativeMessageShown = show;
+	}
+
+	private static void hideMessage() {
+		if (isShowingOwnMessage()) {
+			hud().accelerate$setOverlayMessageTime(0);
+		}
+		lastMessage = null;
+	}
+
+	private static boolean isShowingOwnMessage() {
+		return lastMessage != null && hud().accelerate$getOverlayMessage() == lastMessage;
+	}
+
+	private static HudAccessor hud() {
+		return (HudAccessor) Minecraft.getInstance().gui.hud;
+	}
+
+	private static void showSpeed(float speed) {
+		SpeedDisplay display = Accelerate.config().speedDisplay;
+		if (display == SpeedDisplay.OFF) {
+			return;
+		}
+		LocalPlayer player = Minecraft.getInstance().player;
+		float sprint = player != null && player.isSprinting() ? 2.0F : 1.0F;
+		float blocksPerSecond = speed * BLOCKS_PER_SECOND * sprint;
+		String multiplier = String.format(Locale.ROOT, "%.1f", speed / DEFAULT_SPEED);
+		Component message = switch (display) {
+			case BLOCKS_PER_SECOND -> speedMessage(display, format(blocksPerSecond));
+			case KILOMETERS_PER_HOUR -> speedMessage(display, format(blocksPerSecond * 3.6F));
+			case MACH -> speedMessage(display, String.format(Locale.ROOT, "%.2f", blocksPerSecond / SPEED_OF_SOUND));
+			case CHUNKS_PER_SECOND -> speedMessage(display, String.format(Locale.ROOT, "%.1f", blocksPerSecond / 16.0F));
+			case MULTIPLIER, OFF -> speedMessage(SpeedDisplay.MULTIPLIER, multiplier);
+		};
+		lastMessage = message;
+		Minecraft.getInstance().gui.hud.setOverlayMessage(message, false);
+	}
+
+	private static Component speedMessage(SpeedDisplay display, Object... args) {
+		return Component.translatable("accelerate.speed." + display.key(), args);
+	}
+
+	private static String format(float value) {
+		return String.format(Locale.ROOT, value < 100.0F ? "%.1f" : "%.0f", value);
+	}
+}
