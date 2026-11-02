@@ -15,8 +15,12 @@ val clientOnly = modValue("mod_environment") == "client"
 val modrinthId = modValue("publish_modrinth")
 val curseforgeId = modValue("publish_curseforge")
 
-fun requiredMods(loader: String) = "${modValue("publish_dependencies")},${modValue("publish_dependencies_$loader")}"
-	.split(',').map(String::trim).filter(String::isNotEmpty)
+fun modList(key: String) = modValue(key).split(',').map(String::trim).filter(String::isNotEmpty)
+
+fun requiredMods(loader: String) = modList("publish_dependencies") + modList("publish_dependencies_$loader")
+
+// A jar can be published for more loaders than it is built for, e.g. Fabric jars for Quilt
+fun publishLoaders(loader: String) = modList("publish_loaders_$loader").ifEmpty { listOf(loader) }
 
 val targetProjects = childProjects.values.sortedBy { it.name }.onEach { evaluationDependsOn(it.path) }
 
@@ -66,7 +70,7 @@ publishMods {
 			file = jar
 			version = "$modVersion+$minecraft-$loader"
 			displayName = "$modName $modVersion for $minecraft $loaderName"
-			modLoaders.add(loader)
+			modLoaders.addAll(publishLoaders(loader))
 		}
 
 		if (modrinthId.isNotBlank()) {
