@@ -1,6 +1,7 @@
 package dev.creeperkatze.gather;
 
 import com.mojang.authlib.GameProfile;
+import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import dev.creeperkatze.gather.mixin.IntegratedServerAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.server.IntegratedServer;
@@ -24,10 +25,14 @@ import java.net.SocketException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Function;
 
 public final class LanHosting {
+	public static final SimpleCommandExceptionType BAN_OWNER = new SimpleCommandExceptionType(Component.translatable("gather.commands.ban.owner"));
+	private static final List<String> VIRTUAL_ADAPTERS = List.of("virtualbox", "vmware", "vbox", "hyper-v", "vethernet", "docker", "wsl");
+
 	private LanHosting() {
 	}
 
@@ -51,7 +56,7 @@ public final class LanHosting {
 	// Vanilla never loads these lists for a world it hosts
 	private static void loadPlayerLists(IntegratedServer server) {
 		PlayerList players = server.getPlayerList();
-		for (StoredUserList<?, ?> list : List.of(players.getBans(), players.getIpBans(), players.getOps(), players.getWhiteList())) {
+		for (StoredUserList<?, ?> list : List.of(players.getBans(), players.getIpBans(), players.getWhiteList())) {
 			try {
 				list.load();
 			} catch (IOException e) {
@@ -60,7 +65,7 @@ public final class LanHosting {
 		}
 	}
 
-	// Bans, ops and the whitelist belong to the world, not to the whole game
+	// Bans and the whitelist belong to the world, not to the whole game
 	public static File playerListFile(MinecraftServer server, File file) {
 		return server instanceof IntegratedServer ? worldDir(server).resolve(file.getName()).toFile() : file;
 	}
@@ -79,7 +84,7 @@ public final class LanHosting {
 
 	private static void applyToServer(IntegratedServer server, HostSettings settings) {
 		server.setUsesAuthentication(settings.onlineMode());
-		server.setMotd(settings.serverName().isBlank() ? defaultServerName(server) : settings.serverName());
+		server.setMotd(settings.serverName().isBlank() ? defaultServerName(server) : ServerNameFormat.toLegacy(settings.serverName()));
 		server.setUsingWhitelist(settings.whitelist());
 		server.setPlayerIdleTimeout(settings.idleTimeout());
 	}
@@ -135,8 +140,25 @@ public final class LanHosting {
 	}
 
 	// Remembers how the world was opened, so it can open the same way next time
+	public static void rememberPublished(IntegratedServer server) {
+		if (server.isPublished()) {
+			save(server, settings(server).withPublished(server.getGuestCommandAccess(), server.forceGameMode()));
+		}
+	}
+
+	// Vanilla only reloads the whitelist file on dedicated servers
+	public static void reloadWhitelist(MinecraftServer server) {
+		if (server instanceof IntegratedServer) {
+			try {
+				server.getPlayerList().getWhiteList().load();
+			} catch (IOException e) {
+				Gather.LOGGER.warn("Couldn't reload the whitelist", e);
+			}
+		}
+	}
+
 	public static void onPublished(IntegratedServer server, int port) {
-		save(server, settings(server).withPublished(port, server.getGuestCommandAccess(), server.forceGameMode()));
+		save(server, settings(server).withPublished(server.getGuestCommandAccess(), server.forceGameMode()));
 		lanAddress().ifPresent(address -> {
 			Component message = Component.translatable("gather.address", ComponentUtils.copyOnClickText(address + ":" + port));
 			Minecraft.getInstance().execute(() -> chat(message));
@@ -151,7 +173,7 @@ public final class LanHosting {
 		HostSettings settings = settings(server);
 		server.setGuestCommandAccess(settings.guestCommands());
 		server.setForceGameMode(settings.forceGameMode());
-		int port = settings.port() > 0 && HttpUtil.isPortAvailable(settings.port()) ? settings.port() : HttpUtil.getAvailablePort();
+		int port = HttpUtil.getAvailablePort();
 		if (server.publishServer(MinecraftServer.MultiplayerScope.LAN, port)) {
 			chat(Component.translatable("menu.multiplayerOptions.publish.started.lan", ComponentUtils.copyOnClickText(String.valueOf(port))));
 		} else {
@@ -183,7 +205,7 @@ public final class LanHosting {
 	private static Optional<String> lanAddress() {
 		try {
 			for (NetworkInterface network : Collections.list(NetworkInterface.getNetworkInterfaces())) {
-				if (!network.isUp() || network.isLoopback() || network.isVirtual()) {
+				if (!network.isUp() || network.isLoopback() || network.isVirtual() || isVirtualAdapter(network)) {
 					continue;
 				}
 				for (InetAddress address : Collections.list(network.getInetAddresses())) {
@@ -196,5 +218,11 @@ public final class LanHosting {
 			Gather.LOGGER.warn("Couldn't find the LAN address", e);
 		}
 		return Optional.empty();
+	}
+
+	// Adapters of virtual machines and containers have addresses friends can't reach, VPNs like Hamachi are kept
+	private static boolean isVirtualAdapter(NetworkInterface network) {
+		String name = (network.getName() + " " + network.getDisplayName()).toLowerCase(Locale.ROOT);
+		return VIRTUAL_ADAPTERS.stream().anyMatch(name::contains);
 	}
 }

@@ -3,6 +3,7 @@ package dev.creeperkatze.gather.mixin;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import dev.creeperkatze.gather.HostOptions;
+import dev.creeperkatze.gather.LanHosting;
 import net.minecraft.client.gui.layouts.GridLayout;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.WorldOptionsScreen;
@@ -51,6 +52,14 @@ public class WorldOptionsScreenMixin {
 	private void gather$apply(@Nullable IntegratedServer server, CallbackInfo ci) {
 		if (this.gather$options != null) {
 			this.gather$options.apply();
+		}
+	}
+
+	// Guest commands and the forced game mode can change without opening the world again
+	@Inject(method = "applyChanges", at = @At("TAIL"))
+	private void gather$rememberPublished(@Nullable IntegratedServer server, CallbackInfo ci) {
+		if (server != null) {
+			LanHosting.rememberPublished(server);
 		}
 	}
 }

@@ -74,6 +74,7 @@ public final class HostOptions {
 			this.serverName = value;
 			this.onChange.run();
 		});
+		name.addFormatter((visible, offset) -> ServerNameFormat.preview(name.getValue(), visible, offset));
 		rows.addChild(name, 2);
 
 		rows.addChild(CycleButton.onOffBuilder(this.whitelist)

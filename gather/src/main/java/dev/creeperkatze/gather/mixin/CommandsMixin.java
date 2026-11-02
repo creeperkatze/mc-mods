@@ -7,8 +7,6 @@ import net.minecraft.commands.Commands;
 import net.minecraft.server.commands.BanIpCommands;
 import net.minecraft.server.commands.BanListCommands;
 import net.minecraft.server.commands.BanPlayerCommands;
-import net.minecraft.server.commands.DeOpCommands;
-import net.minecraft.server.commands.OpCommand;
 import net.minecraft.server.commands.PardonCommand;
 import net.minecraft.server.commands.PardonIpCommand;
 import net.minecraft.server.commands.SetPlayerIdleTimeoutCommand;
@@ -35,8 +33,6 @@ public class CommandsMixin {
 		BanIpCommands.register(this.dispatcher);
 		BanListCommands.register(this.dispatcher);
 		BanPlayerCommands.register(this.dispatcher);
-		DeOpCommands.register(this.dispatcher);
-		OpCommand.register(this.dispatcher);
 		PardonCommand.register(this.dispatcher);
 		PardonIpCommand.register(this.dispatcher);
 		SetPlayerIdleTimeoutCommand.register(this.dispatcher);

@@ -10,6 +10,8 @@ import net.minecraft.server.players.PlayerList;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.io.File;
 
@@ -17,12 +19,16 @@ import java.io.File;
 public class PlayerListMixin {
 	@ModifyExpressionValue(method = "<init>", at = {
 			@At(value = "FIELD", target = "Lnet/minecraft/server/players/PlayerList;WHITELIST_FILE:Ljava/io/File;", opcode = Opcodes.GETSTATIC),
-			@At(value = "FIELD", target = "Lnet/minecraft/server/players/PlayerList;OPLIST_FILE:Ljava/io/File;", opcode = Opcodes.GETSTATIC),
 			@At(value = "FIELD", target = "Lnet/minecraft/server/players/PlayerList;USERBANLIST_FILE:Ljava/io/File;", opcode = Opcodes.GETSTATIC),
 			@At(value = "FIELD", target = "Lnet/minecraft/server/players/PlayerList;IPBANLIST_FILE:Ljava/io/File;", opcode = Opcodes.GETSTATIC)
 	})
 	private File gather$worldFile(File file, @Local(argsOnly = true) MinecraftServer server) {
 		return LanHosting.playerListFile(server, file);
+	}
+
+	@Inject(method = "reloadWhiteList", at = @At("HEAD"))
+	private void gather$reloadWhitelist(CallbackInfo ci) {
+		LanHosting.reloadWhitelist(((PlayerList) (Object) this).getServer());
 	}
 
 	@ModifyReturnValue(method = "isWhiteListed", at = @At("RETURN"))

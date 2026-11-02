@@ -3,6 +3,8 @@
 	"package": "dev.creeperkatze.gather.mixin",
 	"compatibilityLevel": "JAVA_25",
 	"client": [
+		"BanIpCommandsMixin",
+		"BanPlayerCommandsMixin",
 		"ClientPacketListenerMixin",
 		"CommandsMixin",
 		"IntegratedPlayerListMixin",

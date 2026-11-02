@@ -4,7 +4,7 @@
 	"gather.online_mode.off.tooltip": "Anyone on your network can join under any name, even without a Microsoft account. Only turn this off if you trust everyone who can reach your world, or turn on the whitelist.",
 	"gather.max_players": "Max Players",
 	"gather.server_name": "Server Name",
-	"gather.server_name.tooltip": "The name your friends see in their LAN server list. Leave it empty for the default.",
+	"gather.server_name.tooltip": "The name your friends see in their LAN server list. Use & codes for colors and styles, like &6 for gold or &l for bold. Leave it empty for the default.",
 	"gather.whitelist": "Whitelist",
 	"gather.whitelist.tooltip": "Only players on the whitelist can join. Add them with /whitelist add <name>, which needs commands to be allowed.",
 	"gather.idle_timeout": "AFK Kick",
@@ -13,5 +13,6 @@
 	"gather.open_on_load": "Open on Load",
 	"gather.open_on_load.tooltip": "Opens this world to LAN with the same settings every time you load it.",
 	"gather.address": "Friends on your network can join at %s",
-	"gather.disconnect.host_name": "That name belongs to the host of this world."
+	"gather.disconnect.host_name": "That name belongs to the host of this world.",
+	"gather.commands.ban.owner": "Cannot ban server owner in LAN game"
 }

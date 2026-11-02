@@ -16,14 +16,13 @@ public record HostSettings(
 		boolean whitelist,
 		int idleTimeout,
 		boolean openOnLoad,
-		int port,
 		boolean guestCommands,
 		boolean forceGameMode
 ) {
 	public static final int MIN_PLAYERS = 2;
 	public static final int MAX_PLAYERS = 50;
 	public static final int MAX_IDLE_TIMEOUT = 60;
-	public static final HostSettings DEFAULT = new HostSettings(true, 8, "", false, 0, false, 0, false, true);
+	public static final HostSettings DEFAULT = new HostSettings(true, 8, "", false, 0, false, false, true);
 
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	private static final String FILE_NAME = Gather.MOD_ID + ".json";
@@ -58,25 +57,24 @@ public record HostSettings(
 				this.whitelist,
 				Math.clamp(this.idleTimeout, 0, MAX_IDLE_TIMEOUT),
 				this.openOnLoad,
-				this.port,
 				this.guestCommands,
 				this.forceGameMode
 		);
 	}
 
 	public HostSettings withOptions(boolean onlineMode, int maxPlayers, String serverName, boolean whitelist, int idleTimeout, boolean openOnLoad) {
-		return new HostSettings(onlineMode, maxPlayers, serverName, whitelist, idleTimeout, openOnLoad, this.port, this.guestCommands, this.forceGameMode);
+		return new HostSettings(onlineMode, maxPlayers, serverName, whitelist, idleTimeout, openOnLoad, this.guestCommands, this.forceGameMode);
 	}
 
-	public HostSettings withPublished(int port, boolean guestCommands, boolean forceGameMode) {
-		return new HostSettings(this.onlineMode, this.maxPlayers, this.serverName, this.whitelist, this.idleTimeout, this.openOnLoad, port, guestCommands, forceGameMode);
+	public HostSettings withPublished(boolean guestCommands, boolean forceGameMode) {
+		return new HostSettings(this.onlineMode, this.maxPlayers, this.serverName, this.whitelist, this.idleTimeout, this.openOnLoad, guestCommands, forceGameMode);
 	}
 
 	public HostSettings withWhitelist(boolean whitelist) {
-		return new HostSettings(this.onlineMode, this.maxPlayers, this.serverName, whitelist, this.idleTimeout, this.openOnLoad, this.port, this.guestCommands, this.forceGameMode);
+		return new HostSettings(this.onlineMode, this.maxPlayers, this.serverName, whitelist, this.idleTimeout, this.openOnLoad, this.guestCommands, this.forceGameMode);
 	}
 
 	public HostSettings withIdleTimeout(int idleTimeout) {
-		return new HostSettings(this.onlineMode, this.maxPlayers, this.serverName, this.whitelist, idleTimeout, this.openOnLoad, this.port, this.guestCommands, this.forceGameMode);
+		return new HostSettings(this.onlineMode, this.maxPlayers, this.serverName, this.whitelist, idleTimeout, this.openOnLoad, this.guestCommands, this.forceGameMode);
 	}
 }
