@@ -2,6 +2,7 @@ package dev.creeperkatze.organize;
 
 import dev.creeperkatze.organize.mixin.AbstractSelectionListAccessor;
 import dev.creeperkatze.organize.mixin.PackSelectionScreenAccessor;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.screens.packs.PackSelectionModel;
 import net.minecraft.client.gui.screens.packs.PackSelectionScreen;
@@ -51,6 +52,30 @@ public final class PackFolders {
 		} catch (IOException e) {
 			Organize.LOGGER.warn("Failed to list pack folders in {}", folder, e);
 		}
+	}
+
+	// Calls watch for every folder vanilla doesn't watch, which is anything below the first level
+	public static void watchFolders(Path packDir, Consumer<Path> watch) {
+		if (!isResourcePackDirectory(packDir)) {
+			return;
+		}
+		discover(packDir, folder -> {
+			try (DirectoryStream<Path> contents = Files.newDirectoryStream(folder)) {
+				for (Path content : contents) {
+					if (Files.isDirectory(content, LinkOption.NOFOLLOW_LINKS)) {
+						watch.accept(content);
+					}
+				}
+			} catch (IOException e) {
+				Organize.LOGGER.warn("Failed to list pack folders in {}", folder, e);
+			}
+		});
+	}
+
+	// Data pack folders are left alone, like when discovering packs
+	private static boolean isResourcePackDirectory(Path path) {
+		Path resourcePacks = Minecraft.getInstance().getResourcePackDirectory();
+		return path.toAbsolutePath().normalize().equals(resourcePacks.toAbsolutePath().normalize());
 	}
 
 	public static PackLocationInfo locationInfo(PackLocationInfo info, Path root, Path content) {

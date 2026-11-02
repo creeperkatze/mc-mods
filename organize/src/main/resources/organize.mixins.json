@@ -6,7 +6,8 @@
 		"AbstractSelectionListAccessor",
 		"FolderRepositorySourceMixin",
 		"PackSelectionScreenAccessor",
-		"PackSelectionScreenMixin"
+		"PackSelectionScreenMixin",
+		"PackWatcherMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
