@@ -2,8 +2,6 @@ package dev.creeperkatze.illuminate.game;
 
 import dev.creeperkatze.illuminate.config.LightingScreen;
 import dev.creeperkatze.illuminate.mixin.BossHealthOverlayAccessor;
-import dev.creeperkatze.illuminate.scene.BiomeFeel;
-import dev.creeperkatze.illuminate.scene.BiomeFeels;
 import dev.creeperkatze.illuminate.scene.Rgb;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -16,7 +14,6 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.attribute.EnvironmentAttributeProbe;
 import net.minecraft.world.attribute.EnvironmentAttributes;
@@ -159,7 +156,7 @@ public final class GameStateCollector {
 				dimension(level),
 				level.dimensionType().hasSkyLight(),
 				horizon,
-				feel(biome),
+				BiomeFeelResolver.resolve(level, eyes, biome),
 				new Rgb(sunrise.x(), sunrise.y(), sunrise.z()),
 				sunrise.w() * (0.35F + 0.65F * facingSun),
 				Float.isNaN(sunU) ? 0.5F : sunU,
@@ -196,15 +193,6 @@ public final class GameStateCollector {
 	// Loading screens and Live Preview are screens too, but they shouldn't dim the lights
 	private static boolean menuOpen(@Nullable Screen screen) {
 		return screen != null && !(screen instanceof LightingScreen) && !(screen instanceof LevelLoadingScreen);
-	}
-
-	// Modded biomes get a neutral feel for now
-	private static BiomeFeel feel(Holder<Biome> biome) {
-		return biome.unwrapKey()
-				.map(ResourceKey::identifier)
-				.filter(id -> id.getNamespace().equals(Identifier.DEFAULT_NAMESPACE))
-				.map(id -> BiomeFeels.of(id.getPath()))
-				.orElse(BiomeFeels.DEFAULT);
 	}
 
 	private static GameState.Dimension dimension(ClientLevel level) {
