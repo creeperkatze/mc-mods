@@ -1,6 +1,6 @@
 package dev.creeperkatze.illuminate.game;
 
-import dev.creeperkatze.illuminate.config.LightingScreen;
+import dev.creeperkatze.illuminate.Illuminate;
 import dev.creeperkatze.illuminate.mixin.BossHealthOverlayAccessor;
 import dev.creeperkatze.illuminate.scene.Rgb;
 import net.minecraft.client.Camera;
@@ -190,9 +190,9 @@ public final class GameStateCollector {
 		);
 	}
 
-	// Loading screens and Live Preview are screens too, but they shouldn't dim the lights
+	// Loading screens and the live preview shouldn't dim the lights
 	private static boolean menuOpen(@Nullable Screen screen) {
-		return screen != null && !(screen instanceof LightingScreen) && !(screen instanceof LevelLoadingScreen);
+		return screen != null && !Illuminate.engine().previewing() && !(screen instanceof LevelLoadingScreen);
 	}
 
 	private static GameState.Dimension dimension(ClientLevel level) {

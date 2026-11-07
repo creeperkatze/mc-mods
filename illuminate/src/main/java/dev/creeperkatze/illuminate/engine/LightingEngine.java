@@ -33,7 +33,7 @@ public final class LightingEngine {
 	private volatile @Nullable OpenRgbOutput openRgb;
 	private volatile float framesPerSecond;
 	private volatile float frameMillis;
-	private volatile boolean previewing;
+	private volatile long previewingUntil;
 	private volatile int eventCount;
 	private volatile @Nullable GameEvent lastEvent;
 	private volatile long lastEventAt;
@@ -70,8 +70,13 @@ public final class LightingEngine {
 		return preview;
 	}
 
-	public void setPreviewing(boolean previewing) {
-		this.previewing = previewing;
+	// Called while the live preview is drawn, it keeps effects playing outside a world for a moment after
+	public void markPreviewing() {
+		previewingUntil = System.currentTimeMillis() + 500L;
+	}
+
+	public boolean previewing() {
+		return System.currentTimeMillis() < previewingUntil;
 	}
 
 	public float framesPerSecond() {
@@ -157,7 +162,7 @@ public final class LightingEngine {
 				Illuminate.LOGGER.info("Event: {}", event);
 			}
 		}
-		boolean release = !config.enabled || (!state.inWorld() && config.idleMode == IdleMode.RELEASE && !previewing);
+		boolean release = !config.enabled || (!state.inWorld() && config.idleMode == IdleMode.RELEASE && !previewing());
 		if (release) {
 			if (!released) {
 				releaseOutputs();
@@ -168,7 +173,7 @@ public final class LightingEngine {
 		}
 		released = false;
 
-		Canvas canvas = scene.render(state, events, new Moment(time, delta, config, previewing));
+		Canvas canvas = scene.render(state, events, new Moment(time, delta, config, previewing()));
 		preview = canvas.toRgb24();
 		long millis = System.currentTimeMillis();
 		SignalRgbOutput signal = signalRgb;
