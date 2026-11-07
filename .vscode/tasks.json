@@ -41,7 +41,7 @@
 			"id": "mod",
 			"type": "pickString",
 			"description": "Mod",
-			"options": ["accelerate", "rearrange", "organize", "gather"],
+			"options": ["accelerate", "rearrange", "organize", "gather", "illuminate"],
 			"default": "accelerate"
 		},
 		{

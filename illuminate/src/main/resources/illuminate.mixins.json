@@ -1,0 +1,17 @@
+{
+	"required": true,
+	"package": "dev.creeperkatze.illuminate.mixin",
+	"compatibilityLevel": "JAVA_25",
+	"client": [
+		"BossHealthOverlayAccessor",
+		"ClientLevelMixin",
+		"ClientPacketListenerMixin",
+		"HudMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}
