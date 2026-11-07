@@ -93,6 +93,8 @@ public class IlluminateConfig {
 	@SerialEntry
 	public boolean showPreview = false;
 	@SerialEntry
+	public boolean showVirtualRoom = false;
+	@SerialEntry
 	public boolean logEvents = false;
 
 	public Placement placement(String device) {

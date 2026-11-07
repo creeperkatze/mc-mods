@@ -15,6 +15,13 @@ public final class LightingPreview {
 
 	public static void extract(GuiGraphicsExtractor graphics) {
 		int[] colors = Illuminate.engine().preview();
+		if (Illuminate.config().showVirtualRoom) {
+			int width = graphics.guiWidth() * 38 / 100;
+			int height = width * 60 / 100;
+			int x = graphics.guiWidth() - width - MARGIN;
+			graphics.fill(x - 1, MARGIN - 1, x + width + 1, MARGIN + height + 1, BORDER);
+			VirtualRoom.extract(graphics, x, MARGIN, width, height, colors);
+		}
 		if (!Illuminate.config().showPreview || colors == null) {
 			return;
 		}

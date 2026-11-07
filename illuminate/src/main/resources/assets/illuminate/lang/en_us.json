@@ -28,6 +28,8 @@
 	"illuminate.config.category.debug": "Debug",
 	"illuminate.config.show_preview": "Show Preview",
 	"illuminate.config.show_preview.tooltip": "Shows what your lights display in the top left corner of the screen. The left of the preview is your left, the top is the sky.",
+	"illuminate.config.show_virtual_room": "Show Virtual Room",
+	"illuminate.config.show_virtual_room.tooltip": "Shows a small desk setup in the top right corner, lit live by Illuminate: a monitor with a glow behind it, light bars, an LED strip and a PC case. Handy for showing the mod without your own room. It stays visible when you hide the HUD with F1.",
 	"illuminate.config.log_events": "Log Events",
 	"illuminate.config.log_events.tooltip": "Writes every damage, explosion, lightning strike and other event to the game log.",
 	"illuminate.config.f3_entry": "Illuminate can show its frame rate, connections, colors and the last event on the F3 screen. Press F3 + F6 and turn on the illuminate entry.",

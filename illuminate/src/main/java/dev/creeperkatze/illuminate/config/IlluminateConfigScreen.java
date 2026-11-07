@@ -77,6 +77,8 @@ public final class IlluminateConfigScreen {
 				.name(Component.translatable("illuminate.config.category.debug"))
 				.option(toggle("show_preview", defaults.showPreview, () -> config.showPreview,
 						value -> config.showPreview = value))
+				.option(toggle("show_virtual_room", defaults.showVirtualRoom, () -> config.showVirtualRoom,
+						value -> config.showVirtualRoom = value))
 				.option(toggle("log_events", defaults.logEvents, () -> config.logEvents,
 						value -> config.logEvents = value))
 				.option(LabelOption.create(Component.translatable("illuminate.config.f3_entry")))
