@@ -5,7 +5,7 @@
 ### Added
 
 - Shift+click a folder whose packs are all selected to deselect them.
-- Folder icons set in a Recursive Resources or Pack Manager will now get shown.
+- Folder icons from Recursive Resources and Pack Manager will now get shown.
 
 ### Changed
 
