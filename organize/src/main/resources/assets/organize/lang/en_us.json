@@ -3,5 +3,6 @@
 	"organize.all_packs": "All packs",
 	"organize.one_pack": "1 pack",
 	"organize.packs": "%s packs",
-	"organize.select_all": "Shift+click to select all packs"
+	"organize.select_all": "Shift+click to select all packs",
+	"organize.deselect_all": "Shift+click to deselect all packs"
 }

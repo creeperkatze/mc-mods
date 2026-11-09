@@ -2,6 +2,17 @@
 
 ## [Unreleased]
 
+### Added
+
+- Shift+click a folder whose packs are all selected to deselect them.
+- Folder icons set in a Recursive Resources or Pack Manager will now get shown.
+
+### Changed
+
+- Folders stay in the list once all their packs are selected.
+- Open Pack Folder opens the folder you are in.
+- Packs dropped onto the pack screen are copied into the folder you are in.
+
 ## [1.0.1] - 2026-11-09
 
 ### Added

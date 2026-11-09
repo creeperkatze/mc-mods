@@ -29,6 +29,9 @@ public class PackFolderEntry extends TransferableSelectionList.Entry {
 	private static final Identifier SELECT_ALL_SPRITE = Identifier.fromNamespaceAndPath(Organize.MOD_ID, "select_all");
 	private static final Identifier SELECT_ALL_HIGHLIGHTED_SPRITE = Identifier.fromNamespaceAndPath(Organize.MOD_ID, "select_all_highlighted");
 	private static final Component SELECT_ALL_HINT = Component.translatable("organize.select_all");
+	private static final Identifier DESELECT_ALL_SPRITE = Identifier.fromNamespaceAndPath(Organize.MOD_ID, "deselect_all");
+	private static final Identifier DESELECT_ALL_HIGHLIGHTED_SPRITE = Identifier.fromNamespaceAndPath(Organize.MOD_ID, "deselect_all_highlighted");
+	private static final Component DESELECT_ALL_HINT = Component.translatable("organize.deselect_all");
 	private static final int ICON_SIZE = 32;
 	private static final int BACK_ARROW_OFFSET = 6;
 	private static final int TEXT_WIDTH = 157;
@@ -39,7 +42,7 @@ public class PackFolderEntry extends TransferableSelectionList.Entry {
 	private final PackSelectionScreen screen;
 	private final String folder;
 	private final @Nullable Identifier icon;
-	// Every pack below the folder, empty for the way back
+	// Every pack below the folder, selected or not, empty for the way back
 	private final List<PackSelectionModel.Entry> packs;
 	private final Component name;
 	private final StringWidget nameWidget;
@@ -76,6 +79,11 @@ public class PackFolderEntry extends TransferableSelectionList.Entry {
 		return this.packs.isEmpty();
 	}
 
+	// Selects the folder while some of its packs can still be selected, deselects it after that
+	private boolean selects() {
+		return PackFolders.canSelectAny(this.packs);
+	}
+
 	private boolean isOverIcon(double mouseX, double mouseY) {
 		int x = this.getContentX();
 		int y = this.getContentY();
@@ -97,8 +105,10 @@ public class PackFolderEntry extends TransferableSelectionList.Entry {
 			Identifier sprite;
 			if (this.isBack()) {
 				sprite = overIcon ? BACK_HIGHLIGHTED_SPRITE : BACK_SPRITE;
-			} else if (Minecraft.getInstance().hasShiftDown()) {
+			} else if (Minecraft.getInstance().hasShiftDown() && this.selects()) {
 				sprite = overIcon ? SELECT_ALL_HIGHLIGHTED_SPRITE : SELECT_ALL_SPRITE;
+			} else if (Minecraft.getInstance().hasShiftDown()) {
+				sprite = overIcon ? DESELECT_ALL_HIGHLIGHTED_SPRITE : DESELECT_ALL_SPRITE;
 			} else {
 				sprite = overIcon ? OPEN_HIGHLIGHTED_SPRITE : OPEN_SPRITE;
 			}
@@ -106,7 +116,7 @@ public class PackFolderEntry extends TransferableSelectionList.Entry {
 			int spriteX = this.isBack() ? x + BACK_ARROW_OFFSET : x;
 			graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, spriteX, y, ICON_SIZE, ICON_SIZE);
 			if (overIcon && !this.isBack()) {
-				graphics.setTooltipForNextFrame(SELECT_ALL_HINT, mouseX, mouseY);
+				graphics.setTooltipForNextFrame(this.selects() ? SELECT_ALL_HINT : DESELECT_ALL_HINT, mouseX, mouseY);
 			}
 		}
 		//? if >=26.1 {
@@ -130,11 +140,13 @@ public class PackFolderEntry extends TransferableSelectionList.Entry {
 		*///?}
 	}
 
-	// A click opens the folder, a shift click selects all of its packs
+	// A click opens the folder, a shift click selects or deselects all of its packs
 	@Override
 	public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
-		if (!this.isBack() && event.hasShiftDown()) {
+		if (!this.isBack() && event.hasShiftDown() && this.selects()) {
 			PackFolders.selectAll(this.packs);
+		} else if (!this.isBack() && event.hasShiftDown()) {
+			PackFolders.deselectAll(this.packs);
 		} else {
 			PackFolders.open(this.screen, this.folder);
 		}

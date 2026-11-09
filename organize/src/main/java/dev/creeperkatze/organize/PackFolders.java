@@ -93,10 +93,11 @@ public final class PackFolders {
 			return;
 		}
 		String folder = ((PackFolderScreen) screen).organize$getFolder();
-		List<PackSelectionModel.Entry> packs = entries.toList();
-		update.accept(packs.stream().filter(pack -> folderOf(pack).equals(folder)));
+		List<PackSelectionModel.Entry> available = entries.toList();
+		update.accept(available.stream().filter(pack -> folderOf(pack).equals(folder)));
 
-		// Every pack below each subfolder, in the order of the list
+		// Every pack below each subfolder, in the order of the lists, so folders stay once all their packs are selected
+		List<PackSelectionModel.Entry> packs = Stream.concat(available.stream(), ((PackSelectionScreenAccessor) screen).organize$getModel().getSelected()).toList();
 		Map<String, List<PackSelectionModel.Entry>> subfolders = new TreeMap<>(NAME_ORDER);
 		for (PackSelectionModel.Entry pack : packs) {
 			String packFolder = folderOf(pack);
@@ -124,13 +125,36 @@ public final class PackFolders {
 		rows.add(index, entry);
 	}
 
+	public static boolean canSelectAny(List<PackSelectionModel.Entry> packs) {
+		return packs.stream().anyMatch(PackFolders::canSelect);
+	}
+
+	// Incompatible packs need the vanilla confirmation, so they are left out
+	private static boolean canSelect(PackSelectionModel.Entry pack) {
+		return pack.canSelect() && pack.getCompatibility().isCompatible();
+	}
+
 	// Each pack goes to the top of the selected list, so going backwards keeps their order
 	public static void selectAll(List<PackSelectionModel.Entry> packs) {
 		for (PackSelectionModel.Entry pack : packs.reversed()) {
-			if (pack.canSelect() && pack.getCompatibility().isCompatible()) {
+			if (canSelect(pack)) {
 				pack.select();
 			}
 		}
+	}
+
+	public static void deselectAll(List<PackSelectionModel.Entry> packs) {
+		for (PackSelectionModel.Entry pack : packs) {
+			if (pack.canUnselect()) {
+				pack.unselect();
+			}
+		}
+	}
+
+	// The open pack folder button and dropped packs use the open folder, or the pack directory once it is gone
+	public static Path directory(Path packDir, String folder) {
+		Path directory = packDir.resolve(folder);
+		return Files.isDirectory(directory) ? directory : packDir;
 	}
 
 	public static void open(PackSelectionScreen screen, String folder) {

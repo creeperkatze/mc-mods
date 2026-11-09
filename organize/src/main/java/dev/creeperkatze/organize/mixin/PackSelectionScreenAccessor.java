@@ -18,6 +18,9 @@ public interface PackSelectionScreenAccessor {
 	@Accessor("packDir")
 	Path organize$getPackDir();
 
+	@Accessor("model")
+	PackSelectionModel organize$getModel();
+
 	@Invoker("populateLists")
 	void organize$populateLists(PackSelectionModel.@Nullable EntryBase transferredEntry);
 }
