@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-09
+
 ### Added
 
 - Worlds can now be moved with shift and the arrow keys, like servers and packs.
