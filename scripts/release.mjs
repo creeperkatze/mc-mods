@@ -15,7 +15,7 @@ const fail = (message) => {
 const propertiesPath = `${mod}/mod.properties`;
 const changelogPath = `${mod}/CHANGELOG.md`;
 if (!bump || !mod || !existsSync(propertiesPath)) {
-	fail('usage: pnpm release:<patch|minor|major> <mod> [--dry-run]');
+	fail('usage: pnpm release <patch|minor|major|x.y.z> <mod> [--dry-run]');
 }
 
 const properties = readFileSync(propertiesPath, 'utf8');
