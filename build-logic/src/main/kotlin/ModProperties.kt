@@ -33,9 +33,13 @@ val Project.minecraftVersion: String
 val Project.loader: String
 	get() = name.substringAfterLast('-')
 
-// Precompiled plugins can't use the generated libs accessor
-val Project.catalog: VersionCatalog
-	get() = extensions.getByType(VersionCatalogsExtension::class.java).named("libs")
+// Minecraft was obfuscated before 26.1, so Fabric needs Loom's remapping plugin there
+val Project.isObfuscated: Boolean
+	get() = minecraftVersion.startsWith("1.")
+
+// Remapped Fabric builds take mod dependencies through Loom's mod* configurations
+fun Project.modConfiguration(name: String): String =
+	if (isObfuscated && loader == "fabric") "mod${name.replaceFirstChar(Char::uppercaseChar)}" else name
 
 val Project.minecraftCatalog: VersionCatalog
 	get() = extensions.getByType(VersionCatalogsExtension::class.java)

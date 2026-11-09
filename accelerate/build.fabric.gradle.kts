@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-	implementation(mcLibrary("yacl-fabric"))
-	compileOnly(mcLibrary("modmenu"))
-	"localRuntime"(mcLibrary("modmenu"))
+	modConfiguration("implementation")(mcLibrary("yacl-fabric"))
+	modConfiguration("compileOnly")(mcLibrary("modmenu"))
+	modConfiguration("localRuntime")(mcLibrary("modmenu"))
 }

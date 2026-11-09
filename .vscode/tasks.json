@@ -4,7 +4,7 @@
 		{
 			"label": "Run client",
 			"type": "shell",
-			"command": "./gradlew :${input:mod}:${input:target}:runClient",
+			"command": "./gradlew :${input:mod}:${input:minecraft}-${input:loader}:runClient",
 			"group": "test",
 			"presentation": {
 				"reveal": "always",
@@ -45,11 +45,18 @@
 			"default": "accelerate"
 		},
 		{
-			"id": "target",
+			"id": "minecraft",
 			"type": "pickString",
-			"description": "Minecraft version and loader",
-			"options": ["26.2-fabric", "26.2-neoforge", "26.3-fabric", "26.3-neoforge"],
-			"default": "26.2-fabric"
+			"description": "Minecraft version",
+			"options": ["26.3", "26.2", "1.21.11"],
+			"default": "26.3"
+		},
+		{
+			"id": "loader",
+			"type": "pickString",
+			"description": "Loader",
+			"options": ["fabric", "neoforge"],
+			"default": "fabric"
 		}
 	]
 }

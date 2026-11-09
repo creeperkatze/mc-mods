@@ -6,7 +6,7 @@ plugins {
 }
 
 val modId = modProperty("mod_id")
-val javaVersion = catalog.version("java").toInt()
+val javaVersion = mcVersion("java").toInt()
 val releaseVersion = "${modProperty("mod_version")}+$minecraftVersion"
 
 group = modProperty("maven_group")
@@ -51,12 +51,13 @@ tasks.named<ProcessResources>("processResources") {
 		"mod_description" to modProperty("mod_description"),
 		"mod_license" to modProperty("mod_license"),
 		"minecraft_version" to minecraftVersion,
+		"java_version" to javaVersion.toString(),
 		"fabric_loader_version" to mcVersion("fabric-loader"),
 		"neoforge_version" to mcVersion("neoforge"),
 		"yacl_version" to mcVersion("yacl-$loader").removeSuffix("-$loader")
 	)
 	inputs.properties(properties)
-	filesMatching(listOf("fabric.mod.json", "META-INF/neoforge.mods.toml")) {
+	filesMatching(listOf("fabric.mod.json", "META-INF/neoforge.mods.toml", "*.mixins.json")) {
 		expand(properties)
 	}
 }

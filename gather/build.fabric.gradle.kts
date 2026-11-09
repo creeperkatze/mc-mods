@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-	"localRuntime"(mcLibrary("modmenu"))
+	modConfiguration("localRuntime")(mcLibrary("modmenu"))
 }

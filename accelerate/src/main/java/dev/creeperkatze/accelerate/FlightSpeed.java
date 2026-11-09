@@ -160,7 +160,11 @@ public final class FlightSpeed {
 	}
 
 	private static HudAccessor hud() {
+		//? if >=26.1 {
 		return (HudAccessor) Minecraft.getInstance().gui.hud;
+		//?} else {
+		/*return (HudAccessor) Minecraft.getInstance().gui;
+		*///?}
 	}
 
 	private static void showSpeed(float speed) {
@@ -180,7 +184,11 @@ public final class FlightSpeed {
 			case MULTIPLIER, OFF -> speedMessage(SpeedDisplay.MULTIPLIER, multiplier);
 		};
 		lastMessage = message;
+		//? if >=26.1 {
 		Minecraft.getInstance().gui.hud.setOverlayMessage(message, false);
+		//?} else {
+		/*Minecraft.getInstance().gui.setOverlayMessage(message, false);
+		*///?}
 	}
 
 	private static Component speedMessage(SpeedDisplay display, Object... args) {

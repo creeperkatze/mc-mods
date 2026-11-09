@@ -1,5 +1,4 @@
 [versions]
-java = "25"
 loom = "1.19.3"
 moddev = "2.0.148"
 mod-publish = "2.2.1"

@@ -1,5 +1,6 @@
 import me.modmuss50.mpp.PublishModTask
 import me.modmuss50.mpp.platforms.modrinth.ModrinthEnvironment
+import org.gradle.api.tasks.bundling.AbstractArchiveTask
 
 plugins {
 	id("me.modmuss50.mod-publish-plugin")
@@ -64,7 +65,8 @@ publishMods {
 		val minecraft = node.minecraftVersion
 		val loaderName = if (loader == "fabric") "Fabric" else "NeoForge"
 		val targetName = "${minecraft.replace('.', '_')}$loaderName"
-		val jar = node.tasks.named<Jar>("jar").flatMap { it.archiveFile }
+		val jarTask = if (node.isObfuscated && loader == "fabric") "remapJar" else "jar"
+		val jar = node.tasks.named<AbstractArchiveTask>(jarTask).flatMap { it.archiveFile }
 		val sources = node.tasks.named<Jar>("sourcesJar").flatMap { it.archiveFile }
 		val options = publishOptions {
 			file = jar

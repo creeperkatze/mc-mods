@@ -1,24 +1,27 @@
+import net.fabricmc.loom.api.LoomGradleExtensionAPI
 import org.gradle.language.jvm.tasks.ProcessResources
 
-plugins {
-	id("net.fabricmc.fabric-loom")
-	id("mc-mods.mod")
-}
+apply(plugin = if (isObfuscated) "net.fabricmc.fabric-loom-remap" else "net.fabricmc.fabric-loom")
+apply(plugin = "mc-mods.mod")
 
 val modId = modProperty("mod_id")
 val modName = modProperty("mod_name")
 val targetMinecraft = minecraftVersion
+val loom = extensions.getByType<LoomGradleExtensionAPI>()
 
 dependencies {
 	"minecraft"("com.mojang:minecraft:$minecraftVersion")
-	implementation(mcLibrary("fabric-loader"))
-	implementation(mcLibrary("fabric-api"))
+	if (isObfuscated) {
+		"mappings"(loom.officialMojangMappings())
+	}
+	modConfiguration("implementation")(mcLibrary("fabric-loader"))
+	modConfiguration("implementation")(mcLibrary("fabric-api"))
 }
 
-loom {
+loom.apply {
 	mods {
 		register(modId) {
-			sourceSet(sourceSets["main"])
+			sourceSet(project.extensions.getByType<SourceSetContainer>()["main"])
 		}
 	}
 	runs {

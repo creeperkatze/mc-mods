@@ -2,6 +2,9 @@ package dev.creeperkatze.organize;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+//? if <26.1 {
+/*import net.minecraft.client.gui.components.AbstractScrollArea;
+*///?}
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.screens.packs.PackSelectionModel;
 import net.minecraft.client.gui.screens.packs.PackSelectionScreen;
@@ -106,13 +109,25 @@ public class PackFolderEntry extends TransferableSelectionList.Entry {
 				graphics.setTooltipForNextFrame(SELECT_ALL_HINT, mouseX, mouseY);
 			}
 		}
+		//? if >=26.1 {
 		int textWidth = TEXT_WIDTH - (this.list.maxScrollAmount() > 0 ? this.list.scrollbarWidth() : 0);
+		//?} else {
+		/*int textWidth = TEXT_WIDTH - (this.list.maxScrollAmount() > 0 ? AbstractScrollArea.SCROLLBAR_WIDTH : 0);
+		*///?}
 		this.nameWidget.setMaxWidth(textWidth);
 		this.nameWidget.setPosition(x + ICON_SIZE + 2, y + 1);
+		//? if >=26.1 {
 		this.nameWidget.extractRenderState(graphics, mouseX, mouseY, a);
+		//?} else {
+		/*this.nameWidget.render(graphics, mouseX, mouseY, a);
+		*///?}
 		this.descriptionWidget.setMaxWidth(textWidth);
 		this.descriptionWidget.setPosition(x + ICON_SIZE + 2, y + 12);
+		//? if >=26.1 {
 		this.descriptionWidget.extractRenderState(graphics, mouseX, mouseY, a);
+		//?} else {
+		/*this.descriptionWidget.render(graphics, mouseX, mouseY, a);
+		*///?}
 	}
 
 	// A click opens the folder, a shift click selects all of its packs

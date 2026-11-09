@@ -4,7 +4,7 @@
 
 ### Added
 
-- Support for Minecraft 26.2.
+- Backported to Minecraft 1.21.11 and 26.2.
 
 ### Changed
 
