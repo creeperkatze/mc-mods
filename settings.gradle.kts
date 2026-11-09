@@ -17,9 +17,9 @@ plugins {
 rootProject.name = "mc-mods"
 
 val modTargets = mapOf(
-	"accelerate" to listOf("26.3"),
-	"rearrange" to listOf("26.3"),
-	"organize" to listOf("26.3"),
+	"accelerate" to listOf("26.2", "26.3"),
+	"rearrange" to listOf("26.2", "26.3"),
+	"organize" to listOf("26.2", "26.3"),
 	"gather" to listOf("26.3"),
 	"illuminate" to listOf("26.3")
 )
@@ -46,6 +46,6 @@ stonecutter {
 				}
 			}
 		}
-		vcsVersion = "${modTargets.values.first().first()}-fabric"
+		vcsVersion = "26.3-fabric"
 	}
 }
