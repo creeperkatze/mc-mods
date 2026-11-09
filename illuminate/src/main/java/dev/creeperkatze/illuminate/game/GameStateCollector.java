@@ -14,6 +14,9 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+//? if <26.3 {
+/*import net.minecraft.util.ARGB;
+*///?}
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.attribute.EnvironmentAttributeProbe;
 import net.minecraft.world.attribute.EnvironmentAttributes;
@@ -122,7 +125,11 @@ public final class GameStateCollector {
 		float sunAngle = (float) Math.toRadians(probe.getValue(EnvironmentAttributes.SUN_ANGLE, 1.0F));
 		float sunX = Math.sin(sunAngle) > 0.0 ? -1.0F : 1.0F;
 		float facingSun = Math.max(0.0F, camera.forwardVector().x() * sunX);
+		//? if >=26.3 {
 		Vector4fc sunrise = probe.getValue(EnvironmentAttributes.SUNRISE_SUNSET_COLOR, 1.0F);
+		//?} else {
+		/*Vector4fc sunrise = ARGB.vector4fFromARGB32(probe.getValue(EnvironmentAttributes.SUNRISE_SUNSET_COLOR, 1.0F));
+		*///?}
 		float sunU = GameEvents.horizontalPosition(camera, sunX, 0.0);
 
 		// The moon moves on a circle from east to west through straight overhead
@@ -148,11 +155,21 @@ public final class GameStateCollector {
 		float blockLight = level.getBrightness(LightLayer.BLOCK, eyes) / 15.0F;
 		Rgb horizon = Rgb.of(probe.getValue(EnvironmentAttributes.FOG_COLOR, 1.0F));
 		float daylight = probe.getValue(EnvironmentAttributes.SKY_LIGHT_FACTOR, 1.0F);
+		//? if >=26.2 {
 		Rgb blockTint = Rgb.of(probe.getValue(EnvironmentAttributes.BLOCK_LIGHT_TINT, 1.0F));
+		//?} else {
+		/*// Older versions have no tint attribute. This is its default in 26.2.
+		Rgb blockTint = Rgb.of(0xFFD88C);
+		*///?}
+		//? if >=26.2 {
+		Screen screen = client.gui.screen();
+		//?} else {
+		/*Screen screen = client.screen;
+		*///?}
 
 		return new GameState(
 				true,
-				menuOpen(client.gui.screen()),
+				menuOpen(screen),
 				dimension(level),
 				level.dimensionType().hasSkyLight(),
 				horizon,
@@ -179,7 +196,7 @@ public final class GameStateCollector {
 				player.getPercentFrozen(),
 				player.displayFireAnimation(),
 				player.isSleeping() ? Math.min(player.getSleepTimer() / 100.0F, 1.0F) : 0.0F,
-				player.isDeadOrDying() || client.gui.screen() instanceof DeathScreen,
+				player.isDeadOrDying() || screen instanceof DeathScreen,
 				effects(player),
 				player.hasEffect(MobEffects.NIGHT_VISION) ? GameRenderer.nightVisionScale(player, 1.0F) : 0.0F,
 				blend(player, MobEffects.DARKNESS),

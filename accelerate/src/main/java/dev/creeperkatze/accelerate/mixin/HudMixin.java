@@ -1,7 +1,7 @@
 package dev.creeperkatze.accelerate.mixin;
 
 import dev.creeperkatze.accelerate.FlightSpeed;
-//? if >=26.1 {
+//? if >=26.2 {
 import net.minecraft.client.gui.Hud;
 //?} else {
 /*import net.minecraft.client.gui.Gui;
@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
-//? if >=26.1 {
+//? if >=26.2 {
 @Mixin(Hud.class)
 //?} else {
 /*@Mixin(Gui.class)

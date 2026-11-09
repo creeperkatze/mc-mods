@@ -34,7 +34,7 @@ public class ResetWorldOrderButton extends Button.Plain {
 
 	private static void confirm(Screen screen, Supplier<@Nullable WorldSelectionList> list) {
 		Minecraft minecraft = Minecraft.getInstance();
-		setScreen(minecraft, new ConfirmScreen(confirmed -> {
+		minecraft.gui.setScreen(new ConfirmScreen(confirmed -> {
 			if (confirmed) {
 				WorldOrder.reset();
 				WorldSelectionList worlds = list.get();
@@ -42,16 +42,8 @@ public class ResetWorldOrderButton extends Button.Plain {
 					worlds.reloadWorldList();
 				}
 			}
-			setScreen(minecraft, screen);
+			minecraft.gui.setScreen(screen);
 		}, CONFIRM_TITLE, CONFIRM_MESSAGE));
-	}
-
-	private static void setScreen(Minecraft minecraft, Screen screen) {
-		//? if >=26.1 {
-		minecraft.gui.setScreen(screen);
-		//?} else {
-		/*minecraft.setScreen(screen);
-		*///?}
 	}
 
 	public void position(@Nullable EditBox searchBox) {

@@ -21,7 +21,7 @@ val modTargets = mapOf(
 	"rearrange" to listOf("1.21.11", "26.2", "26.3"),
 	"organize" to listOf("1.21.11", "26.2", "26.3"),
 	"gather" to listOf("26.3"),
-	"illuminate" to listOf("26.3")
+	"illuminate" to listOf("1.21.11", "26.2", "26.3")
 )
 
 dependencyResolutionManagement {

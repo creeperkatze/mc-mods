@@ -19,5 +19,18 @@ stonecutter parameters {
 		replace("renderDefaultSprite", "extractDefaultSprite")
 		replace(".renderOutline(", ".outline(")
 		replace("renderDeferredElements()V", "extractDeferredElements(IIF)V")
+		replace("graphics.drawString(", "graphics.text(")
+		replace("graphics.drawCenteredString(", "graphics.centeredText(")
+	}
+
+	// 26.2 moved screens, toasts and the HUD from Minecraft to Gui
+	replacements.string(current.parsed >= "26.2") {
+		replace("minecraft.setScreen(", "minecraft.gui.setScreen(")
+		replace(".getToastManager()", ".gui.toastManager()")
+		replace(".gui.getChat()", ".gui.hud.getChat()")
+		replace(".gui.getBossOverlay()", ".gui.hud.getBossOverlay()")
+		replace(".gui.setOverlayMessage(", ".gui.hud.setOverlayMessage(")
+		replace("getMainCamera()", "mainCamera()")
+		replace("getNightVisionScale(", "nightVisionScale(")
 	}
 }

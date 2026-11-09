@@ -14,7 +14,11 @@ import java.util.List;
 @Mixin(ClientLevel.class)
 public class ClientLevelMixin {
 	@Inject(method = "createFireworks", at = @At("HEAD"))
+	//? if >=26.3 {
 	private void illuminate$onFireworks(double x, double y, double z, double xd, double yd, double zd, List<FireworkExplosion> explosions, boolean playSound, CallbackInfo ci) {
+	//?} else {
+	/*private void illuminate$onFireworks(double x, double y, double z, double xd, double yd, double zd, List<FireworkExplosion> explosions, CallbackInfo ci) {
+	*///?}
 		GameEvents.onFirework(new Vec3(x, y, z), explosions);
 	}
 }
