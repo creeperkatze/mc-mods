@@ -4,6 +4,7 @@ import dev.creeperkatze.rearrange.reorder.PackReorder;
 import dev.creeperkatze.rearrange.reorder.ServerReorder;
 import dev.creeperkatze.rearrange.reorder.WorldReorder;
 import net.minecraft.client.gui.components.AbstractSelectionList;
+import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.screens.multiplayer.ServerSelectionList;
 import net.minecraft.client.gui.screens.packs.TransferableSelectionList;
 import net.minecraft.client.gui.screens.worldselection.WorldSelectionList;
@@ -14,6 +15,11 @@ import java.util.List;
 public interface Reorder {
 	// Returns how the entry at this index can move, or null if it can't be picked up
 	@Nullable Move pickUp(int index);
+
+	// Identifies an entry for the animation, also after the list rebuilt its entries
+	default Object key(LayoutElement entry) {
+		return entry;
+	}
 
 	interface Move {
 		boolean canDrop(int index);

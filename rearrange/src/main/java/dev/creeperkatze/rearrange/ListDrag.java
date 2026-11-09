@@ -15,9 +15,9 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.Util;
 import org.jspecify.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 public final class ListDrag {
 	private static final int DRAG_THRESHOLD = 4;
@@ -49,7 +49,8 @@ public final class ListDrag {
 	private long lastFrame;
 	private boolean overTransfer;
 	private int transferSlot;
-	private final Map<LayoutElement, Double> shownY = new WeakHashMap<>();
+	// Keyed by Reorder.key, so the positions survive a list that rebuilds its entries
+	private Map<Object, Double> shownY = new HashMap<>();
 	private @Nullable Double shownGap;
 	private long lastAnimation;
 
@@ -140,6 +141,36 @@ public final class ListDrag {
 		int to = this.entries().indexOf(dragged);
 		if (to >= 0 && to != this.from) {
 			move.drop(to);
+		}
+	}
+
+	// Moves an entry up or down by one, returns false if it can't move there
+	public boolean step(LayoutElement entry, int direction) {
+		List<LayoutElement> entries = this.entries();
+		int from = entries.indexOf(entry);
+		int to = from + direction;
+		if (this.dragged != null || from < 0 || to < 0 || to >= entries.size()) {
+			return false;
+		}
+		Reorder.Move move = this.reorder.pickUp(from);
+		if (move == null || !move.canDrop(to)) {
+			return false;
+		}
+		entries.remove(from);
+		entries.add(to, entry);
+		((DraggableList) this.list).rearrange$repositionEntries();
+		move.drop(to);
+		this.scrollTo(entry);
+		return true;
+	}
+
+	private void scrollTo(LayoutElement entry) {
+		int above = this.list.getY() - entry.getY();
+		int below = entry.getY() + entry.getHeight() - this.list.getBottom();
+		if (above > 0) {
+			this.list.setScrollAmount(this.list.scrollAmount() - above);
+		} else if (below > 0) {
+			this.list.setScrollAmount(this.list.scrollAmount() + below);
 		}
 	}
 
@@ -300,11 +331,14 @@ public final class ListDrag {
 		double progress = 1.0 - Math.exp(-(now - this.lastAnimation) / ANIMATION_TIME);
 		this.lastAnimation = now;
 		int origin = this.origin();
+		Map<Object, Double> shownY = new HashMap<>();
 		for (LayoutElement entry : this.entries()) {
-			double y = ease(this.shownY.get(entry), entry.getY() - origin, progress);
-			this.shownY.put(entry, y);
+			Object key = this.reorder.key(entry);
+			double y = ease(this.shownY.get(key), entry.getY() - origin, progress);
+			shownY.put(key, y);
 			entry.setY(origin + (int) Math.round(y));
 		}
+		this.shownY = shownY;
 		this.shownGap = gapY == null ? null : ease(this.shownGap, gapY - origin, progress);
 	}
 
@@ -317,7 +351,7 @@ public final class ListDrag {
 	}
 
 	private int shownY(LayoutElement entry) {
-		Double shown = this.shownY.get(entry);
+		Double shown = this.shownY.get(this.reorder.key(entry));
 		return shown == null ? entry.getY() : this.origin() + (int) Math.round(shown);
 	}
 

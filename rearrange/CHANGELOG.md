@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Added
+
+- Worlds can now be moved with shift and the arrow keys, like servers and packs.
+- Resource packs and data packs now animate when moved with shift and the arrow keys or the arrow buttons.
+
 ## [1.0.1] - 2026-11-09
 
 ### Added

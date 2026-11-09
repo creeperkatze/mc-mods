@@ -5,6 +5,7 @@ import dev.creeperkatze.rearrange.mixin.EntryBaseInvoker;
 import dev.creeperkatze.rearrange.mixin.PackEntryAccessor;
 import dev.creeperkatze.rearrange.mixin.PackSelectionScreenAccessor;
 import dev.creeperkatze.rearrange.mixin.TransferableSelectionListAccessor;
+import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.screens.packs.PackSelectionModel;
 import net.minecraft.client.gui.screens.packs.TransferableSelectionList;
 import net.minecraft.server.packs.repository.Pack;
@@ -17,6 +18,12 @@ import java.util.stream.Collectors;
 
 // The first entry of a pack list is its header, so pack i is at index i + 1
 public record PackReorder(TransferableSelectionList list) implements Reorder {
+	// Vanilla rebuilds the pack lists after every change, so packs are told apart by id
+	@Override
+	public Object key(LayoutElement entry) {
+		return entry instanceof TransferableSelectionList.Entry pack && !pack.getPackId().isEmpty() ? pack.getPackId() : entry;
+	}
+
 	@Override
 	public @Nullable Move pickUp(int index) {
 		if (!(this.list.children().get(index) instanceof TransferableSelectionList.PackEntry entry)
