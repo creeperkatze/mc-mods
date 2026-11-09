@@ -31,7 +31,7 @@ public final class AccelerateConfigScreen {
 								.description(description("max_speed"))
 								.binding(defaults.maxSpeed, () -> config.maxSpeed, value -> config.maxSpeed = value)
 								.controller(option -> FloatSliderControllerBuilder.create(option)
-										.range(1.0F, 100.0F)
+										.range(1.0F, 1000.0F)
 										.step(1.0F)
 										.formatValue(value -> Component.translatable("accelerate.config.multiplier", Math.round(value))))
 								.build())

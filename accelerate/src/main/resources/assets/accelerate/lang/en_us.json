@@ -9,7 +9,7 @@
 	"accelerate.config.plus": "+%s",
 	"accelerate.config.times": "×%s",
 	"accelerate.config.max_speed": "Max Speed",
-	"accelerate.config.max_speed.tooltip": "Highest spectator and creative flight speed in worlds you host (singleplayer or LAN). Vanilla spectator stops at 4×.",
+	"accelerate.config.max_speed.tooltip": "Highest spectator and creative flight speed. Vanilla spectator stops at 4×.",
 	"accelerate.config.step_mode": "Scroll Steps",
 	"accelerate.config.step_mode.tooltip": "Progressive: vanilla's small steps up to 4×, then multiplied on every step, set with Progressive Step. Linear: every step adds the same amount, set with Linear Step.",
 	"accelerate.config.step_mode.progressive": "Progressive",

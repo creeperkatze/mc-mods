@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Works on multiplayer servers, not only in worlds you host.
+- Raised the highest max speed to 1000x.
+
 ## [1.0.1] - 2026-11-09
 
 ### Added

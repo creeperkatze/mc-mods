@@ -37,7 +37,7 @@ public final class FlightSpeed {
 	}
 
 	public static boolean isActive(@Nullable LocalPlayer player) {
-		return player != null && (player.isSpectator() || player.isCreative()) && Minecraft.getInstance().hasSingleplayerServer();
+		return player != null && (player.isSpectator() || player.isCreative());
 	}
 
 	public static boolean canChange(@Nullable LocalPlayer player) {
