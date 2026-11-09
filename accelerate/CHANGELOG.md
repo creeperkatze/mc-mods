@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-09
+
 ### Changed
 
 - Works on multiplayer servers, not only in worlds you host.
