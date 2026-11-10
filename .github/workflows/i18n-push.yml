@@ -1,0 +1,42 @@
+name: Crowdin (push)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/i18n-push.yml'
+      - '*/src/main/resources/assets/*/lang/en_us.json'
+      - 'crowdin.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: i18n-management
+
+permissions:
+  contents: read
+
+jobs:
+  push:
+    name: Push Sources to Crowdin
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    concurrency:
+      group: i18n-push:${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Upload source strings to Crowdin
+        uses: crowdin/github-action@9c23991700c0ec5256fd41089b9d9d7d540e424e # v3.3.0
+        with:
+          upload_sources: true
+          upload_translations: false
+          download_translations: false
+          push_translations: false
+          create_pull_request: false
+        env:
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}

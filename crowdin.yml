@@ -1,0 +1,27 @@
+preserve_hierarchy: true
+commit_message: '[ci skip]'
+
+files:
+  - source: /accelerate/src/main/resources/assets/accelerate/lang/en_us.json
+    dest: /accelerate.json
+    translation: /accelerate/src/main/resources/assets/accelerate/lang/%locale_with_underscore%.json
+    skip_untranslated_strings: true
+  - source: /rearrange/src/main/resources/assets/rearrange/lang/en_us.json
+    dest: /rearrange.json
+    translation: /rearrange/src/main/resources/assets/rearrange/lang/%locale_with_underscore%.json
+    skip_untranslated_strings: true
+  - source: /organize/src/main/resources/assets/organize/lang/en_us.json
+    dest: /organize.json
+    translation: /organize/src/main/resources/assets/organize/lang/%locale_with_underscore%.json
+    skip_untranslated_strings: true
+  - source: /gather/src/main/resources/assets/gather/lang/en_us.json
+    dest: /gather.json
+    translation: /gather/src/main/resources/assets/gather/lang/%locale_with_underscore%.json
+    skip_untranslated_strings: true
+  - source: /illuminate/src/main/resources/assets/illuminate/lang/en_us.json
+    dest: /illuminate.json
+    translation: /illuminate/src/main/resources/assets/illuminate/lang/%locale_with_underscore%.json
+    skip_untranslated_strings: true
+
+project_id_env: CROWDIN_PROJECT_ID
+api_token_env: CROWDIN_PERSONAL_TOKEN
