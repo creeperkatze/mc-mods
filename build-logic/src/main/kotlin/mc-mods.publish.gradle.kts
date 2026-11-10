@@ -40,6 +40,11 @@ val releaseChangelog = run {
 	}
 }
 
+// Modrinth shows its own title, so the heading is left out
+val modrinthDescription = providers.fileContents(layout.projectDirectory.file("README.md")).asText.map { readme ->
+	readme.lines().dropWhile { it.isNotBlank() }.joinToString("\n").trim()
+}
+
 tasks.register("assemble") {
 	group = "build"
 	dependsOn(targetProjects.map { it.tasks.named("assemble") })
@@ -79,6 +84,7 @@ publishMods {
 			modrinth("modrinth$targetName") {
 				from(options.get())
 				projectId = modrinthId
+				projectDescription = modrinthDescription
 				accessToken = providers.environmentVariable("MODRINTH_TOKEN")
 				minecraftVersions.add(minecraft)
 				environment = if (clientOnly) ModrinthEnvironment.CLIENT_ONLY else ModrinthEnvironment.CLIENT_AND_SERVER
