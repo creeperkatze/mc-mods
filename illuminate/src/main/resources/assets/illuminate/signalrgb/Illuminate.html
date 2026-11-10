@@ -4,7 +4,6 @@
 		description="Ambient lighting from Minecraft with the Illuminate mod. The left of the canvas is your left, the top is the sky."
 	/>
 	<meta publisher="Creeperkatze" />
-	<meta property="smoothing" label="Smoothing" type="number" min="0" max="10" default="2" />
 </head>
 
 <body style="margin: 0; padding: 0; background: #000">
@@ -16,8 +15,7 @@
 	var context = canvas.getContext('2d');
 	var grid = document.createElement('canvas');
 	var gridContext = grid.getContext('2d');
-	var target = null;
-	var current = null;
+	var image = null;
 	var lastFrame = 0;
 	var timeout = 3000;
 
@@ -41,31 +39,19 @@
 		if (width !== grid.width || height !== grid.height) {
 			grid.width = width;
 			grid.height = height;
-			current = null;
 		}
-		target = new Float32Array(width * height * 3);
-		for (var i = 0; i < target.length; i++) {
-			target[i] = parseInt(hex.substr(i * 2, 2), 16);
-		}
-		if (current === null) {
-			current = Float32Array.from(target);
+		image = gridContext.createImageData(width, height);
+		for (var cell = 0; cell < width * height; cell++) {
+			for (var channel = 0; channel < 3; channel++) {
+				image.data[cell * 4 + channel] = parseInt(hex.substr((cell * 3 + channel) * 2, 2), 16);
+			}
+			image.data[cell * 4 + 3] = 255;
 		}
 		lastFrame = Date.now();
 	}
 
 	function update() {
-		if (target !== null && Date.now() - lastFrame < timeout) {
-			// Minecraft sends about 30 frames per second, easing towards each one fills in the frames in between
-			var easing = 1 / (1 + Math.max(0, Number(smoothing) || 0));
-			var image = gridContext.createImageData(grid.width, grid.height);
-			for (var cell = 0; cell < grid.width * grid.height; cell++) {
-				for (var channel = 0; channel < 3; channel++) {
-					var i = cell * 3 + channel;
-					current[i] += (target[i] - current[i]) * easing;
-					image.data[cell * 4 + channel] = current[i];
-				}
-				image.data[cell * 4 + 3] = 255;
-			}
+		if (image !== null && Date.now() - lastFrame < timeout) {
 			gridContext.putImageData(image, 0, 0);
 			context.imageSmoothingEnabled = true;
 			context.drawImage(grid, 0, 0, canvas.width, canvas.height);
