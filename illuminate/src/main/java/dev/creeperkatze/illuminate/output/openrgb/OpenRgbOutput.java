@@ -17,6 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public final class OpenRgbOutput implements LightOutput {
 	private static final long RETRY_MS = 5000;
 	private static final long RESEND_MS = 2000;
+	private static final int MAX_DEVICES = 256;
 
 	private final String host;
 	private final int port;
@@ -102,9 +103,13 @@ public final class OpenRgbOutput implements LightOutput {
 	}
 
 	private void connect() {
+		OpenRgbClient connection = null;
 		try {
-			OpenRgbClient connection = OpenRgbClient.connect(host, port, "Illuminate");
+			connection = OpenRgbClient.connect(host, port, "Illuminate");
 			int count = connection.controllerCount();
+			if (count < 0 || count > MAX_DEVICES) {
+				throw new IOException("Unexpected OpenRGB device count " + count);
+			}
 			List<OpenRgbDevice> found = new ArrayList<>(count);
 			for (int index = 0; index < count; index++) {
 				found.add(OpenRgbDevice.parse(index, connection.controllerData(index), connection.protocol()));
@@ -117,6 +122,12 @@ public final class OpenRgbOutput implements LightOutput {
 			Illuminate.LOGGER.info("Connected to OpenRGB at {}:{} with {} devices (protocol {})", host, port, count, connection.protocol());
 		} catch (IOException | RuntimeException e) {
 			status = "unavailable";
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (IOException ignored) {
+				}
+			}
 			if (!warned) {
 				Illuminate.LOGGER.info("OpenRGB is not reachable at {}:{}: {}", host, port, e.getMessage());
 				warned = true;

@@ -91,6 +91,9 @@ final class OpenRgbDevice {
 			if (matrixLength > 0) {
 				height = data.getInt();
 				width = data.getInt();
+				if (width < 0 || height < 0 || (long) width * height > data.remaining() / 4) {
+					throw new IllegalArgumentException("Invalid OpenRGB matrix size " + width + "x" + height);
+				}
 				matrix = new int[width * height];
 				for (int i = 0; i < matrix.length; i++) {
 					matrix[i] = data.getInt();
