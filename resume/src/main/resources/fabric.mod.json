@@ -1,0 +1,39 @@
+{
+	"schemaVersion": 1,
+	"id": "${mod_id}",
+	"version": "${version}",
+	"name": "${mod_name}",
+	"description": "${mod_description}",
+	"authors": ["Creeperkatze"],
+	"contact": {
+		"homepage": "https://github.com/creeperkatze/mc-mods/tree/main/${mod_folder}",
+		"sources": "https://github.com/creeperkatze/mc-mods/tree/main/${mod_folder}",
+		"issues": "https://github.com/creeperkatze/mc-mods/issues"
+	},
+	"license": "${mod_license}",
+	"icon": "assets/resume/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"client": ["dev.creeperkatze.resume.loaders.fabric.ResumeFabric"],
+		"modmenu": ["dev.creeperkatze.resume.compat.modmenu.ResumeModMenuCompat"]
+	},
+	"mixins": ["resume.mixins.json"],
+	"depends": {
+		"fabricloader": ">=${fabric_loader_version}",
+		"minecraft": "~${minecraft_version}",
+		"java": ">=${java_version}",
+		"fabric-api": "*",
+		"yet_another_config_lib_v3": "*"
+	},
+	"suggests": {
+		"modmenu": "*"
+	},
+	"custom": {
+		"modmenu": {
+			"links": {
+				"modmenu.discord": "https://discord.gg/Qds5QMrnDv",
+				"modmenu.donate": "https://ko-fi.com/creeperkatze"
+			}
+		}
+	}
+}

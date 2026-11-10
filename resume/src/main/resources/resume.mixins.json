@@ -1,0 +1,22 @@
+{
+	"required": true,
+	"package": "dev.creeperkatze.resume.mixin",
+	"compatibilityLevel": "JAVA_${java_version}",
+	"client": [
+		"ConnectScreenMixin",
+		"GameRendererMixin",
+		"GenericMessageScreenMixin",
+		"GuiMixin",
+		"HudMixin",
+		"LevelLoadingScreenMixin",
+		"MinecraftMixin",
+		"ScreenMixin",
+		"WorldOpenFlowsMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}

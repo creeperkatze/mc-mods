@@ -22,6 +22,10 @@ files:
     dest: /illuminate/en_us.json
     translation: /illuminate/src/main/resources/assets/illuminate/lang/%locale_with_underscore%.json
     skip_untranslated_strings: true
+  - source: /resume/src/main/resources/assets/resume/lang/en_us.json
+    dest: /resume/en_us.json
+    translation: /resume/src/main/resources/assets/resume/lang/%locale_with_underscore%.json
+    skip_untranslated_strings: true
 
 project_id_env: CROWDIN_PROJECT_ID
 api_token_env: CROWDIN_PERSONAL_TOKEN
