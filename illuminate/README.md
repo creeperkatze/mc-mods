@@ -16,8 +16,8 @@ Your lights follow the sky, biome and time of day, darken in caves, flash with l
 
 1. Start OpenRGB, open the **SDK Server** tab and press **Start Server**.
 2. Enable OpenRGB in the Illuminate settings under **Devices**. The default address is `127.0.0.1:6742`.
-3. Set where each device sits under **OpenRGB Device Positions** in the **Devices** tab, so directional effects land on the right side.
+3. Set where each device sits under **Device Positions** in the **OpenRGB** section of the **Devices** tab, so directional effects land on the right side.
 
-You can use SignalRGB and OpenRGB at the same time, as long as each device is controlled by only one of them. A device controlled by both flickers. Turn it off in SignalRGB or set it to **Off** under OpenRGB Device Positions.
+You can use SignalRGB and OpenRGB at the same time, as long as each device is controlled by only one of them. A device controlled by both flickers. Turn it off in SignalRGB or set it to **Off** under **Device Positions** in the OpenRGB section.
 
 Licensed under [LGPL-3.0](LICENSE).

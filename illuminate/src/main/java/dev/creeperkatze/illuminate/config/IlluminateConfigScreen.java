@@ -201,32 +201,27 @@ public final class IlluminateConfigScreen {
 				.option(port("openrgb_port", defaults.openRgbPort, () -> config.openRgbPort,
 						value -> config.openRgbPort = value));
 
+		Set<String> deviceNames = new LinkedHashSet<>(Illuminate.engine().openRgbDevices());
+		deviceNames.addAll(config.openRgbPlacements.keySet());
+		if (!deviceNames.isEmpty()) {
+			openRgb.option(LabelOption.create(Component.translatable("illuminate.config.device_positions")));
+		}
+		for (String device : deviceNames) {
+			openRgb.option(Option.<Placement>createBuilder()
+					.name(Component.literal(device))
+					.description(choice("placement"))
+					.binding(Placement.CENTER, () -> config.placement(device), value -> config.setPlacement(device, value))
+					.controller(option -> EnumControllerBuilder.create(option).enumClass(Placement.class)
+							.formatValue(Placement::caption))
+					.build());
+		}
+
 		ConfigCategory.Builder category = ConfigCategory.createBuilder()
 				.name(Component.translatable("illuminate.config.category.devices"));
 		if (config.signalRgb && config.openRgb) {
 			category.option(LabelOption.create(Component.translatable("illuminate.config.overlap")));
 		}
 		category.group(signalRgb.build()).group(openRgb.build());
-
-		Set<String> deviceNames = new LinkedHashSet<>(Illuminate.engine().openRgbDevices());
-		deviceNames.addAll(config.openRgbPlacements.keySet());
-		if (!deviceNames.isEmpty()) {
-			OptionGroup.Builder placements = OptionGroup.createBuilder()
-					.name(Component.translatable("illuminate.config.group.placements"))
-					.description(
-							OptionDescription.of(Component.translatable("illuminate.config.group.placements.tooltip")));
-			for (String device : deviceNames) {
-				placements.option(Option.<Placement>createBuilder()
-						.name(Component.literal(device))
-						.description(choice("placement"))
-						.binding(Placement.CENTER, () -> config.placement(device),
-								value -> config.setPlacement(device, value))
-						.controller(option -> EnumControllerBuilder.create(option).enumClass(Placement.class)
-								.formatValue(Placement::caption))
-						.build());
-			}
-			category.group(placements.build());
-		}
 		return category.build();
 	}
 
