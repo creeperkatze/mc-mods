@@ -162,7 +162,7 @@ public final class LightingEngine {
 				Illuminate.LOGGER.info("Event: {}", event);
 			}
 		}
-		boolean release = !config.enabled || (!state.inWorld() && config.idleMode == IdleMode.RELEASE && !previewing());
+		boolean release = !config.enabled || (!state.inWorld() && config.idleMode == IdleMode.OFF && !previewing());
 		if (release) {
 			if (!released) {
 				releaseOutputs();

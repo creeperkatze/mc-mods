@@ -14,6 +14,7 @@ import dev.isxander.yacl3.api.OptionDescription;
 import dev.isxander.yacl3.api.OptionGroup;
 import dev.isxander.yacl3.api.YetAnotherConfigLib;
 import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
+import dev.isxander.yacl3.api.controller.ColorControllerBuilder;
 import dev.isxander.yacl3.api.controller.EnumControllerBuilder;
 import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
 import dev.isxander.yacl3.api.controller.IntegerFieldControllerBuilder;
@@ -24,8 +25,10 @@ import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -74,9 +77,22 @@ public final class IlluminateConfigScreen {
 						value -> config.reduceFlashing = value))
 				.option(toggle("dim_in_menus", defaults.dimInMenus, () -> config.dimInMenus,
 						value -> config.dimInMenus = value))
-				.option(cycle("idle_mode", IdleMode.class, IdleMode::caption, defaults.idleMode, () -> config.idleMode,
-						value -> config.idleMode = value))
+				.options(idle(defaults, config))
 				.build();
+	}
+
+	private static List<Option<?>> idle(IlluminateConfig defaults, IlluminateConfig config) {
+		Option<Color> color = Option.<Color>createBuilder()
+				.name(name("idle_color"))
+				.description(description("idle_color"))
+				.binding(defaults.idleColor, () -> config.idleColor, value -> config.idleColor = value)
+				.available(config.idleMode == IdleMode.COLOR)
+				.controller(ColorControllerBuilder::create)
+				.build();
+		Option<IdleMode> mode = cycle("idle_mode", IdleMode.class, IdleMode::caption, defaults.idleMode,
+				() -> config.idleMode, value -> config.idleMode = value);
+		mode.addEventListener((option, event) -> color.setAvailable(option.pendingValue() == IdleMode.COLOR));
+		return List.of(mode, color);
 	}
 
 	// Test effects whose descriptions show the lights live, so the preview needs no screen of its own

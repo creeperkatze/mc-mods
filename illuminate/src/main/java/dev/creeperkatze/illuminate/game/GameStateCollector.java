@@ -68,6 +68,7 @@ public final class GameStateCollector {
 		ClientLevel level = client.level;
 		Camera camera = client.gameRenderer.mainCamera();
 		if (player == null || level == null || !camera.isInitialized()) {
+			MenuPanorama.tick(client);
 			// Changing dimension leaves the game without a world for a moment, so the last scene stays to avoid a flash
 			if (current.inWorld() && System.currentTimeMillis() - lastInWorldAt < WORLD_GAP_MS) {
 				return;

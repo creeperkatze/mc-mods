@@ -6,7 +6,8 @@
 		"BossHealthOverlayAccessor",
 		"ClientLevelMixin",
 		"ClientPacketListenerMixin",
-		"HudMixin"
+		"HudMixin",
+		"PanoramaAccessor"
 	],
 	"injectors": {
 		"defaultRequire": 1

@@ -11,6 +11,7 @@ import net.neoforged.fml.loading.FMLPaths;
 *//*?}*/
 import net.minecraft.resources.Identifier;
 
+import java.awt.Color;
 import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -46,7 +47,9 @@ public class IlluminateConfig {
 	@SerialEntry
 	public boolean dimInMenus = true;
 	@SerialEntry
-	public IdleMode idleMode = IdleMode.AMBIENT;
+	public IdleMode idleMode = IdleMode.PANORAMA;
+	@SerialEntry
+	public Color idleColor = Color.WHITE;
 
 	@SerialEntry
 	public boolean environment = true;
