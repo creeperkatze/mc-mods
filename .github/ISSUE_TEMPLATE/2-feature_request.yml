@@ -11,6 +11,8 @@ body:
         - Rearrange
         - Organize
         - Gather
+        - Illuminate
+        - Resume
     validations:
       required: true
   - type: textarea
