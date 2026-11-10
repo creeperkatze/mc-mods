@@ -31,6 +31,7 @@ public final class LoadingBackground {
 	private static int width;
 	private static int height;
 	private static boolean joining;
+	private static long shownAt;
 	private static long fadeStart = -1;
 
 	private LoadingBackground() {
@@ -40,6 +41,7 @@ public final class LoadingBackground {
 		Path file = place.screenshot();
 		if (file.equals(shown)) {
 			joining = true;
+			shownAt = Util.getMillis();
 			fadeStart = -1;
 			return;
 		}
@@ -55,6 +57,7 @@ public final class LoadingBackground {
 					new DynamicTexture(() -> "Resume loading background", image));
 			shown = file;
 			joining = true;
+			shownAt = Util.getMillis();
 		} catch (IOException e) {
 			Resume.LOGGER.warn("Could not load the screenshot {}", file, e);
 		}
@@ -62,7 +65,7 @@ public final class LoadingBackground {
 
 	public static void onScreenChange(@Nullable Screen from, @Nullable Screen to) {
 		if (joining && from instanceof LevelLoadingScreen && !(to instanceof LevelLoadingScreen)) {
-			if (Resume.config().fadeDuration > 0.0F) {
+			if (Resume.config().fadeOutDuration > 0.0F) {
 				joining = false;
 				fadeStart = Util.getMillis();
 			} else {
@@ -89,7 +92,7 @@ public final class LoadingBackground {
 		if (fadeStart < 0) {
 			return;
 		}
-		float progress = (Util.getMillis() - fadeStart) / (Resume.config().fadeDuration * 1000.0F);
+		float progress = (Util.getMillis() - fadeStart) / (Resume.config().fadeOutDuration * 1000.0F);
 		if (!(progress < 1.0F)) {
 			release();
 			return;
@@ -105,7 +108,17 @@ public final class LoadingBackground {
 		graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, 0, 0, (width - sourceWidth) / 2.0F,
 				(height - sourceHeight) / 2.0F, screenWidth, screenHeight, sourceWidth, sourceHeight, width, height,
 				ARGB.white(alpha));
-		graphics.fill(0, 0, screenWidth, screenHeight, ARGB.black(alpha * (1.0F - Resume.config().brightness)));
+		float brightness = Resume.config().brightness * fadeIn();
+		graphics.fill(0, 0, screenWidth, screenHeight, ARGB.black(alpha * (1.0F - brightness)));
+	}
+
+	// Rises from 0 to 1 over the fade in duration after the screenshot first shows
+	private static float fadeIn() {
+		float duration = Resume.config().fadeInDuration * 1000.0F;
+		if (duration <= 0.0F) {
+			return 1.0F;
+		}
+		return Math.min(1.0F, (Util.getMillis() - shownAt) / duration);
 	}
 
 	private static void release() {

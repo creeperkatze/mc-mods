@@ -37,21 +37,27 @@ public final class ResumeConfigScreen {
 										.formatValue(value -> Component.translatable("resume.config.percent",
 												Math.round(value * 100.0F))))
 								.build())
-						.option(Option.<Float>createBuilder()
-								.name(name("fade_duration"))
-								.description(description("fade_duration"))
-								.binding(defaults.fadeDuration, () -> config.fadeDuration,
-										value -> config.fadeDuration = value)
-								.controller(option -> FloatSliderControllerBuilder.create(option)
-										.range(0.0F, 3.0F)
-										.step(0.1F)
-										.formatValue(value -> Component.translatable("resume.config.seconds",
-												String.format("%.1f", value))))
-								.build())
+						.option(seconds("fade_in_duration", defaults.fadeInDuration, () -> config.fadeInDuration,
+								value -> config.fadeInDuration = value))
+						.option(seconds("fade_out_duration", defaults.fadeOutDuration, () -> config.fadeOutDuration,
+								value -> config.fadeOutDuration = value))
 						.build())
 				.save(ResumeConfig.HANDLER::save)
 				.build()
 				.generateScreen(parent);
+	}
+
+	private static Option<Float> seconds(String key, float defaultValue, Supplier<Float> getter, Consumer<Float> setter) {
+		return Option.<Float>createBuilder()
+				.name(name(key))
+				.description(description(key))
+				.binding(defaultValue, getter, setter)
+				.controller(option -> FloatSliderControllerBuilder.create(option)
+						.range(0.0F, 3.0F)
+						.step(0.1F)
+						.formatValue(value -> Component.translatable("resume.config.seconds",
+								String.format("%.1f", value))))
+				.build();
 	}
 
 	private static Option<Boolean> toggle(String key, boolean defaultValue, Supplier<Boolean> getter,

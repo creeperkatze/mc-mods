@@ -17,18 +17,19 @@ The next time you join, the screenshot is the background of the loading screens 
 
 **🌅 Fade**
 
-Let the screenshot fade into the game once the world has loaded, so you pick up right where you were.
+Let the screenshot fade in from black when the loading screen appears and fade into the game once the world has loaded, so you pick up right where you were.
 
 ## ⚙️ Settings
 
 Open the config screen from the Mods screen (Mod Menu on Fabric).
 
-| Option        | Description                                                                                      | Default |
-| ------------- | ------------------------------------------------------------------------------------------------ | ------- |
-| Worlds        | Takes a screenshot when you leave a singleplayer world and shows it while the world loads again. | On      |
-| Servers       | Takes a screenshot when you leave a server and shows it while you join it again.                 | On      |
-| Brightness    | How bright the screenshot is, from 0% to 100%. Lower it to make the loading text easier to read. | 50%     |
-| Fade Duration | How long the screenshot takes to fade into the world once it has loaded, up to 3 seconds.        | Off     |
+| Option            | Description                                                                                           | Default |
+| ----------------- | ----------------------------------------------------------------------------------------------------- | ------- |
+| Worlds            | Takes a screenshot when you leave a singleplayer world and shows it while the world loads again.      | On      |
+| Servers           | Takes a screenshot when you leave a server and shows it while you join it again.                      | On      |
+| Brightness        | How bright the screenshot is, from 0% to 100%. Lower it to make the loading text easier to read.      | 50%     |
+| Fade In Duration  | How long the screenshot takes to fade in from black when the loading screen appears, up to 3 seconds. | Off     |
+| Fade Out Duration | How long the screenshot takes to fade into the world once it has loaded, up to 3 seconds.             | Off     |
 
 ## 🌐 Translating
 

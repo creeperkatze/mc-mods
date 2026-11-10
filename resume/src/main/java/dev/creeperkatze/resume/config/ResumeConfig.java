@@ -36,5 +36,7 @@ public class ResumeConfig {
 	@SerialEntry
 	public float brightness = 0.5F;
 	@SerialEntry
-	public float fadeDuration = 0.0F;
+	public float fadeInDuration = 0.0F;
+	@SerialEntry
+	public float fadeOutDuration = 0.0F;
 }
