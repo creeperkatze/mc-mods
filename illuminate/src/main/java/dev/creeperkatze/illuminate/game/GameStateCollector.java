@@ -207,9 +207,10 @@ public final class GameStateCollector {
 		);
 	}
 
-	// Loading screens and the live preview shouldn't dim the lights
+	// Loading screens, the death screen and the live preview shouldn't dim the lights
 	private static boolean menuOpen(@Nullable Screen screen) {
-		return screen != null && !Illuminate.engine().previewing() && !(screen instanceof LevelLoadingScreen);
+		return screen != null && !Illuminate.engine().previewing() && !(screen instanceof LevelLoadingScreen)
+				&& !(screen instanceof DeathScreen);
 	}
 
 	private static GameState.Dimension dimension(ClientLevel level) {

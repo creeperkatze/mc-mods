@@ -15,8 +15,8 @@ public final class VitalsLayer implements Layer {
 	private static final Rgb FLAME_TIP = new Rgb(1.0F, 0.72F, 0.12F);
 	private static final Rgb FROST = new Rgb(0.72F, 0.9F, 1.0F);
 	private static final Rgb AIR = new Rgb(0.1F, 0.35F, 1.0F);
-	private static final Rgb DEATH = new Rgb(0.3F, 0.0F, 0.0F);
-	private static final float DEATH_SECONDS = 5.0F;
+	private static final Rgb DEATH = new Rgb(1.0F, 0.0F, 0.0F);
+	private static final float DEATH_SECONDS = 2.0F;
 
 	private float heartPhase;
 	private float drownPhase;
@@ -30,7 +30,7 @@ public final class VitalsLayer implements Layer {
 		var config = moment.config();
 
 		fire = Shapes.approach(fire, config.hazards && state.burning() ? 1.0F : 0.0F, 6.0F, delta);
-		death = state.dead() ? Math.min(death + delta / DEATH_SECONDS, 1.0F) : Shapes.approach(death, 0.0F, 4.0F, delta);
+		death = state.dead() ? Math.min(death + delta / DEATH_SECONDS, 1.0F) : 0.0F;
 
 		float heartbeat = 0.0F;
 		if (config.lowHealth && state.health() < LOW_HEALTH && !state.dead()) {
@@ -73,8 +73,7 @@ public final class VitalsLayer implements Layer {
 				canvas.multiply(i, 1.0F - 0.92F * sleep);
 			}
 			if (death > 0.01F) {
-				Rgb faded = canvas.get(i).scale(0.25F).lerp(DEATH, 0.6F);
-				canvas.mix(i, faded.scale(0.8F + 0.2F * (float) Math.sin(time * 1.5F)), death);
+				canvas.mix(i, DEATH, death);
 			}
 		}
 	}
