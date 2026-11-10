@@ -33,7 +33,7 @@ public final class ResumeConfigScreen {
 										value -> config.brightness = value)
 								.controller(option -> FloatSliderControllerBuilder.create(option)
 										.range(0.0F, 1.0F)
-										.step(0.05F)
+										.step(0.01F)
 										.formatValue(value -> Component.translatable("resume.config.percent",
 												Math.round(value * 100.0F))))
 								.build())

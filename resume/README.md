@@ -27,7 +27,7 @@ Open the config screen from the Mods screen (Mod Menu on Fabric).
 | ------------- | ------------------------------------------------------------------------------------------------ | ------- |
 | Worlds        | Takes a screenshot when you leave a singleplayer world and shows it while the world loads again. | On      |
 | Servers       | Takes a screenshot when you leave a server and shows it while you join it again.                 | On      |
-| Brightness    | How bright the screenshot is, from 0% to 100%. Lower it to make the loading text easier to read. | 100%    |
+| Brightness    | How bright the screenshot is, from 0% to 100%. Lower it to make the loading text easier to read. | 50%     |
 | Fade Duration | How long the screenshot takes to fade into the world once it has loaded, up to 3 seconds.        | Off     |
 
 ## 🌐 Translating
