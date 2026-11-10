@@ -16,6 +16,7 @@ public final class VitalsLayer implements Layer {
 	private static final Rgb FROST = new Rgb(0.72F, 0.9F, 1.0F);
 	private static final Rgb AIR = new Rgb(0.1F, 0.35F, 1.0F);
 	private static final Rgb DEATH = new Rgb(0.3F, 0.0F, 0.0F);
+	private static final float DEATH_SECONDS = 5.0F;
 
 	private float heartPhase;
 	private float drownPhase;
@@ -29,7 +30,7 @@ public final class VitalsLayer implements Layer {
 		var config = moment.config();
 
 		fire = Shapes.approach(fire, config.hazards && state.burning() ? 1.0F : 0.0F, 6.0F, delta);
-		death = Shapes.approach(death, state.dead() ? 1.0F : 0.0F, state.dead() ? 1.5F : 4.0F, delta);
+		death = state.dead() ? Math.min(death + delta / DEATH_SECONDS, 1.0F) : Shapes.approach(death, 0.0F, 4.0F, delta);
 
 		float heartbeat = 0.0F;
 		if (config.lowHealth && state.health() < LOW_HEALTH && !state.dead()) {

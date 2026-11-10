@@ -94,7 +94,7 @@ public final class GameStateCollector {
 			lastLevel = player.experienceLevel;
 		}
 		if (player.experienceLevel > lastLevel && lastLevel >= 0) {
-			GameEvents.post(new GameEvent.LevelUp(player.experienceLevel));
+			GameEvents.post(new GameEvent.LevelUp());
 		}
 		lastLevel = player.experienceLevel;
 	}

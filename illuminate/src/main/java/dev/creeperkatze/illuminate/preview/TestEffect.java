@@ -27,8 +27,7 @@ public enum TestEffect {
 			u -> new GameEvent.Firework(List.of(Rgb.of(0xFF3355), Rgb.of(0x33AAFF), Rgb.of(0xFFDD33)),
 					List.of(Rgb.of(0xFFFFFF)), 1.0F, Float.isNaN(u) ? 0.5F : u, 0.3F)),
 	TOTEM(Kind.PLAYER, false, u -> new GameEvent.Totem()),
-	LEVEL_UP(Kind.PLAYER, false, u -> new GameEvent.LevelUp(1)),
-	LEVEL_UP_5(Kind.PLAYER, false, u -> new GameEvent.LevelUp(5));
+	LEVEL_UP(Kind.PLAYER, false, u -> new GameEvent.LevelUp());
 
 	private final Kind kind;
 	private final boolean directional;

@@ -24,7 +24,6 @@ public final class EventLayer implements Layer {
 	private static final Rgb EXPLOSION = new Rgb(1.0F, 0.85F, 0.55F);
 	private static final Rgb EXPLOSION_END = new Rgb(1.0F, 0.3F, 0.0F);
 	private static final Rgb TOTEM = new Rgb(1.0F, 0.82F, 0.2F);
-	private static final Rgb TOTEM_END = new Rgb(0.35F, 0.9F, 0.3F);
 	private static final Rgb LEVEL_UP = new Rgb(0.55F, 1.0F, 0.25F);
 
 	private final List<Effect> active = new ArrayList<>();
@@ -43,9 +42,9 @@ public final class EventLayer implements Layer {
 					new Effect(calm ? Kind.FLASH : Kind.LIGHTNING, LIGHTNING, LIGHTNING, lightning.u(), strength * lightning.strength(), LIGHTNING_SECONDS);
 			case GameEvent.Firework firework when config.fireworks -> firework(firework, strength);
 			case GameEvent.Totem totem when config.worldEvents ->
-					new Effect(Kind.RING, TOTEM, TOTEM_END, Float.NaN, Math.max(strength, 0.5F), 1.6F);
+					new Effect(Kind.RING, TOTEM, TOTEM, Float.NaN, Math.max(strength, 0.8F), 1.8F);
 			case GameEvent.LevelUp levelUp when config.worldEvents ->
-					new Effect(Kind.SPARKLE, LEVEL_UP, LEVEL_UP, Float.NaN, levelUp.level() % 5 == 0 ? 1.0F : 0.6F, levelUp.level() % 5 == 0 ? 1.6F : 1.0F);
+					new Effect(Kind.SPARKLE, LEVEL_UP, LEVEL_UP, Float.NaN, 1.0F, 1.6F);
 			default -> null;
 		};
 		if (effect != null && active.size() < MAX_ACTIVE) {
@@ -89,7 +88,7 @@ public final class EventLayer implements Layer {
 					float dy = v - 0.5F;
 					float distance = (float) Math.sqrt(dx * dx + dy * dy);
 					float ring = Shapes.gaussian(distance, age * 1.2F, 0.01F);
-					canvas.mix(i, color, effect.strength * (1.0F - age) * (ring * 0.9F + 0.25F));
+					canvas.mix(i, color, effect.strength * (1.0F - age) * (ring + 0.5F));
 				}
 				case SPARKLE -> {
 					if (Shapes.hash(i, effect.seed) < 0.3F) {

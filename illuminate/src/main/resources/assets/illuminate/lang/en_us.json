@@ -97,7 +97,6 @@
 	"illuminate.preview.test.firework": "Firework",
 	"illuminate.preview.test.totem": "Totem",
 	"illuminate.preview.test.level_up": "Level Up",
-	"illuminate.preview.test.level_up_5": "Level Up (Every 5 Levels)",
 	"illuminate.config.group.signalrgb": "SignalRGB",
 	"illuminate.config.group.openrgb": "OpenRGB",
 	"illuminate.config.status": "Status: %s",

@@ -133,7 +133,7 @@ public final class IlluminateDebugEntry implements DebugScreenEntry {
 			case GameEvent.Lightning lightning -> "lightning" + side(lightning.u());
 			case GameEvent.Firework firework -> "firework" + side(firework.u());
 			case GameEvent.Totem totem -> "totem";
-			case GameEvent.LevelUp levelUp -> "level " + levelUp.level();
+			case GameEvent.LevelUp levelUp -> "level up";
 			case GameEvent.Arrival arrival -> "arrival";
 		};
 	}

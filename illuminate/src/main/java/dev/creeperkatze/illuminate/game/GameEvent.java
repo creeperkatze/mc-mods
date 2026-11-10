@@ -21,7 +21,7 @@ public sealed interface GameEvent {
 	record Totem() implements GameEvent {
 	}
 
-	record LevelUp(int level) implements GameEvent {
+	record LevelUp() implements GameEvent {
 	}
 
 	record Arrival() implements GameEvent {
