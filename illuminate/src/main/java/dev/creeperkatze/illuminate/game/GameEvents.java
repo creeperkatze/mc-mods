@@ -66,7 +66,9 @@ public final class GameEvents {
 
 	public static void onFirework(Vec3 position, List<FireworkExplosion> explosions) {
 		Camera camera = Minecraft.getInstance().gameRenderer.mainCamera();
-		float strength = (float) Math.clamp(1.0 - camera.position().distanceTo(position) / FIREWORK_RANGE, 0.0, 1.0);
+		double distance = camera.position().distanceTo(position) / FIREWORK_RANGE;
+		// Falls off slowly at first, so fireworks nearby burst at almost full strength
+		float strength = (float) Math.clamp(1.0 - distance * distance, 0.0, 1.0);
 		if (strength <= 0.0F) {
 			return;
 		}

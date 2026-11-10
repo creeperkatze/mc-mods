@@ -56,8 +56,8 @@ public final class EventLayer implements Layer {
 	private static Effect firework(GameEvent.Firework firework, float strength) {
 		Effect effect = new Effect(Kind.FIREWORK, Rgb.BLACK, Rgb.BLACK, firework.u(), strength * firework.strength(), FIREWORK_SECONDS);
 		effect.v = firework.v();
-		effect.palette = firework.colors();
-		effect.fadePalette = firework.fadeColors();
+		effect.palette = firework.colors().stream().map(Rgb::vivid).toList();
+		effect.fadePalette = firework.fadeColors().stream().map(Rgb::vivid).toList();
 		return effect;
 	}
 
@@ -111,7 +111,7 @@ public final class EventLayer implements Layer {
 		int pick = (int) (Shapes.hash(cell, effect.seed) * effect.palette.size()) % effect.palette.size();
 		Rgb spark = effect.palette.get(pick);
 		Rgb fade = effect.fadePalette.isEmpty() ? spark.scale(0.5F) : effect.fadePalette.get(pick % effect.fadePalette.size());
-		float glow = 0.25F * (1.0F - age);
+		float glow = 0.4F * (1.0F - age);
 		canvas.mix(cell, spark.lerp(fade, Shapes.smoothstep(0.3F, 0.9F, age)), effect.strength * (1.0F - age) * Math.min(shell * twinkle + glow, 1.0F));
 	}
 

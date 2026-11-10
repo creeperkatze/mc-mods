@@ -51,6 +51,17 @@ public record Rgb(float r, float g, float b) {
 		return new Rgb(y + 0.956F * i2 + 0.621F * q2, y - 0.272F * i2 - 0.647F * q2, y - 1.106F * i2 + 1.703F * q2);
 	}
 
+	// Brightens and saturates a color by how colorful it is, so white, grey and black stay as they are
+	public Rgb vivid() {
+		float max = max();
+		if (max <= 0.0001F) {
+			return this;
+		}
+		float chroma = (max - Math.min(r, Math.min(g, b))) / max;
+		Rgb boosted = scale(1.0F + (1.0F / max - 1.0F) * chroma).saturate(1.0F + 0.5F * chroma);
+		return new Rgb(Math.clamp(boosted.r, 0.0F, 1.0F), Math.clamp(boosted.g, 0.0F, 1.0F), Math.clamp(boosted.b, 0.0F, 1.0F));
+	}
+
 	// Raises the brightest channel to at least the given level without changing the hue
 	public Rgb atLeast(float level) {
 		float max = max();
