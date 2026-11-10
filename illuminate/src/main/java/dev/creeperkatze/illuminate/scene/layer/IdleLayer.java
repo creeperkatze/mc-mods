@@ -18,7 +18,7 @@ public final class IdleLayer implements Layer {
 		}
 		for (int i = 0; i < Canvas.SIZE; i++) {
 			Rgb panorama = MenuPanorama.sample(Canvas.u(i), Canvas.v(i));
-			canvas.set(i, panorama != null ? panorama : Rgb.WHITE);
+			canvas.set(i, panorama != null ? panorama : Rgb.BLACK);
 		}
 	}
 }
