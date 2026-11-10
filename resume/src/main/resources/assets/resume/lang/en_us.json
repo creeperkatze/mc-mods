@@ -10,5 +10,5 @@
 	"resume.config.brightness": "Brightness",
 	"resume.config.brightness.tooltip": "How bright the screenshot is. Lower it to make the loading text easier to read.",
 	"resume.config.fade_duration": "Fade Duration",
-	"resume.config.fade_duration.tooltip": "How long the screenshot takes to fade into the world once it has loaded. 0 switches right away."
+	"resume.config.fade_duration.tooltip": "How long the screenshot takes to fade into the world once it has loaded."
 }
