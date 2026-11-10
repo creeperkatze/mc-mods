@@ -188,8 +188,6 @@ public final class IlluminateConfigScreen {
 				.option(LabelOption.create(status(Illuminate.engine().signalRgbStatus())))
 				.option(toggle("signalrgb", defaults.signalRgb, () -> config.signalRgb,
 						value -> config.signalRgb = value))
-				.option(toggle("signalrgb_apply_effect", defaults.signalRgbApplyEffect,
-						() -> config.signalRgbApplyEffect, value -> config.signalRgbApplyEffect = value))
 				.option(ButtonOption.createBuilder()
 						.name(name("signalrgb_effect"))
 						.description(OptionDescription
@@ -198,6 +196,8 @@ public final class IlluminateConfigScreen {
 						.text(Component.translatable("illuminate.config.install"))
 						.action((screen, button) -> installEffect())
 						.build())
+				.option(toggle("signalrgb_apply_effect", defaults.signalRgbApplyEffect,
+						() -> config.signalRgbApplyEffect, value -> config.signalRgbApplyEffect = value))
 				.option(port("signalrgb_port", defaults.signalRgbPort, () -> config.signalRgbPort,
 						value -> config.signalRgbPort = value));
 

@@ -10,7 +10,7 @@ Your lights follow the sky, biome and time of day, darken in caves, flash with l
 
 1. In the Illuminate settings, open **Devices** and press **Install** next to **SignalRGB Effect**. This copies the effect to `Documents\WhirlwindFX\Effects`.
 2. Restart SignalRGB and select the **Illuminate** effect.
-3. Arrange your devices on the SignalRGB canvas. The left side of the canvas is your left, the top is the sky.
+3. Place your devices on the SignalRGB canvas where they are around your screen.
 
 ### OpenRGB
 
