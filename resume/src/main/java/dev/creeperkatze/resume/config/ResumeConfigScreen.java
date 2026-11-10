@@ -6,7 +6,9 @@ import dev.isxander.yacl3.api.OptionDescription;
 import dev.isxander.yacl3.api.YetAnotherConfigLib;
 import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
 import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
+import dev.isxander.yacl3.api.controller.IntegerSliderControllerBuilder;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
 import java.util.function.Consumer;
@@ -36,6 +38,16 @@ public final class ResumeConfigScreen {
 										.step(0.01F)
 										.formatValue(value -> Component.translatable("resume.config.percent",
 												Math.round(value * 100.0F))))
+								.build())
+						.option(Option.<Integer>createBuilder()
+								.name(name("blur"))
+								.description(description("blur"))
+								.binding(defaults.blur, () -> config.blur, value -> config.blur = value)
+								.controller(option -> IntegerSliderControllerBuilder.create(option)
+										.range(0, 10)
+										.step(1)
+										.formatValue(value -> value == 0 ? CommonComponents.OPTION_OFF
+												: Component.literal(String.valueOf(value))))
 								.build())
 						.option(seconds("fade_in_duration", defaults.fadeInDuration, () -> config.fadeInDuration,
 								value -> config.fadeInDuration = value))

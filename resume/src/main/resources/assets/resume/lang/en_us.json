@@ -9,6 +9,8 @@
 	"resume.config.servers.tooltip": "Takes a screenshot when you leave a server and shows it while you join it again.",
 	"resume.config.brightness": "Brightness",
 	"resume.config.brightness.tooltip": "How bright the screenshot is. Lower it to make the loading text easier to read.",
+	"resume.config.blur": "Blur",
+	"resume.config.blur.tooltip": "How much the screenshot is blurred.",
 	"resume.config.fade_in_duration": "Fade In Duration",
 	"resume.config.fade_in_duration.tooltip": "How long the screenshot takes to fade in from black when the loading screen appears.",
 	"resume.config.fade_out_duration": "Fade Out Duration",

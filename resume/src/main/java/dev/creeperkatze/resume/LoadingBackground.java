@@ -23,11 +23,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.concurrent.CompletableFuture;
 
 public final class LoadingBackground {
 	private static final Identifier TEXTURE = Identifier.fromNamespaceAndPath(Resume.MOD_ID, "loading_background");
 
+	// Image width that gets a blur radius of one pixel per step, so the blur looks the same at any resolution
+	private static final float BLUR_SCALE = 960.0F;
+
 	private static @Nullable Path shown;
+	private static @Nullable Path loading;
+	private static int shownBlur;
 	private static int width;
 	private static int height;
 	private static boolean joining;
@@ -39,7 +45,8 @@ public final class LoadingBackground {
 
 	public static void onJoin(Place place) {
 		Path file = place.screenshot();
-		if (file.equals(shown)) {
+		int blur = Resume.config().blur;
+		if (file.equals(shown) && blur == shownBlur || file.equals(loading)) {
 			joining = true;
 			shownAt = Util.getMillis();
 			fadeStart = -1;
@@ -49,23 +56,50 @@ public final class LoadingBackground {
 		if (!place.enabled() || !Files.isRegularFile(file)) {
 			return;
 		}
+		loading = file;
+		joining = true;
+		// Reading and blurring a large screenshot takes a moment, so it happens off the main thread
+		CompletableFuture.supplyAsync(() -> read(file, blur), Util.backgroundExecutor())
+				.thenAcceptAsync(image -> show(file, blur, image), Minecraft.getInstance());
+	}
+
+	private static @Nullable NativeImage read(Path file, int blur) {
 		try (InputStream input = Files.newInputStream(file)) {
 			NativeImage image = NativeImage.read(input);
-			width = image.getWidth();
-			height = image.getHeight();
-			Minecraft.getInstance().getTextureManager().register(TEXTURE,
-					new DynamicTexture(() -> "Resume loading background", image));
-			shown = file;
-			joining = true;
-			shownAt = Util.getMillis();
+			if (blur > 0) {
+				Blur.apply(image, Math.max(1, Math.round(blur * image.getWidth() / BLUR_SCALE)));
+			}
+			return image;
 		} catch (IOException e) {
 			Resume.LOGGER.warn("Could not load the screenshot {}", file, e);
+			return null;
 		}
+	}
+
+	private static void show(Path file, int blur, @Nullable NativeImage image) {
+		if (!file.equals(loading)) {
+			// Joining was canceled while the screenshot loaded
+			if (image != null) {
+				image.close();
+			}
+			return;
+		}
+		loading = null;
+		if (image == null) {
+			return;
+		}
+		width = image.getWidth();
+		height = image.getHeight();
+		Minecraft.getInstance().getTextureManager().register(TEXTURE,
+				new DynamicTexture(() -> "Resume loading background", image));
+		shown = file;
+		shownBlur = blur;
+		shownAt = Util.getMillis();
 	}
 
 	public static void onScreenChange(@Nullable Screen from, @Nullable Screen to) {
 		if (joining && from instanceof LevelLoadingScreen && !(to instanceof LevelLoadingScreen)) {
-			if (Resume.config().fadeOutDuration > 0.0F) {
+			if (shown != null && Resume.config().fadeOutDuration > 0.0F) {
 				joining = false;
 				fadeStart = Util.getMillis();
 			} else {
@@ -79,9 +113,9 @@ public final class LoadingBackground {
 	}
 
 	public static boolean extract(Screen screen, GuiGraphicsExtractor graphics) {
-		boolean loading = screen instanceof LevelLoadingScreen || screen instanceof ConnectScreen
+		boolean loadingScreen = screen instanceof LevelLoadingScreen || screen instanceof ConnectScreen
 				|| screen instanceof ProgressScreen || screen instanceof GenericMessageScreen;
-		if (!joining || !loading) {
+		if (!joining || shown == null || !loadingScreen) {
 			return false;
 		}
 		draw(graphics, screen.width, screen.height, 1.0F);
@@ -126,6 +160,7 @@ public final class LoadingBackground {
 			Minecraft.getInstance().getTextureManager().release(TEXTURE);
 			shown = null;
 		}
+		loading = null;
 		joining = false;
 		fadeStart = -1;
 	}
