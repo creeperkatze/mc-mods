@@ -15,7 +15,14 @@
 		{
 			"label": "Run all",
 			"type": "shell",
-			"command": "./gradlew runAll -PrunAll=${input:minecraft}-${input:loader}",
+			"command": "./gradlew",
+			"args": [
+				"runAll",
+				{
+					"value": "-PrunAll=${input:minecraft}-${input:loader}",
+					"quoting": "strong"
+				}
+			],
 			"group": "test",
 			"presentation": {
 				"reveal": "always",
