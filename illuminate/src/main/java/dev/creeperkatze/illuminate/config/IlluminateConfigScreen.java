@@ -6,11 +6,13 @@ import dev.creeperkatze.illuminate.output.signalrgb.SignalRgbEffect;
 import dev.creeperkatze.illuminate.preview.TestEffect;
 import dev.creeperkatze.illuminate.preview.TestEffect.Kind;
 import dev.creeperkatze.illuminate.preview.TestEffect.Direction;
+import dev.isxander.yacl3.api.Binding;
 import dev.isxander.yacl3.api.ButtonOption;
 import dev.isxander.yacl3.api.ConfigCategory;
 import dev.isxander.yacl3.api.LabelOption;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.OptionDescription;
+import dev.isxander.yacl3.api.OptionFlag;
 import dev.isxander.yacl3.api.OptionGroup;
 import dev.isxander.yacl3.api.YetAnotherConfigLib;
 import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
@@ -20,6 +22,9 @@ import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
 import dev.isxander.yacl3.api.controller.IntegerFieldControllerBuilder;
 import dev.isxander.yacl3.api.controller.IntegerSliderControllerBuilder;
 import dev.isxander.yacl3.api.controller.StringControllerBuilder;
+import dev.isxander.yacl3.gui.YACLScreen;
+import dev.isxander.yacl3.gui.controllers.LabelController;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.client.gui.screens.Screen;
@@ -31,6 +36,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -42,18 +48,42 @@ public final class IlluminateConfigScreen {
 	}
 
 	public static Screen create(Screen parent) {
+		return create(parent, 0);
+	}
+
+	private static Screen create(Screen parent, int tab) {
 		IlluminateConfig defaults = IlluminateConfig.HANDLER.defaults();
 		IlluminateConfig config = IlluminateConfig.HANDLER.instance();
+		AtomicReference<YACLScreen> shown = new AtomicReference<>();
+		// Options that only appear for certain settings need the screen built again after saving
+		OptionFlag rebuild = client -> {
+			YACLScreen screen = shown.get();
+			int current = screen.tabNavigationBar.getTabs().indexOf(screen.tabManager.getCurrentTab());
+			setScreen(client, create(parent, Math.max(current, 0)));
+		};
 		return YetAnotherConfigLib.createBuilder()
 				.title(Component.translatable("illuminate.config.title"))
 				.category(general(defaults, config))
 				.category(effects(defaults, config))
-				.category(devices(defaults, config))
+				.category(devices(defaults, config, rebuild))
 				.category(preview())
 				.category(debug(defaults, config))
 				.save(IlluminateConfig.HANDLER::save)
+				.screenInit(screen -> {
+					if (shown.getAndSet(screen) == null) {
+						screen.tabNavigationBar.selectTab(tab, false);
+					}
+				})
 				.build()
 				.generateScreen(parent);
+	}
+
+	private static void setScreen(Minecraft client, Screen screen) {
+		//? if >=26.2 {
+		client.gui.setScreen(screen);
+		//?} else {
+		/*client.setScreen(screen);
+		*///?}
 	}
 
 	private static ConfigCategory general(IlluminateConfig defaults, IlluminateConfig config) {
@@ -182,12 +212,12 @@ public final class IlluminateConfigScreen {
 				.build();
 	}
 
-	private static ConfigCategory devices(IlluminateConfig defaults, IlluminateConfig config) {
+	private static ConfigCategory devices(IlluminateConfig defaults, IlluminateConfig config, OptionFlag rebuild) {
 		OptionGroup.Builder signalRgb = OptionGroup.createBuilder()
 				.name(Component.translatable("illuminate.config.group.signalrgb"))
 				.option(LabelOption.create(status(Illuminate.engine().signalRgbStatus())))
 				.option(toggle("signalrgb", defaults.signalRgb, () -> config.signalRgb,
-						value -> config.signalRgb = value))
+						value -> config.signalRgb = value, rebuild))
 				.option(ButtonOption.createBuilder()
 						.name(name("signalrgb_effect"))
 						.description(OptionDescription
@@ -204,7 +234,8 @@ public final class IlluminateConfigScreen {
 		OptionGroup.Builder openRgb = OptionGroup.createBuilder()
 				.name(Component.translatable("illuminate.config.group.openrgb"))
 				.option(LabelOption.create(status(Illuminate.engine().openRgbStatus())))
-				.option(toggle("openrgb", defaults.openRgb, () -> config.openRgb, value -> config.openRgb = value))
+				.option(toggle("openrgb", defaults.openRgb, () -> config.openRgb, value -> config.openRgb = value,
+						rebuild))
 				.option(Option.<String>createBuilder()
 						.name(name("openrgb_host"))
 						.description(description("openrgb_host"))
@@ -233,7 +264,12 @@ public final class IlluminateConfigScreen {
 		ConfigCategory.Builder category = ConfigCategory.createBuilder()
 				.name(Component.translatable("illuminate.config.category.devices"));
 		if (config.signalRgb && config.openRgb) {
-			category.option(LabelOption.create(Component.translatable("illuminate.config.overlap")));
+			category.option(Option.<Component>createBuilder()
+					.name(name("warning"))
+					.binding(Binding.immutable(
+							Component.translatable("illuminate.config.overlap").withStyle(ChatFormatting.YELLOW)))
+					.customController(LabelController::new)
+					.build());
 		}
 		category.group(signalRgb.build()).group(openRgb.build());
 		return category.build();
@@ -296,11 +332,12 @@ public final class IlluminateConfigScreen {
 	}
 
 	private static Option<Boolean> toggle(String key, boolean defaultValue, Supplier<Boolean> getter,
-			Consumer<Boolean> setter) {
+			Consumer<Boolean> setter, OptionFlag... flags) {
 		return Option.<Boolean>createBuilder()
 				.name(name(key))
 				.description(description(key))
 				.binding(defaultValue, getter, setter)
+				.flag(flags)
 				.controller(option -> BooleanControllerBuilder.create(option).onOffFormatter())
 				.build();
 	}

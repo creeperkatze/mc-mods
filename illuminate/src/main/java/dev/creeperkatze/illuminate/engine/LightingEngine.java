@@ -13,17 +13,12 @@ import dev.creeperkatze.illuminate.output.signalrgb.SignalRgbOutput;
 import dev.creeperkatze.illuminate.scene.Canvas;
 import dev.creeperkatze.illuminate.scene.Moment;
 import dev.creeperkatze.illuminate.scene.Scene;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.toasts.SystemToast;
-import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
 public final class LightingEngine {
 	private static final long ERROR_LOG_INTERVAL_MS = 30_000;
-	private static final String CONNECTED = "connected";
-	private static final SystemToast.SystemToastId OVERLAP_TOAST = new SystemToast.SystemToastId(10_000L);
 
 	private final Scene scene = new Scene();
 	private volatile boolean running;
@@ -38,7 +33,6 @@ public final class LightingEngine {
 	private volatile @Nullable GameEvent lastEvent;
 	private volatile long lastEventAt;
 	private boolean released = true;
-	private boolean overlapShown;
 	private long lastErrorAt;
 
 	public void start() {
@@ -184,20 +178,6 @@ public final class LightingEngine {
 		if (open != null) {
 			open.send(canvas, millis, config.openRgbPlacements);
 		}
-		if (!overlapShown && signal != null && open != null && CONNECTED.equals(signal.status())
-				&& CONNECTED.equals(open.status())) {
-			overlapShown = true;
-			showOverlapToast();
-		}
-	}
-
-	// Both outputs may drive the same device, which makes it flicker, so point it
-	// out once per launch
-	private static void showOverlapToast() {
-		Minecraft client = Minecraft.getInstance();
-		client.execute(() -> SystemToast.add(client.gui.toastManager(), OVERLAP_TOAST,
-				Component.translatable("illuminate.toast.overlap.title"),
-				Component.translatable("illuminate.toast.overlap")));
 	}
 
 	private void syncOutputs(IlluminateConfig config) {

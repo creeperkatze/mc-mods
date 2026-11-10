@@ -108,6 +108,7 @@
 	"illuminate.config.status.disabled": "Off",
 	"illuminate.config.signalrgb": "Use SignalRGB",
 	"illuminate.config.signalrgb.tooltip": "Sends the lighting to the Illuminate effect in SignalRGB. Place your devices on the SignalRGB canvas where they are around your screen.",
+	"illuminate.config.warning": "Warning",
 	"illuminate.config.overlap": "SignalRGB and OpenRGB are both on. A device controlled by both will flicker. Turn it off in SignalRGB or set it to Off under Device Positions.",
 	"illuminate.config.signalrgb_apply_effect": "Switch Effect Automatically",
 	"illuminate.config.signalrgb_apply_effect.tooltip": "Switches SignalRGB to the Illuminate effect when Minecraft starts sending lighting.",
@@ -140,8 +141,6 @@
 	"illuminate.config.placement.surround": "Surround",
 	"illuminate.config.placement.whole_scene": "Whole Scene",
 	"illuminate.config.placement.off": "Off",
-	"illuminate.toast.overlap.title": "SignalRGB and OpenRGB are both in use",
-	"illuminate.toast.overlap": "A device controlled by both will flicker. Turn it off in one of them.",
 	"illuminate.toast.effect_installed": "Effect installed. Restart SignalRGB to use it.",
 	"illuminate.toast.effect_failed": "Could not install the effect: %s"
 }
