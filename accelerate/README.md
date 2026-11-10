@@ -11,7 +11,7 @@ Accelerate removes vanilla's flight speed limits in worlds you host. Use the scr
 
 **👻 Spectator mode**
 
-Scroll or use the keybinds to change your flight speed. The vanilla cap of 4× is removed.
+Scroll or use the keybinds to change your flight speed. The vanilla cap of 4x is removed.
 
 **🧱 Creative mode**
 
@@ -34,9 +34,9 @@ Open the config screen from the Mods screen (Mod Menu on Fabric).
 
 | Option           | Description                                                                                                                                               | Default     |
 | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| Max Speed        | The highest speed you can reach, from 1× to 1000×.                                                                                                        | 50×         |
-| Scroll Steps     | _Progressive_ keeps vanilla's small steps up to 4× and then multiplies your speed on every step. _Linear_ adds the same amount on every step.             | Progressive |
-| Progressive Step | What each step above 4× multiplies your speed by, from 1.01× to 2×.                                                                                       | 1.15×       |
+| Max Speed        | The highest speed you can reach, from 1x to 1000x.                                                                                                        | 50x         |
+| Scroll Steps     | **Progressive** keeps vanilla's small steps up to 4x and then multiplies your speed on every step. _Linear_ adds the same amount on every step.           | Progressive |
+| Progressive Step | What each step above 4x multiplies your speed by, from 1.01x to 2x.                                                                                       | 1.15x       |
 | Linear Step      | How much each step adds, from +0.1 to +10.                                                                                                                | +1.0        |
 | Speed Display    | Shows your speed above the hotbar after you change it, as a multiplier, in blocks per second, km/h, Mach or chunks per second. It can also be turned off. | Multiplier  |
 | Remember Speed   | Keeps your speed when you rejoin, respawn or switch game modes. In creative, each hold of the modifier starts at your last speed.                         | Off         |
