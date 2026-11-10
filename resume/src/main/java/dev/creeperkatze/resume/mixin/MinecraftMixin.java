@@ -7,20 +7,29 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.server.WorldStem;
 import net.minecraft.server.packs.repository.PackRepository;
+//? if >=26.2 {
 import net.minecraft.world.level.gamerules.GameRules;
+//?}
 import net.minecraft.world.level.storage.LevelStorageSource;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+//? if >=26.2 {
 import java.util.Optional;
+//?}
 
 @Mixin(Minecraft.class)
 public class MinecraftMixin {
 	@Inject(method = "doWorldLoad", at = @At("HEAD"))
+	//? if >=26.2 {
 	private void resume$joinWorld(LevelStorageSource.LevelStorageAccess levelSourceAccess, PackRepository packRepository,
 			WorldStem worldStem, Optional<GameRules> gameRules, boolean newWorld, CallbackInfo ci) {
+	//?} else {
+	/*private void resume$joinWorld(LevelStorageSource.LevelStorageAccess levelSourceAccess, PackRepository packRepository,
+			WorldStem worldStem, boolean newWorld, CallbackInfo ci) {
+	*///?}
 		Resume.onJoin(Place.world(levelSourceAccess.getLevelId()));
 	}
 

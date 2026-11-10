@@ -1,6 +1,10 @@
 package dev.creeperkatze.resume.config;
 
+//? if >=26.3 {
 import com.mojang.blaze3d.Blaze3D;
+//?} else {
+/*import net.minecraft.util.Util;
+*///?}
 import dev.creeperkatze.resume.Place;
 import dev.creeperkatze.resume.Resume;
 import dev.isxander.yacl3.api.ButtonOption;
@@ -70,7 +74,11 @@ public final class ResumeConfigScreen {
 		Path folder = Place.directory();
 		try {
 			Files.createDirectories(folder);
+			//? if >=26.3 {
 			Blaze3D.openPath(folder);
+			//?} else {
+			/*Util.getPlatform().openPath(folder);
+			*///?}
 		} catch (IOException e) {
 			Resume.LOGGER.warn("Could not open {}", folder, e);
 		}

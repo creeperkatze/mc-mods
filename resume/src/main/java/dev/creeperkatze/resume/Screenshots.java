@@ -32,7 +32,11 @@ public final class Screenshots {
 		}
 		// Renders one more frame so the world is captured before the pause menu is drawn over it
 		pending = place.screenshot();
+		//? if >=26.2 {
 		minecraft.renderFrame(true);
+		//?} else {
+		/*minecraft.gameRenderer.render(minecraft.getDeltaTracker(), true);
+		*///?}
 		pending = null;
 	}
 

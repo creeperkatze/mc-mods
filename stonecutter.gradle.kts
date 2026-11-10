@@ -14,6 +14,7 @@ stonecutter parameters {
 		replace("renderWidget", "extractWidgetRenderState")
 		replace("renderListItems", "extractListItems")
 		replace("renderContent", "extractContent")
+		replace("renderBackground", "extractBackground")
 		replace("renderWithTooltipAndSubtitles", "extractRenderStateWithTooltipAndSubtitles")
 		replace("renderOverlayMessage", "extractOverlayMessage")
 		replace("renderDefaultSprite", "extractDefaultSprite")
