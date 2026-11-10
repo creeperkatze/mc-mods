@@ -36,8 +36,6 @@
 	"illuminate.config.show_virtual_room.tooltip": "Shows a small desk setup in the top right corner, lit live by Illuminate: a monitor with a glow behind it, light bars, an LED strip and a PC case. Handy for showing the mod without your own room. It stays visible when you hide the HUD with F1.",
 	"illuminate.config.log_events": "Log Events",
 	"illuminate.config.log_events.tooltip": "Writes every damage, explosion, lightning strike and other event to the game log.",
-	"illuminate.config.f3_entry": "Illuminate can show its frame rate, connections, colors and the last event on the F3 screen. Press F3 + F6 and turn on the illuminate entry.",
-	"illuminate.config.test_command": "Play any effect with /illuminate debug, like /illuminate debug damage left or /illuminate debug totem. Nothing in the world happens, only the lights react.",
 	"illuminate.config.group.world": "World",
 	"illuminate.config.group.player": "Player",
 	"illuminate.config.group.events": "Events",

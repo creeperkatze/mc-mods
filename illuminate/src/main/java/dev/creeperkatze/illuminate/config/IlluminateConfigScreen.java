@@ -141,8 +141,6 @@ public final class IlluminateConfigScreen {
 						value -> config.showVirtualRoom = value))
 				.option(toggle("log_events", defaults.logEvents, () -> config.logEvents,
 						value -> config.logEvents = value))
-				.option(LabelOption.create(Component.translatable("illuminate.config.f3_entry")))
-				.option(LabelOption.create(Component.translatable("illuminate.config.test_command")))
 				.build();
 	}
 
