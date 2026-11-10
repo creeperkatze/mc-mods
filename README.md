@@ -35,4 +35,5 @@ Any installed JDK can launch `./gradlew`. Gradle runs itself on JDK 25 and compi
 | ------------------------------------------------- | ----------------------------------------- |
 | `./gradlew build`                                 | Build all mods                            |
 | `./gradlew :<mod>:<minecraft>-<loader>:runClient` | Launch a development client               |
+| `./gradlew runAll -PrunAll=<minecraft>-<loader>`  | Launch a client with every mod            |
 | `./gradlew :<mod>:<minecraft>-fabric:genSources`  | Decompile Minecraft for browsing its code |

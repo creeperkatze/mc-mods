@@ -9,7 +9,8 @@ val modId = modProperty("mod_id")
 val javaVersion = mcVersion("java").toInt()
 val releaseVersion = "${modProperty("mod_version")}+$minecraftVersion"
 
-group = modProperty("maven_group")
+// Tells apart version projects of different mods, which share names like 26.3-fabric
+group = "${modProperty("maven_group")}.$modId"
 version = "$releaseVersion-$loader"
 base.archivesName = modDirectory.asFile.name
 
@@ -23,6 +24,17 @@ repositories {
 	maven("https://maven.terraformersmc.com/releases/")
 	maven("https://maven.isxander.dev/releases/")
 	maven("https://maven.quiltmc.org/repository/release/")
+}
+
+// For the root runAll task the first mod of this target puts every other mod of it on its runtime classpath
+val allTargetProjects = targetProjects(name)
+if (providers.gradleProperty("runAll").orNull == name && allTargetProjects.first() == project) {
+	dependencies {
+		(allTargetProjects - project).forEach { other ->
+			// Remapped Fabric builds expose their dev jar through Loom's namedElements
+			"runtimeOnly"(if (isObfuscated && loader == "fabric") project(other.path, "namedElements") else project(other.path))
+		}
+	}
 }
 
 tasks.withType<JavaCompile>().configureEach {

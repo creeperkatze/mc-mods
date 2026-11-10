@@ -13,6 +13,17 @@
 			"problemMatcher": []
 		},
 		{
+			"label": "Run all",
+			"type": "shell",
+			"command": "./gradlew runAll -PrunAll=${input:minecraft}-${input:loader}",
+			"group": "test",
+			"presentation": {
+				"reveal": "always",
+				"panel": "dedicated"
+			},
+			"problemMatcher": []
+		},
+		{
 			"label": "Build all",
 			"type": "shell",
 			"command": "./gradlew build",

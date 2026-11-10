@@ -33,6 +33,10 @@ val Project.minecraftVersion: String
 val Project.loader: String
 	get() = name.substringAfterLast('-')
 
+// The projects of every mod that supports a <minecraft>-<loader> target
+fun Project.targetProjects(target: String): List<Project> =
+	rootProject.childProjects.values.mapNotNull { it.childProjects[target] }.sortedBy { it.path }
+
 // Minecraft was obfuscated before 26.1, so Fabric needs Loom's remapping plugin there
 val Project.isObfuscated: Boolean
 	get() = minecraftVersion.startsWith("1.")
