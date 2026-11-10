@@ -1,10 +1,11 @@
 package dev.creeperkatze.illuminate.config;
 
 import dev.creeperkatze.illuminate.Illuminate;
-import dev.creeperkatze.illuminate.game.GameEvent;
 import dev.creeperkatze.illuminate.game.GameEvents;
 import dev.creeperkatze.illuminate.output.signalrgb.SignalRgbEffect;
-import dev.creeperkatze.illuminate.scene.Rgb;
+import dev.creeperkatze.illuminate.preview.TestEffect;
+import dev.creeperkatze.illuminate.preview.TestEffect.Kind;
+import dev.creeperkatze.illuminate.preview.TestEffect.Side;
 import dev.isxander.yacl3.api.ButtonOption;
 import dev.isxander.yacl3.api.ConfigCategory;
 import dev.isxander.yacl3.api.LabelOption;
@@ -24,17 +25,16 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 import java.io.IOException;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 public final class IlluminateConfigScreen {
+	private static Side previewSide = Side.NONE;
+
 	private IlluminateConfigScreen() {
 	}
 
@@ -46,6 +46,7 @@ public final class IlluminateConfigScreen {
 				.category(general(defaults, config))
 				.category(effects(defaults, config))
 				.category(devices(defaults, config))
+				.category(preview())
 				.category(debug(defaults, config))
 				.save(IlluminateConfig.HANDLER::save)
 				.build()
@@ -75,34 +76,44 @@ public final class IlluminateConfigScreen {
 						value -> config.dimInMenus = value))
 				.option(cycle("idle_mode", IdleMode.class, IdleMode::caption, defaults.idleMode, () -> config.idleMode,
 						value -> config.idleMode = value))
-				.group(livePreview())
 				.build();
 	}
 
 	// Test effects whose descriptions show the lights live, so the preview needs no screen of its own
-	private static OptionGroup livePreview() {
+	private static ConfigCategory preview() {
 		OptionDescription preview = OptionDescription.createBuilder()
-				.text(Component.translatable("illuminate.config.group.live_preview.tooltip"))
+				.text(Component.translatable("illuminate.config.preview.tooltip"))
 				.customImage(new LivePreviewImage())
 				.build();
-		OptionGroup.Builder group = OptionGroup.createBuilder()
-				.name(Component.translatable("illuminate.config.group.live_preview"))
-				.description(preview);
-		Map<String, Supplier<GameEvent>> tests = new LinkedHashMap<>();
-		tests.put("damage_left", () -> new GameEvent.Damage("generic", 0.1F));
-		tests.put("damage_right", () -> new GameEvent.Damage("generic", 0.9F));
-		tests.put("explosion", () -> new GameEvent.Explosion(1.0F, 0.5F));
-		tests.put("lightning", () -> new GameEvent.Lightning(1.0F, 0.5F));
-		tests.put("firework", () -> new GameEvent.Firework(List.of(Rgb.of(0xFF3355), Rgb.of(0x33AAFF), Rgb.of(0xFFDD33)), List.of(Rgb.of(0xFFFFFF)), 1.0F, 0.5F, 0.3F));
-		tests.put("totem", GameEvent.Totem::new);
-		tests.put("level_up", () -> new GameEvent.LevelUp(5));
-		tests.forEach((key, event) -> group.option(ButtonOption.createBuilder()
-				.name(Component.translatable("illuminate.preview.test." + key))
+		Option<Side> side = Option.<Side>createBuilder()
+				.name(Component.translatable("illuminate.config.preview_side"))
 				.description(preview)
-				.text(Component.translatable("illuminate.config.play"))
-				.action((screen, button) -> GameEvents.post(event.get()))
-				.build()));
-		return group.build();
+				.binding(Side.NONE, () -> previewSide, value -> previewSide = value)
+				// Follows the selection right away so the side never counts as an unsaved change
+				.addListener((option, event) -> previewSide = option.pendingValue())
+				.controller(option -> EnumControllerBuilder.create(option).enumClass(Side.class)
+						.formatValue(Side::caption))
+				.build();
+		ConfigCategory.Builder category = ConfigCategory.createBuilder()
+				.name(Component.translatable("illuminate.config.category.preview"))
+				.option(side);
+		for (Kind kind : Kind.values()) {
+			OptionGroup.Builder group = OptionGroup.createBuilder()
+					.name(kind.caption())
+					.description(preview);
+			for (TestEffect effect : TestEffect.values()) {
+				if (effect.kind() == kind) {
+					group.option(ButtonOption.createBuilder()
+							.name(effect.caption())
+							.description(preview)
+							.text(Component.translatable("illuminate.config.play"))
+							.action((screen, button) -> GameEvents.post(effect.event(previewSide)))
+							.build());
+				}
+			}
+			category.group(group.build());
+		}
+		return category.build();
 	}
 
 	private static ConfigCategory debug(IlluminateConfig defaults, IlluminateConfig config) {
