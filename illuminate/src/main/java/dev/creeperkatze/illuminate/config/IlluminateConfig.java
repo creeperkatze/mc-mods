@@ -1,6 +1,7 @@
 package dev.creeperkatze.illuminate.config;
 
 import dev.creeperkatze.illuminate.Illuminate;
+import dev.creeperkatze.illuminate.output.signalrgb.SignalRgbEffect;
 import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
@@ -79,7 +80,7 @@ public class IlluminateConfig {
 	public float eventIntensity = 1.0F;
 
 	@SerialEntry
-	public boolean signalRgb = true;
+	public boolean signalRgb = SignalRgbEffect.supported();
 	@SerialEntry
 	public int signalRgbPort = 16034;
 	@SerialEntry

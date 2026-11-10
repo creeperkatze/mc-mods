@@ -106,6 +106,7 @@
 	"illuminate.config.status.connected": "Connected",
 	"illuminate.config.status.unavailable": "Not running",
 	"illuminate.config.status.disabled": "Off",
+	"illuminate.config.status.windows_only": "Only available on Windows",
 	"illuminate.config.signalrgb": "Use SignalRGB",
 	"illuminate.config.signalrgb.tooltip": "Sends the lighting to the Illuminate effect in SignalRGB. Place your devices on the SignalRGB canvas where they are around your screen.",
 	"illuminate.config.warning": "Warning",

@@ -213,23 +213,29 @@ public final class IlluminateConfigScreen {
 	}
 
 	private static ConfigCategory devices(IlluminateConfig defaults, IlluminateConfig config, OptionFlag rebuild) {
+		boolean windows = SignalRgbEffect.supported();
 		OptionGroup.Builder signalRgb = OptionGroup.createBuilder()
 				.name(Component.translatable("illuminate.config.group.signalrgb"))
-				.option(LabelOption.create(status(Illuminate.engine().signalRgbStatus())))
-				.option(toggle("signalrgb", defaults.signalRgb, () -> config.signalRgb,
-						value -> config.signalRgb = value, rebuild))
-				.option(ButtonOption.createBuilder()
+				.option(LabelOption.create(status(Illuminate.engine().signalRgbStatus())));
+		List<Option<?>> signalRgbOptions = List.of(
+				toggle("signalrgb", defaults.signalRgb, () -> config.signalRgb, value -> config.signalRgb = value,
+						rebuild),
+				ButtonOption.createBuilder()
 						.name(name("signalrgb_effect"))
 						.description(OptionDescription
 								.of(Component.translatable("illuminate.config.signalrgb_effect.tooltip",
 										SignalRgbEffect.effectsDirectory().toString())))
 						.text(Component.translatable("illuminate.config.install"))
 						.action((screen, button) -> installEffect())
-						.build())
-				.option(toggle("signalrgb_apply_effect", defaults.signalRgbApplyEffect,
-						() -> config.signalRgbApplyEffect, value -> config.signalRgbApplyEffect = value))
-				.option(port("signalrgb_port", defaults.signalRgbPort, () -> config.signalRgbPort,
+						.build(),
+				toggle("signalrgb_apply_effect", defaults.signalRgbApplyEffect, () -> config.signalRgbApplyEffect,
+						value -> config.signalRgbApplyEffect = value),
+				port("signalrgb_port", defaults.signalRgbPort, () -> config.signalRgbPort,
 						value -> config.signalRgbPort = value));
+		for (Option<?> option : signalRgbOptions) {
+			option.setAvailable(windows);
+			signalRgb.option(option);
+		}
 
 		OptionGroup.Builder openRgb = OptionGroup.createBuilder()
 				.name(Component.translatable("illuminate.config.group.openrgb"))
@@ -263,16 +269,19 @@ public final class IlluminateConfigScreen {
 
 		ConfigCategory.Builder category = ConfigCategory.createBuilder()
 				.name(Component.translatable("illuminate.config.category.devices"));
-		if (config.signalRgb && config.openRgb) {
-			category.option(Option.<Component>createBuilder()
-					.name(name("warning"))
-					.binding(Binding.immutable(
-							Component.translatable("illuminate.config.overlap").withStyle(ChatFormatting.YELLOW)))
-					.customController(LabelController::new)
-					.build());
+		if (windows && config.signalRgb && config.openRgb) {
+			category.option(warning(Component.translatable("illuminate.config.overlap")));
 		}
 		category.group(signalRgb.build()).group(openRgb.build());
 		return category.build();
+	}
+
+	private static Option<Component> warning(Component text) {
+		return Option.<Component>createBuilder()
+				.name(name("warning"))
+				.binding(Binding.immutable(text.copy().withStyle(ChatFormatting.YELLOW)))
+				.customController(LabelController::new)
+				.build();
 	}
 
 	private static void installEffect() {

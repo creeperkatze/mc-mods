@@ -103,6 +103,9 @@ public final class LightingEngine {
 	}
 
 	public String signalRgbStatus() {
+		if (!SignalRgbEffect.supported()) {
+			return "windows_only";
+		}
 		SignalRgbOutput output = signalRgb;
 		return output == null ? "disabled" : output.status();
 	}
@@ -181,12 +184,13 @@ public final class LightingEngine {
 	}
 
 	private void syncOutputs(IlluminateConfig config) {
+		boolean useSignalRgb = config.signalRgb && SignalRgbEffect.supported();
 		SignalRgbOutput signal = signalRgb;
-		if (signal != null && (!config.signalRgb || !signal.matches(config.signalRgbPort))) {
+		if (signal != null && (!useSignalRgb || !signal.matches(config.signalRgbPort))) {
 			signal.close();
 			signalRgb = null;
 		}
-		if (config.signalRgb && signalRgb == null) {
+		if (useSignalRgb && signalRgb == null) {
 			signalRgb = new SignalRgbOutput(config.signalRgbPort);
 		}
 

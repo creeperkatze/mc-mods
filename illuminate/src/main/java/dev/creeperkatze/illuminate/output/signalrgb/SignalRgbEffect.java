@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 // The Illuminate lighting effect that SignalRGB loads from its user effects folder
 public final class SignalRgbEffect {
@@ -18,8 +19,15 @@ public final class SignalRgbEffect {
 	private static final List<String> FILES = List.of(EFFECT, THUMBNAIL);
 	private static final String RESOURCES = "/assets/" + Illuminate.MOD_ID + "/signalrgb/";
 	private static final String APPLY_URI = "signalrgb://effect/apply/Illuminate?-silentlaunch-";
+	// SignalRGB only exists for Windows.
+	private static final boolean SUPPORTED = Objects.requireNonNullElse(System.getenv("ILLUMINATE_OS"),
+			System.getProperty("os.name", "")).toLowerCase(Locale.ROOT).contains("windows");
 
 	private SignalRgbEffect() {
+	}
+
+	public static boolean supported() {
+		return SUPPORTED;
 	}
 
 	public static Path effectsDirectory() {
@@ -48,7 +56,7 @@ public final class SignalRgbEffect {
 
 	// Keeps an installed effect in step with the mod version
 	public static void updateIfInstalled() {
-		if (!isInstalled()) {
+		if (!supported() || !isInstalled()) {
 			return;
 		}
 		try {
@@ -66,9 +74,10 @@ public final class SignalRgbEffect {
 		}
 	}
 
-	// Asks SignalRGB to switch to the Illuminate effect without bringing its window up
+	// Asks SignalRGB to switch to the Illuminate effect without bringing its window
+	// up
 	public static void apply() {
-		if (!System.getProperty("os.name", "").toLowerCase(Locale.ROOT).contains("windows")) {
+		if (!supported()) {
 			return;
 		}
 		try {
