@@ -5,7 +5,7 @@ import dev.creeperkatze.illuminate.game.GameEvents;
 import dev.creeperkatze.illuminate.output.signalrgb.SignalRgbEffect;
 import dev.creeperkatze.illuminate.preview.TestEffect;
 import dev.creeperkatze.illuminate.preview.TestEffect.Kind;
-import dev.creeperkatze.illuminate.preview.TestEffect.Side;
+import dev.creeperkatze.illuminate.preview.TestEffect.Direction;
 import dev.isxander.yacl3.api.ButtonOption;
 import dev.isxander.yacl3.api.ConfigCategory;
 import dev.isxander.yacl3.api.LabelOption;
@@ -33,7 +33,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public final class IlluminateConfigScreen {
-	private static Side previewSide = Side.NONE;
+	private static Direction previewDirection = Direction.NONE;
 
 	private IlluminateConfigScreen() {
 	}
@@ -85,18 +85,18 @@ public final class IlluminateConfigScreen {
 				.text(Component.translatable("illuminate.config.preview.tooltip"))
 				.customImage(new LivePreviewImage())
 				.build();
-		Option<Side> side = Option.<Side>createBuilder()
-				.name(Component.translatable("illuminate.config.preview_side"))
+		Option<Direction> direction = Option.<Direction>createBuilder()
+				.name(Component.translatable("illuminate.config.preview_direction"))
 				.description(preview)
-				.binding(Side.NONE, () -> previewSide, value -> previewSide = value)
-				// Follows the selection right away so the side never counts as an unsaved change
-				.addListener((option, event) -> previewSide = option.pendingValue())
-				.controller(option -> EnumControllerBuilder.create(option).enumClass(Side.class)
-						.formatValue(Side::caption))
+				.binding(Direction.NONE, () -> previewDirection, value -> previewDirection = value)
+				// Follows the selection right away so the direction never counts as an unsaved change
+				.addListener((option, event) -> previewDirection = option.pendingValue())
+				.controller(option -> EnumControllerBuilder.create(option).enumClass(Direction.class)
+						.formatValue(Direction::caption))
 				.build();
 		ConfigCategory.Builder category = ConfigCategory.createBuilder()
 				.name(Component.translatable("illuminate.config.category.preview"))
-				.option(side);
+				.option(direction);
 		for (Kind kind : Kind.values()) {
 			OptionGroup.Builder group = OptionGroup.createBuilder()
 					.name(kind.caption())
@@ -107,7 +107,7 @@ public final class IlluminateConfigScreen {
 							.name(effect.caption())
 							.description(preview)
 							.text(Component.translatable("illuminate.config.play"))
-							.action((screen, button) -> GameEvents.post(effect.event(previewSide)))
+							.action((screen, button) -> GameEvents.post(effect.event(previewDirection)))
 							.build());
 				}
 			}

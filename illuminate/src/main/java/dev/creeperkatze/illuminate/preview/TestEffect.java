@@ -47,8 +47,8 @@ public enum TestEffect {
 		return directional;
 	}
 
-	public GameEvent event(Side side) {
-		return event.apply(directional ? side.u : Float.NaN);
+	public GameEvent event(Direction direction) {
+		return event.apply(directional ? direction.u : Float.NaN);
 	}
 
 	public String id() {
@@ -73,7 +73,7 @@ public enum TestEffect {
 		}
 	}
 
-	public enum Side {
+	public enum Direction {
 		NONE(Float.NaN),
 		LEFT(0.1F),
 		CENTER(0.5F),
@@ -81,7 +81,7 @@ public enum TestEffect {
 
 		private final float u;
 
-		Side(float u) {
+		Direction(float u) {
 			this.u = u;
 		}
 
@@ -90,7 +90,7 @@ public enum TestEffect {
 		}
 
 		public Component caption() {
-			return Component.translatable("illuminate.preview.side." + id());
+			return Component.translatable("illuminate.preview.direction." + id());
 		}
 	}
 }
