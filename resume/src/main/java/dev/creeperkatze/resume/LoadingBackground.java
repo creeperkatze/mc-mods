@@ -62,8 +62,12 @@ public final class LoadingBackground {
 
 	public static void onScreenChange(@Nullable Screen from, @Nullable Screen to) {
 		if (joining && from instanceof LevelLoadingScreen && !(to instanceof LevelLoadingScreen)) {
-			joining = false;
-			fadeStart = Util.getMillis();
+			if (Resume.config().fadeDuration > 0.0F) {
+				joining = false;
+				fadeStart = Util.getMillis();
+			} else {
+				release();
+			}
 		} else if (to instanceof TitleScreen || to instanceof JoinMultiplayerScreen || to instanceof SelectWorldScreen
 				|| to instanceof DisconnectedScreen) {
 			// Joining was canceled or failed
@@ -101,7 +105,7 @@ public final class LoadingBackground {
 		graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, 0, 0, (width - sourceWidth) / 2.0F,
 				(height - sourceHeight) / 2.0F, screenWidth, screenHeight, sourceWidth, sourceHeight, width, height,
 				ARGB.white(alpha));
-		graphics.fill(0, 0, screenWidth, screenHeight, ARGB.black(alpha * Resume.config().darkness));
+		graphics.fill(0, 0, screenWidth, screenHeight, ARGB.black(alpha * (1.0F - Resume.config().brightness)));
 	}
 
 	private static void release() {

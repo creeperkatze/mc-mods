@@ -16,7 +16,7 @@ public record Place(Path screenshot, boolean singleplayer) {
 		return new Place(directory().resolve("servers").resolve(name + ".png"), false);
 	}
 
-	public static Path directory() {
+	private static Path directory() {
 		return Minecraft.getInstance().gameDirectory.toPath().resolve(Resume.MOD_ID);
 	}
 

@@ -3,15 +3,12 @@
 	"resume.config.category.general": "General",
 	"resume.config.percent": "%s%%",
 	"resume.config.seconds": "%ss",
-	"resume.config.worlds": "Singleplayer Worlds",
+	"resume.config.worlds": "Worlds",
 	"resume.config.worlds.tooltip": "Takes a screenshot when you leave a singleplayer world and shows it while the world loads again.",
 	"resume.config.servers": "Servers",
 	"resume.config.servers.tooltip": "Takes a screenshot when you leave a server and shows it while you join it again.",
-	"resume.config.darkness": "Darkness",
-	"resume.config.darkness.tooltip": "How much the screenshot is darkened so the loading text stays readable.",
+	"resume.config.brightness": "Brightness",
+	"resume.config.brightness.tooltip": "How bright the screenshot is. Lower it to make the loading text easier to read.",
 	"resume.config.fade_duration": "Fade Duration",
-	"resume.config.fade_duration.tooltip": "How long the screenshot takes to fade into the world once it has loaded. 0 switches right away.",
-	"resume.config.screenshots": "Screenshots",
-	"resume.config.screenshots.tooltip": "Opens the folder with the screenshots of your worlds and servers. Delete one to get the normal loading screen back.",
-	"resume.config.open_folder": "Open Folder"
+	"resume.config.fade_duration.tooltip": "How long the screenshot takes to fade into the world once it has loaded. 0 switches right away."
 }

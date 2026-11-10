@@ -1,13 +1,5 @@
 package dev.creeperkatze.resume.config;
 
-//? if >=26.3 {
-import com.mojang.blaze3d.Blaze3D;
-//?} else {
-/*import net.minecraft.util.Util;
-*///?}
-import dev.creeperkatze.resume.Place;
-import dev.creeperkatze.resume.Resume;
-import dev.isxander.yacl3.api.ButtonOption;
 import dev.isxander.yacl3.api.ConfigCategory;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.OptionDescription;
@@ -17,9 +9,6 @@ import dev.isxander.yacl3.api.controller.FloatSliderControllerBuilder;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -38,11 +27,12 @@ public final class ResumeConfigScreen {
 						.option(toggle("servers", defaults.servers, () -> config.servers,
 								value -> config.servers = value))
 						.option(Option.<Float>createBuilder()
-								.name(name("darkness"))
-								.description(description("darkness"))
-								.binding(defaults.darkness, () -> config.darkness, value -> config.darkness = value)
+								.name(name("brightness"))
+								.description(description("brightness"))
+								.binding(defaults.brightness, () -> config.brightness,
+										value -> config.brightness = value)
 								.controller(option -> FloatSliderControllerBuilder.create(option)
-										.range(0.0F, 0.9F)
+										.range(0.0F, 1.0F)
 										.step(0.05F)
 										.formatValue(value -> Component.translatable("resume.config.percent",
 												Math.round(value * 100.0F))))
@@ -58,30 +48,10 @@ public final class ResumeConfigScreen {
 										.formatValue(value -> Component.translatable("resume.config.seconds",
 												String.format("%.1f", value))))
 								.build())
-						.option(ButtonOption.createBuilder()
-								.name(name("screenshots"))
-								.description(description("screenshots"))
-								.text(Component.translatable("resume.config.open_folder"))
-								.action((screen, button) -> openFolder())
-								.build())
 						.build())
 				.save(ResumeConfig.HANDLER::save)
 				.build()
 				.generateScreen(parent);
-	}
-
-	private static void openFolder() {
-		Path folder = Place.directory();
-		try {
-			Files.createDirectories(folder);
-			//? if >=26.3 {
-			Blaze3D.openPath(folder);
-			//?} else {
-			/*Util.getPlatform().openPath(folder);
-			*///?}
-		} catch (IOException e) {
-			Resume.LOGGER.warn("Could not open {}", folder, e);
-		}
 	}
 
 	private static Option<Boolean> toggle(String key, boolean defaultValue, Supplier<Boolean> getter,

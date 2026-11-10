@@ -17,11 +17,18 @@ The next time you join, the screenshot is the background of the loading screens 
 
 **🌅 Fade**
 
-Once the world has loaded, the screenshot fades into the game, so you pick up right where you were.
+Let the screenshot fade into the game once the world has loaded, so you pick up right where you were.
 
-## 🔧 Settings
+## ⚙️ Settings
 
-Turn it on or off for singleplayer worlds and servers, and change how dark the screenshot is and how long it takes to fade. The screenshots are saved in the `resume` folder of your game folder. Delete one to get the normal loading screen back.
+Open the config screen from the Mods screen (Mod Menu on Fabric).
+
+| Option        | Description                                                                                      | Default |
+| ------------- | ------------------------------------------------------------------------------------------------ | ------- |
+| Worlds        | Takes a screenshot when you leave a singleplayer world and shows it while the world loads again. | On      |
+| Servers       | Takes a screenshot when you leave a server and shows it while you join it again.                 | On      |
+| Brightness    | How bright the screenshot is, from 0% to 100%. Lower it to make the loading text easier to read. | 100%    |
+| Fade Duration | How long the screenshot takes to fade into the world once it has loaded, up to 3 seconds.        | Off     |
 
 ## 🌐 Translating
 
