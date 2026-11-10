@@ -1,0 +1,18 @@
+{
+	"resume.config.title": "Resume",
+	"resume.config.category.general": "Allgemein",
+	"resume.config.percent": "%s%%",
+	"resume.config.seconds": "%ss",
+	"resume.config.worlds": "Welten",
+	"resume.config.worlds.tooltip": "Erstellt einen Screenshot, wenn du eine Einzelspieler-Welt verlässt, und zeigt ihn an, während die Welt erneut geladen wird.",
+	"resume.config.servers": "Server",
+	"resume.config.servers.tooltip": "Erstellt einen Screenshot, wenn du einen Server verlässt, und zeigt ihn an, während du dem Server erneut beitrittst.",
+	"resume.config.brightness": "Helligkeit",
+	"resume.config.brightness.tooltip": "Wie hell der Screenshot ist. Verringere die Helligkeit, damit der Text beim Laden besser lesbar ist.",
+	"resume.config.blur": "Unschärfe",
+	"resume.config.blur.tooltip": "Wie stark der Screenshot unscharf ist.",
+	"resume.config.fade_in_duration": "Einblenddauer",
+	"resume.config.fade_in_duration.tooltip": "Wie lange es dauert, bis der Screenshot aus dem Schwarz heraus einblendet, wenn der Ladebildschirm erscheint.",
+	"resume.config.fade_out_duration": "Ausblenddauer",
+	"resume.config.fade_out_duration.tooltip": "Wie lange es dauert, bis der Screenshot nach dem Laden in die Spielwelt eingeblendet wird."
+}
