@@ -11,10 +11,8 @@ import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
 //? if >=26.3 {
 import net.minecraft.client.gui.screens.WorldOptionsScreen;
-//?} else if >=26.2 {
+//?} else {
 /*import net.minecraft.client.gui.screens.MultiplayerOptionsScreen;
-*///?} else {
-/*import net.minecraft.client.gui.screens.ShareToLanScreen;
 *///?}
 import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.network.chat.Component;
@@ -30,17 +28,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 // The screen that opens the world to LAN
 //? if >=26.3 {
 @Mixin(WorldOptionsScreen.class)
-//?} else if >=26.2 {
+//?} else {
 /*@Mixin(MultiplayerOptionsScreen.class)
-*///?} else {
-/*@Mixin(ShareToLanScreen.class)
 *///?}
 public abstract class WorldOptionsScreenMixin extends Screen {
 	private WorldOptionsScreenMixin(Component title) {
 		super(title);
 	}
 
-	//? if >=26.2 {
 	@Shadow
 	private int port;
 
@@ -48,7 +43,6 @@ public abstract class WorldOptionsScreenMixin extends Screen {
 	private MutableComponent gather$publishedMessage(MutableComponent original) {
 		return LanHosting.publishedMessage(this.port).orElse(original);
 	}
-	//?}
 
 	//? if >=26.3 {
 	@Unique
@@ -95,18 +89,10 @@ public abstract class WorldOptionsScreenMixin extends Screen {
 			LanHosting.rememberPublished(server);
 		}
 	}
-	//?} else if >=26.2 {
+	//?} else {
 	/*@Inject(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/layouts/HeaderAndFooterLayout;visitWidgets(Ljava/util/function/Consumer;)V"))
 	private void gather$addHostSettings(CallbackInfo ci, @Local(ordinal = 0) LinearLayout content, @Local IntegratedServer server) {
 		content.addChild(HostOptionsScreen.openButton(this, server).build());
-	}
-	*///?} else {
-	/*@Inject(method = "init", at = @At("TAIL"))
-	private void gather$addHostSettings(CallbackInfo ci) {
-		IntegratedServer server = this.minecraft.getSingleplayerServer();
-		if (server != null) {
-			this.addRenderableWidget(HostOptionsScreen.openButton(this, server).bounds(this.width / 2 - 75, 190, 150, 20).build());
-		}
 	}
 	*///?}
 }

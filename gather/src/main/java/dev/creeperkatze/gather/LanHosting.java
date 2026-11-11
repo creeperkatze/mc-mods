@@ -155,10 +155,8 @@ public final class LanHosting {
 		if (server.isPublished()) {
 			//? if >=26.3 {
 			save(server, settings(server).withPublished(server.getGuestCommandAccess(), server.forceGameMode()));
-			//?} else if >=26.2 {
+			//?} else {
 			/*save(server, settings(server).withPublished(server.commandsAllowedForOtherPlayers(), server.getGameTypeForOtherPlayers()));
-			*///?} else {
-			/*save(server, settings(server).withPublished(server.getPlayerList().isAllowCommandsForAllPlayers(), server.getForcedGameType()));
 			*///?}
 		}
 	}
@@ -190,20 +188,14 @@ public final class LanHosting {
 		server.setGuestCommandAccess(settings.guestCommands());
 		server.setForceGameMode(settings.forceGameMode());
 		boolean published = server.publishServer(MinecraftServer.MultiplayerScope.LAN, port);
-		//?} else if >=26.2 {
+		//?} else {
 		/*boolean published = server.publishServer(MinecraftServer.MultiplayerScope.LAN, settings.guestGameMode(), settings.guestCommands(), port);
-		*///?} else {
-		/*boolean published = server.publishServer(settings.guestGameMode(), settings.guestCommands(), port);
 		*///?}
 		chat(published ? PublishCommand.getSuccessMessage(port) : Component.translatable("commands.publish.failed"));
 	}
 
 	private static void chat(Component message) {
-		//? if >=26.2 {
 		Minecraft.getInstance().gui.hud.getChat().addClientSystemMessage(message);
-		//?} else {
-		/*Minecraft.getInstance().gui.getChat().addMessage(message);
-		*///?}
 	}
 
 	// Players with a real account keep their real id in offline mode, so their inventory stays

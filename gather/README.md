@@ -33,7 +33,7 @@ Open your world to LAN every time you load it, with the same settings as last ti
 
 ## ⚙️ Settings
 
-On 26.3, the settings are in the **Multiplayer** section of **World Options** in the pause menu. On 1.21.11 and 26.2, press **Host Settings...** on the **Open to LAN** screen. Every world keeps its own settings.
+On 26.3, the settings are in the **Multiplayer** section of **World Options** in the pause menu. On 26.2, press **Host Settings...** on the **Open to LAN** screen. Every world keeps its own settings.
 
 | Option       | Description                                                                                                             | Default |
 | ------------ | ----------------------------------------------------------------------------------------------------------------------- | ------- |
