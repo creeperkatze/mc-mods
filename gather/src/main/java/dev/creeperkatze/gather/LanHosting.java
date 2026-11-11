@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import dev.creeperkatze.gather.mixin.IntegratedServerAccessor;
 import net.minecraft.client.Minecraft;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.client.server.LanServerPinger;
 import net.minecraft.network.Connection;
@@ -12,6 +13,7 @@ import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.commands.PublishCommand;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.NameAndId;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.server.players.StoredUserList;
@@ -30,6 +32,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public final class LanHosting {
 	public static final SimpleCommandExceptionType BAN_OWNER = new SimpleCommandExceptionType(Component.translatable("gather.commands.ban.owner"));
@@ -116,6 +119,12 @@ public final class LanHosting {
 
 	public static boolean isHost(MinecraftServer server, GameProfile profile) {
 		return isHost(server, new NameAndId(profile));
+	}
+
+	// The host can always manage who joins, even when the world doesn't allow cheats
+	public static Predicate<CommandSourceStack> orHost(Predicate<CommandSourceStack> requirement) {
+		return source -> requirement.test(source)
+				|| source.getEntity() instanceof ServerPlayer player && isHost(source.getServer(), player.getGameProfile());
 	}
 
 	// The name vanilla gives a LAN world

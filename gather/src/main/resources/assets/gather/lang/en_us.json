@@ -6,7 +6,7 @@
 	"gather.server_name": "Server Name",
 	"gather.server_name.tooltip": "The name your friends see in their LAN server list. Use & codes for colors and styles, like &6 for gold or &l for bold. Leave it empty for the default.",
 	"gather.whitelist": "Whitelist",
-	"gather.whitelist.tooltip": "Only players on the whitelist can join. Add them with /whitelist add <name>, which needs commands to be allowed.",
+	"gather.whitelist.tooltip": "Only players on the whitelist can join. Add them with /whitelist add <name>, which you can use even without cheats.",
 	"gather.idle_timeout": "AFK Kick",
 	"gather.idle_timeout.minutes": "%s min",
 	"gather.idle_timeout.tooltip": "Kicks players who haven't moved for this long. You are never kicked from your own world.",
