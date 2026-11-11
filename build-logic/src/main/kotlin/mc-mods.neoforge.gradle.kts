@@ -24,7 +24,6 @@ neoForge {
 		register("client") {
 			client()
 			gameDirectory = rootProject.layout.projectDirectory.dir("run/$targetMinecraft/neoforge/client")
-			programArguments.addAll("--quickPlaySingleplayer", "New World")
 		}
 		if (optionalModProperty("mod_environment") != "client") {
 			register("server") {
