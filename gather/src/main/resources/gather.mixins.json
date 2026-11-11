@@ -12,6 +12,7 @@
 		"IntegratedServerMixin",
 		"MinecraftServerMixin",
 		"PlayerListMixin",
+		"PublishCommandMixin",
 		"ServerGamePacketListenerImplMixin",
 		"ServerLoginPacketListenerImplMixin",
 		"WorldOptionsScreenMixin"

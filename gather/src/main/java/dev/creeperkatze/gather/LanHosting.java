@@ -9,6 +9,7 @@ import net.minecraft.client.server.LanServerPinger;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.players.NameAndId;
 import net.minecraft.server.players.PlayerList;
@@ -157,12 +158,13 @@ public final class LanHosting {
 		}
 	}
 
-	public static void onPublished(IntegratedServer server, int port) {
+	public static void onPublished(IntegratedServer server) {
 		save(server, settings(server).withPublished(server.getGuestCommandAccess(), server.forceGameMode()));
-		lanAddress().ifPresent(address -> {
-			Component message = Component.translatable("gather.address", ComponentUtils.copyOnClickText(address + ":" + port));
-			Minecraft.getInstance().execute(() -> chat(message));
-		});
+	}
+
+	// Replaces the vanilla message, which only shows the port
+	public static Optional<MutableComponent> publishedMessage(int port) {
+		return lanAddress().map(address -> Component.translatable("gather.published", ComponentUtils.copyOnClickText(address + ":" + port)));
 	}
 
 	public static void openOnLoad(Minecraft minecraft) {
@@ -175,7 +177,7 @@ public final class LanHosting {
 		server.setForceGameMode(settings.forceGameMode());
 		int port = HttpUtil.getAvailablePort();
 		if (server.publishServer(MinecraftServer.MultiplayerScope.LAN, port)) {
-			chat(Component.translatable("menu.multiplayerOptions.publish.started.lan", ComponentUtils.copyOnClickText(String.valueOf(port))));
+			chat(publishedMessage(port).orElseGet(() -> Component.translatable("menu.multiplayerOptions.publish.started.lan", ComponentUtils.copyOnClickText(String.valueOf(port)))));
 		} else {
 			chat(Component.translatable("commands.publish.failed"));
 		}

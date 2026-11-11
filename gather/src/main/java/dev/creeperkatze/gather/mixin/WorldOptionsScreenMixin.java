@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import net.minecraft.network.chat.MutableComponent;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
@@ -22,6 +23,9 @@ public class WorldOptionsScreenMixin {
 	private GridLayout.@Nullable RowHelper gather$rows;
 	@Unique
 	private @Nullable HostOptions gather$options;
+
+	@Shadow
+	private int port;
 
 	@Shadow
 	private void updateApplyChangesActiveState() {
@@ -45,6 +49,11 @@ public class WorldOptionsScreenMixin {
 	@ModifyReturnValue(method = "hasSettingsChanges", at = @At("RETURN"))
 	private boolean gather$hasChanges(boolean original) {
 		return original || this.gather$options != null && this.gather$options.changed();
+	}
+
+	@ModifyExpressionValue(method = "publish", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/chat/Component;translatable(Ljava/lang/String;[Ljava/lang/Object;)Lnet/minecraft/network/chat/MutableComponent;"))
+	private MutableComponent gather$publishedMessage(MutableComponent original) {
+		return LanHosting.publishedMessage(this.port).orElse(original);
 	}
 
 	// Before vanilla publishes, so the world opens with the new settings

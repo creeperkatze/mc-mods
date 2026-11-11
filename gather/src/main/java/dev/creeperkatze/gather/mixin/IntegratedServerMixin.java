@@ -40,7 +40,7 @@ public class IntegratedServerMixin implements HostedServer {
 	@Inject(method = "publishServer(Lnet/minecraft/server/MinecraftServer$MultiplayerScope;I)Z", at = @At("RETURN"))
 	private void gather$onPublished(MinecraftServer.MultiplayerScope scope, int port, CallbackInfoReturnable<Boolean> cir) {
 		if (cir.getReturnValueZ()) {
-			LanHosting.onPublished((IntegratedServer) (Object) this, port);
+			LanHosting.onPublished((IntegratedServer) (Object) this);
 		}
 	}
 }
