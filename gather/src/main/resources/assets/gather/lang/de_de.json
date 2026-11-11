@@ -1,0 +1,20 @@
+{
+	"gather.online_mode": "Online-Modus",
+	"gather.online_mode.on.tooltip": "Spieler brauchen ein Microsoft-Konto, um beizutreten.",
+	"gather.online_mode.off.tooltip": "Jeder in deinem Netzwerk kann unter einem beliebigen Namen beitreten, auch ohne Microsoft-Konto. Schalte dies nur aus, wenn du allen vertraust, die deine Welt erreichen können, oder aktiviere die Whitelist.",
+	"gather.max_players": "Maximale Spieler",
+	"gather.server_name": "Servername",
+	"gather.server_name.tooltip": "Der Name, den deine Freunde in ihrer LAN-Serverliste sehen. Verwende &-Codes für Farben und Stile, z. B. &6 für Gold oder &l für fett. Lass das Feld leer für den Standardnamen.",
+	"gather.whitelist": "Whitelist",
+	"gather.whitelist.tooltip": "Nur Spieler auf der Whitelist können beitreten. Füge sie mit /whitelist add <name> hinzu. Das geht auch ohne Cheats.",
+	"gather.idle_timeout": "AFK-Kick",
+	"gather.idle_timeout.minutes": "%s min",
+	"gather.idle_timeout.tooltip": "Wirft Spieler hinaus, die sich so lange nicht bewegt haben. Aus deiner eigenen Welt wirst du nie hinausgeworfen.",
+	"gather.open_on_load": "Beim Laden öffnen",
+	"gather.open_on_load.tooltip": "Öffnet diese Welt bei jedem Laden mit denselben Einstellungen im LAN.",
+	"gather.host_settings": "Host-Einstellungen",
+	"gather.host_settings.open": "Host-Einstellungen...",
+	"gather.published": "Deine Welt ist im LAN geöffnet. Freunde in deinem Netzwerk können über %s beitreten",
+	"gather.disconnect.host_name": "Dieser Name gehört dem Host dieser Welt.",
+	"gather.commands.ban.owner": "Der Serverbesitzer kann in einem LAN-Spiel nicht gesperrt werden"
+}

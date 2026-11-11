@@ -117,7 +117,7 @@
 	"illuminate.config.signalrgb_effect.tooltip": "Kopiert den Illuminate-Effekt nach %s. Starte SignalRGB anschließend neu.",
 	"illuminate.config.install": "Installieren",
 	"illuminate.config.signalrgb_port": "SignalRGB-Port",
-	"illuminate.config.signalrgb_port.tooltip": "Port der Canvas-API von SignalRGB. Nur ändern, wenn SignalRGB einen anderen verwendet.",
+	"illuminate.config.signalrgb_port.tooltip": "Port der Leinwand-API von SignalRGB. Nur ändern, wenn SignalRGB einen anderen verwendet.",
 	"illuminate.config.openrgb": "OpenRGB verwenden",
 	"illuminate.config.openrgb.tooltip": "Steuert deine Geräte über den SDK-Server von OpenRGB. Starte den Server auf dem SDK-Server-Tab in OpenRGB. Setze die von SignalRGB gesteuerten Geräte unter Gerätepositionen auf Aus.",
 	"illuminate.config.openrgb_host": "OpenRGB-Adresse",
