@@ -3,6 +3,8 @@ package dev.creeperkatze.gather;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonParseException;
+import net.minecraft.world.level.GameType;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -17,12 +19,14 @@ public record HostSettings(
 		int idleTimeout,
 		boolean openOnLoad,
 		boolean guestCommands,
-		boolean forceGameMode
+		boolean forceGameMode,
+		// Older versions pick a game mode for guests instead of forcing the world's
+		@Nullable GameType guestGameMode
 ) {
 	public static final int MIN_PLAYERS = 2;
 	public static final int MAX_PLAYERS = 50;
 	public static final int MAX_IDLE_TIMEOUT = 60;
-	public static final HostSettings DEFAULT = new HostSettings(true, 8, "", false, 0, false, false, true);
+	public static final HostSettings DEFAULT = new HostSettings(true, 8, "", false, 0, false, false, true, null);
 
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	private static final String FILE_NAME = Gather.MOD_ID + ".json";
@@ -58,23 +62,28 @@ public record HostSettings(
 				Math.clamp(this.idleTimeout, 0, MAX_IDLE_TIMEOUT),
 				this.openOnLoad,
 				this.guestCommands,
-				this.forceGameMode
+				this.forceGameMode,
+				this.guestGameMode
 		);
 	}
 
 	public HostSettings withOptions(boolean onlineMode, int maxPlayers, String serverName, boolean whitelist, int idleTimeout, boolean openOnLoad) {
-		return new HostSettings(onlineMode, maxPlayers, serverName, whitelist, idleTimeout, openOnLoad, this.guestCommands, this.forceGameMode);
+		return new HostSettings(onlineMode, maxPlayers, serverName, whitelist, idleTimeout, openOnLoad, this.guestCommands, this.forceGameMode, this.guestGameMode);
 	}
 
 	public HostSettings withPublished(boolean guestCommands, boolean forceGameMode) {
-		return new HostSettings(this.onlineMode, this.maxPlayers, this.serverName, this.whitelist, this.idleTimeout, this.openOnLoad, guestCommands, forceGameMode);
+		return new HostSettings(this.onlineMode, this.maxPlayers, this.serverName, this.whitelist, this.idleTimeout, this.openOnLoad, guestCommands, forceGameMode, this.guestGameMode);
+	}
+
+	public HostSettings withPublished(boolean guestCommands, @Nullable GameType guestGameMode) {
+		return new HostSettings(this.onlineMode, this.maxPlayers, this.serverName, this.whitelist, this.idleTimeout, this.openOnLoad, guestCommands, this.forceGameMode, guestGameMode);
 	}
 
 	public HostSettings withWhitelist(boolean whitelist) {
-		return new HostSettings(this.onlineMode, this.maxPlayers, this.serverName, whitelist, this.idleTimeout, this.openOnLoad, this.guestCommands, this.forceGameMode);
+		return new HostSettings(this.onlineMode, this.maxPlayers, this.serverName, whitelist, this.idleTimeout, this.openOnLoad, this.guestCommands, this.forceGameMode, this.guestGameMode);
 	}
 
 	public HostSettings withIdleTimeout(int idleTimeout) {
-		return new HostSettings(this.onlineMode, this.maxPlayers, this.serverName, this.whitelist, idleTimeout, this.openOnLoad, this.guestCommands, this.forceGameMode);
+		return new HostSettings(this.onlineMode, this.maxPlayers, this.serverName, this.whitelist, idleTimeout, this.openOnLoad, this.guestCommands, this.forceGameMode, this.guestGameMode);
 	}
 }

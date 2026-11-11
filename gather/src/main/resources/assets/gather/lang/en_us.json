@@ -12,6 +12,8 @@
 	"gather.idle_timeout.tooltip": "Kicks players who haven't moved for this long. You are never kicked from your own world.",
 	"gather.open_on_load": "Open on Load",
 	"gather.open_on_load.tooltip": "Opens this world to LAN with the same settings every time you load it.",
+	"gather.host_settings": "Host Settings",
+	"gather.host_settings.open": "Host Settings...",
 	"gather.published": "Your world is open to LAN. Friends on your network can join at %s",
 	"gather.disconnect.host_name": "That name belongs to the host of this world.",
 	"gather.commands.ban.owner": "Cannot ban server owner in LAN game"

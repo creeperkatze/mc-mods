@@ -5,11 +5,13 @@ import dev.creeperkatze.gather.HostSettings;
 import dev.creeperkatze.gather.HostedServer;
 import dev.creeperkatze.gather.LanHosting;
 import net.minecraft.client.server.IntegratedServer;
-import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+//? if >=26.2 && <26.3 {
+/*import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+*///?}
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(IntegratedServer.class)
@@ -37,10 +39,21 @@ public class IntegratedServerMixin implements HostedServer {
 		return this.gather$settings.maxPlayers();
 	}
 
+	//? if >=26.2 {
 	@Inject(method = "publishServer(Lnet/minecraft/server/MinecraftServer$MultiplayerScope;I)Z", at = @At("RETURN"))
-	private void gather$onPublished(MinecraftServer.MultiplayerScope scope, int port, CallbackInfoReturnable<Boolean> cir) {
+	//?} else {
+	/*@Inject(method = "publishServer", at = @At("RETURN"))
+	*///?}
+	private void gather$onPublished(CallbackInfoReturnable<Boolean> cir) {
 		if (cir.getReturnValueZ()) {
-			LanHosting.onPublished((IntegratedServer) (Object) this);
+			LanHosting.rememberPublished((IntegratedServer) (Object) this);
 		}
 	}
+
+	//? if >=26.2 && <26.3 {
+	/*@Inject(method = {"setGameTypeForOtherPlayers", "setCommandsAllowedForOtherPlayers"}, at = @At("RETURN"))
+	private void gather$onGuestSettingsChanged(CallbackInfo ci) {
+		LanHosting.rememberPublished((IntegratedServer) (Object) this);
+	}
+	*///?}
 }

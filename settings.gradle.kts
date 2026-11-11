@@ -20,7 +20,7 @@ val modTargets = mapOf(
 	"accelerate" to listOf("1.21.11", "26.2", "26.3"),
 	"rearrange" to listOf("1.21.11", "26.2", "26.3"),
 	"organize" to listOf("1.21.11", "26.2", "26.3"),
-	"gather" to listOf("26.3"),
+	"gather" to listOf("1.21.11", "26.2", "26.3"),
 	"illuminate" to listOf("1.21.11", "26.2", "26.3"),
 	"resume" to listOf("1.21.11", "26.2", "26.3")
 )

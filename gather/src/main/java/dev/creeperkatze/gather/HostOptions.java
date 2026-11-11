@@ -13,7 +13,7 @@ import net.minecraft.network.chat.Component;
 import java.util.function.IntConsumer;
 import java.util.function.IntFunction;
 
-// Gather's settings in the multiplayer section of the world options screen
+// Gather's settings in the multiplayer section of the world options screen, or on their own screen in older versions
 public final class HostOptions {
 	private static final int WIDGET_WIDTH = 150;
 	private static final int WIDGET_HEIGHT = 20;

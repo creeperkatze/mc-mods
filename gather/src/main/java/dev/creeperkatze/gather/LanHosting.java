@@ -11,6 +11,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.commands.PublishCommand;
 import net.minecraft.server.players.NameAndId;
 import net.minecraft.server.players.PlayerList;
 import net.minecraft.server.players.StoredUserList;
@@ -143,7 +144,13 @@ public final class LanHosting {
 	// Remembers how the world was opened, so it can open the same way next time
 	public static void rememberPublished(IntegratedServer server) {
 		if (server.isPublished()) {
+			//? if >=26.3 {
 			save(server, settings(server).withPublished(server.getGuestCommandAccess(), server.forceGameMode()));
+			//?} else if >=26.2 {
+			/*save(server, settings(server).withPublished(server.commandsAllowedForOtherPlayers(), server.getGameTypeForOtherPlayers()));
+			*///?} else {
+			/*save(server, settings(server).withPublished(server.getPlayerList().isAllowCommandsForAllPlayers(), server.getForcedGameType()));
+			*///?}
 		}
 	}
 
@@ -158,10 +165,6 @@ public final class LanHosting {
 		}
 	}
 
-	public static void onPublished(IntegratedServer server) {
-		save(server, settings(server).withPublished(server.getGuestCommandAccess(), server.forceGameMode()));
-	}
-
 	// Replaces the vanilla message, which only shows the port
 	public static Optional<MutableComponent> publishedMessage(int port) {
 		return lanAddress().map(address -> Component.translatable("gather.published", ComponentUtils.copyOnClickText(address + ":" + port)));
@@ -173,18 +176,25 @@ public final class LanHosting {
 			return;
 		}
 		HostSettings settings = settings(server);
+		int port = HttpUtil.getAvailablePort();
+		//? if >=26.3 {
 		server.setGuestCommandAccess(settings.guestCommands());
 		server.setForceGameMode(settings.forceGameMode());
-		int port = HttpUtil.getAvailablePort();
-		if (server.publishServer(MinecraftServer.MultiplayerScope.LAN, port)) {
-			chat(publishedMessage(port).orElseGet(() -> Component.translatable("menu.multiplayerOptions.publish.started.lan", ComponentUtils.copyOnClickText(String.valueOf(port)))));
-		} else {
-			chat(Component.translatable("commands.publish.failed"));
-		}
+		boolean published = server.publishServer(MinecraftServer.MultiplayerScope.LAN, port);
+		//?} else if >=26.2 {
+		/*boolean published = server.publishServer(MinecraftServer.MultiplayerScope.LAN, settings.guestGameMode(), settings.guestCommands(), port);
+		*///?} else {
+		/*boolean published = server.publishServer(settings.guestGameMode(), settings.guestCommands(), port);
+		*///?}
+		chat(published ? PublishCommand.getSuccessMessage(port) : Component.translatable("commands.publish.failed"));
 	}
 
 	private static void chat(Component message) {
+		//? if >=26.2 {
 		Minecraft.getInstance().gui.hud.getChat().addClientSystemMessage(message);
+		//?} else {
+		/*Minecraft.getInstance().gui.getChat().addMessage(message);
+		*///?}
 	}
 
 	// Players with a real account keep their real id in offline mode, so their inventory stays
