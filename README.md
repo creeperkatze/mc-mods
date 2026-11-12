@@ -1,4 +1,4 @@
-# Minecraft Mods
+![Minecraft Mods](.github/assets/title.png)
 
 All my Minecraft mods in one place.
 
