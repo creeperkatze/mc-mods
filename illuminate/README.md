@@ -5,7 +5,7 @@
 
 Illuminate turns the RGB lights around your desk into part of the game. They glow with the sunset, flash when lightning strikes and react to every hit you take.
 
-![Showcase](https://raw.githubusercontent.com/creeperkatze/mc-mods/main/.github/assets/illuminate/screenshots/portal.webp)
+![Showcase](https://raw.githubusercontent.com/creeperkatze/mc-mods/main/.github/assets/illuminate/screenshots/variants/portal.webp)
 
 ## ✨ Features
 
