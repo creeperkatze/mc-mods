@@ -40,10 +40,7 @@ val releaseChangelog = run {
 	}
 }
 
-// Modrinth shows its own title, so the heading is left out
-val modrinthDescription = providers.fileContents(layout.projectDirectory.file("README.md")).asText.map { readme ->
-	readme.lines().dropWhile { it.isNotBlank() }.joinToString("\n").trim()
-}
+val modrinthDescription = providers.fileContents(layout.projectDirectory.file("README.md")).asText.map(String::trim)
 
 tasks.register("assemble") {
 	group = "build"
