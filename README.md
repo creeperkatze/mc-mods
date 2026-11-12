@@ -10,6 +10,13 @@ All my Minecraft mods in one place.
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/creeperkatze)
 
+## 🔗 Quick links
+
+- 🐛 [Report a bug](https://github.com/creeperkatze/mc-mods/issues/new?template=1-bug_report.yml)
+- 💡 [Suggest a feature](https://github.com/creeperkatze/mc-mods/issues/new?template=2-feature_request.yml)
+- 💬 [Ask for help on Discord](https://discord.gg/Qds5QMrnDv)
+- 🌐 [Help translate on Crowdin](https://crowdin.com/project/creeperkatze-mc-mods)
+
 ## 📦 Mods
 
 | Mod                       | Description                                                                                                                                 | Downloads                                                                                                                                                                                                                                                                | Minecraft                 | Loaders                                                                                                                                                                                                                                                              |
