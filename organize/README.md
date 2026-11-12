@@ -9,19 +9,19 @@ Organize lets you sort your resource packs into folders and browse them right in
 
 ## ✨ Features
 
-### 📁 Folders
+### Folders
 
 Add folders in your `resourcepacks` folder and put packs inside. Folders can be nested as deep as you like.
 
-### 🧭 Browsing
+### Browsing
 
 Folders show up above the packs in the available list, along with how many packs they hold. Click a folder to open it and use Back to go up again.
 
-### ✅ Selecting
+### Selecting
 
 Shift-click a folder to select all of its packs at once.
 
-### 🖼️ Icons
+### Icons
 
 Put an `icon.png` in a folder to give it its own icon.
 

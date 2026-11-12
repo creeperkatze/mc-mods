@@ -9,15 +9,15 @@ Illuminate turns the RGB lights around your desk into part of the game. They glo
 
 ## ✨ Features
 
-### 🌅 World
+### World
 
 Your lights follow the sky, biome and time of day, darken in caves and flash with lightning.
 
-### 💥 Effects
+### Effects
 
 Your lights react when you take damage, burn, freeze, drown or drink a potion.
 
-### 🧭 Direction
+### Direction
 
 Lights placed to your left or right react to hits from that side.
 

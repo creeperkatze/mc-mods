@@ -9,15 +9,15 @@ Rearrange lets you drag and drop to reorder your servers, worlds, resource packs
 
 ## ✨ Features
 
-### 🎨 Resource packs and data packs
+### Resource packs and data packs
 
 Drag packs to reorder the selected list, or drag them between the available and selected lists. Packs that are fixed in place stay where they are.
 
-### 🖥️ Servers
+### Servers
 
 Drag servers in the multiplayer list into any order. The order is saved to your server list, just like with vanilla's arrow buttons.
 
-### 🌍 Worlds
+### Worlds
 
 Drag worlds in the singleplayer list into any order. New worlds show up at the top. The button next to the search box sorts your worlds by when you last played them again.
 

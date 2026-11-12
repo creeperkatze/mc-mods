@@ -9,11 +9,11 @@ Accelerate removes vanilla's flight speed limits in worlds you host. Use the scr
 
 ## ✨ Features
 
-### 👻 Spectator mode
+### Spectator mode
 
 Scroll or use the keybinds to change your flight speed. The vanilla cap of 4x is removed.
 
-### 🧱 Creative mode
+### Creative mode
 
 Hold the modifier key (Left Control by default) while flying, then scroll or use the keybinds. The scroll wheel changes your speed instead of your hotbar slot while you hold it. Let go of the modifier and you're back to normal creative flight.
 
