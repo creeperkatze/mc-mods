@@ -9,27 +9,27 @@ Illuminate turns the RGB lights around your desk into part of the game. They glo
 
 ## ✨ Features
 
-**🌅 World**
+### 🌅 World
 
 Your lights follow the sky, biome and time of day, darken in caves and flash with lightning.
 
-**💥 Effects**
+### 💥 Effects
 
 Your lights react when you take damage, burn, freeze, drown or drink a potion.
 
-**🧭 Direction**
+### 🧭 Direction
 
 Lights placed to your left or right react to hits from that side.
 
 ## 🔧 Setup
 
-**SignalRGB**
+### SignalRGB
 
 1. In the Illuminate settings, open **Devices** and press **Install** next to **SignalRGB Effect**. This copies the effect to `Documents\WhirlwindFX\Effects`.
 2. Restart SignalRGB and select the **Illuminate** effect.
 3. Place your devices on the SignalRGB canvas where they are around your screen.
 
-**OpenRGB**
+### OpenRGB
 
 1. Start OpenRGB, open the **SDK Server** tab and press **Start Server**.
 2. Enable OpenRGB in the Illuminate settings under **Devices**. The default address is `127.0.0.1:6742`.

@@ -7,27 +7,27 @@ Gather turns Open to LAN into a real way to host your world for friends. Invite 
 
 ## ✨ Features
 
-**📡 Offline mode**
+### 📡 Offline mode
 
 Turn off Online Mode so friends can still join when there's no internet connection, like at a LAN party.
 
-**👥 More players**
+### 👥 More players
 
 Raise the player limit from vanilla's 8 up to 50.
 
-**🏷️ Server name**
+### 🏷️ Server name
 
 Give your world its own name in your friends' LAN server list. Use `&` codes for colors and styles, like `&6` for gold or `&l` for bold.
 
-**📋 Whitelist and bans**
+### 📋 Whitelist and bans
 
 The whitelist, bans and IP bans work like on a real server and are saved with each world. You can use their commands even without cheats.
 
-**💤 AFK kick**
+### 💤 AFK kick
 
 Kick players who haven't moved for a while. You are never kicked from your own world.
 
-**🔁 Open on load**
+### 🔁 Open on load
 
 Open your world to LAN every time you load it, with the same settings as last time.
 

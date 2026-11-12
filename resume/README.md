@@ -7,15 +7,15 @@ Resume swaps the loading screen panorama for the last thing you saw before you q
 
 ## ✨ Features
 
-**📸 Screenshot**
+### 📸 Screenshot
 
 When you leave a world or server, Resume takes a screenshot of the world without the pause menu or the HUD.
 
-**⏳ Loading screen**
+### ⏳ Loading screen
 
 The next time you join, the screenshot is the background of the loading screens instead of the panorama.
 
-**🌅 Fade**
+### 🌅 Fade
 
 Let the screenshot fade in from black when the loading screen appears and fade into the game once the world has loaded, so you pick up right where you were.
 
