@@ -5,6 +5,8 @@
 
 Illuminate brings your room into the game with ambient RGB lighting through OpenRGB and SignalRGB.
 
+![Showcase](https://raw.githubusercontent.com/creeperkatze/mc-mods/main/.github/assets/illuminate/screenshots/portal.avif)
+
 ## ✨ Features
 
 **🌅 World**
