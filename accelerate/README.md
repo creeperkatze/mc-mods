@@ -5,7 +5,7 @@
 
 Accelerate removes vanilla's flight speed limits in worlds you host. Use the scroll wheel or the keybinds to go as fast as you like.
 
-![Showcase](https://raw.githubusercontent.com/creeperkatze/mc-mods/4e9cf04/.github/assets/accelerate/screenshots/creative.webp)
+![Showcase](https://raw.githubusercontent.com/creeperkatze/mc-mods/main/.github/assets/accelerate/screenshots/creative.webp)
 
 ## ✨ Features
 
