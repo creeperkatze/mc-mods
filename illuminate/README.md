@@ -3,7 +3,7 @@
 [![Discord](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/social/discord-singular_vector.svg)](https://discord.gg/Qds5QMrnDv)
 [![Ko-fi](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/donate/kofi-singular_vector.svg)](https://ko-fi.com/creeperkatze)
 
-Illuminate brings your room into the game with ambient RGB lighting through OpenRGB and SignalRGB.
+Illuminate turns the RGB lights around your desk into part of the game. They glow with the sunset, flash when lightning strikes and react to every hit you take.
 
 ![Showcase](https://raw.githubusercontent.com/creeperkatze/mc-mods/main/.github/assets/illuminate/screenshots/portal.webp)
 
