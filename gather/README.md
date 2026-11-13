@@ -2,6 +2,7 @@
 
 [![Discord](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/social/discord-singular_vector.svg)](https://discord.gg/Qds5QMrnDv)
 [![Ko-fi](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/donate/kofi-singular_vector.svg)](https://ko-fi.com/creeperkatze)
+[![Crowdin](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/translate/crowdin_vector.svg)](https://crowdin.com/project/creeperkatze-mc-mods)
 
 Gather turns Open to LAN into a real way to host your world for friends. Invite more players, name your server, decide who gets in and keep playing together even without an internet connection.
 

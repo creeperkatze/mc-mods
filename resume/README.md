@@ -2,6 +2,7 @@
 
 [![Discord](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/social/discord-singular_vector.svg)](https://discord.gg/Qds5QMrnDv)
 [![Ko-fi](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/donate/kofi-singular_vector.svg)](https://ko-fi.com/creeperkatze)
+[![Crowdin](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/translate/crowdin_vector.svg)](https://crowdin.com/project/creeperkatze-mc-mods)
 
 Resume swaps the loading screen panorama for the last thing you saw before you quit. By the time your world has loaded, you already know where you were and what you were doing.
 
