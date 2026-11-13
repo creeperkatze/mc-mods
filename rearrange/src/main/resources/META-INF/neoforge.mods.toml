@@ -9,6 +9,8 @@ version = "${version}"
 displayName = "${mod_name}"
 displayURL = "https://modrinth.com/mod/LI06Bzs9"
 iconFile = "assets/rearrange/icon.png"
+iconBlur = true
+logoFile = "assets/rearrange/banner.png"
 authors = "Creeperkatze"
 description = "${mod_description}"
 

@@ -1,4 +1,4 @@
-![Organize](https://raw.githubusercontent.com/creeperkatze/mc-mods/main/.github/assets/organize/title.png)
+![Organize](https://raw.githubusercontent.com/creeperkatze/mc-mods/main/organize/media/banner.png)
 
 [![Discord](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/social/discord-singular_vector.svg)](https://discord.gg/Qds5QMrnDv)
 [![Ko-fi](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/donate/kofi-singular_vector.svg)](https://ko-fi.com/creeperkatze)

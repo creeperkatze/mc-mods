@@ -9,6 +9,8 @@ version = "${version}"
 displayName = "${mod_name}"
 displayURL = "https://github.com/creeperkatze/mc-mods/tree/main/${mod_folder}"
 iconFile = "assets/illuminate/icon.png"
+iconBlur = true
+logoFile = "assets/illuminate/banner.png"
 authors = "Creeperkatze"
 description = "${mod_description}"
 

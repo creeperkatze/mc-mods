@@ -1,11 +1,11 @@
-![Illuminate](https://raw.githubusercontent.com/creeperkatze/mc-mods/main/.github/assets/illuminate/title.png)
+![Illuminate](https://raw.githubusercontent.com/creeperkatze/mc-mods/main/illuminate/media/banner.png)
 
 [![Discord](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/social/discord-singular_vector.svg)](https://discord.gg/Qds5QMrnDv)
 [![Ko-fi](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/donate/kofi-singular_vector.svg)](https://ko-fi.com/creeperkatze)
 
 Illuminate turns the RGB lights around your desk into part of the game. They glow with the sunset, flash when lightning strikes and react to every hit you take.
 
-![Showcase](https://raw.githubusercontent.com/creeperkatze/mc-mods/main/.github/assets/illuminate/screenshots/variants/portal.webp)
+![Showcase](https://raw.githubusercontent.com/creeperkatze/mc-mods/main/illuminate/media/screenshots/variants/portal.webp)
 
 ## ✨ Features
 
