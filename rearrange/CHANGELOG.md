@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.1.1] - 2026-11-14
+
 ### Added
 
 - Backported to Minecraft 1.21.1.
