@@ -5,7 +5,7 @@
 	"scripts": {
 		"fmt": "oxfmt",
 		"fmt:check": "oxfmt --check",
-		"vscode:sync": "node scripts/sync-vscode-tasks.mjs",
+		"vscode:sync": "node scripts/sync-vscode-tasks.mjs && oxfmt .vscode/tasks.json",
 		"release": "node scripts/release.mjs"
 	},
 	"devDependencies": {

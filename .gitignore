@@ -1,8 +1,9 @@
 .gradle
 .kotlin
 .idea
+.eclipse
+.vscode/launch.json
 build
 bin
 run
 node_modules
-.vscode/launch.json
