@@ -66,7 +66,7 @@
 			"id": "minecraft",
 			"type": "pickString",
 			"description": "Minecraft version",
-			"options": ["26.3", "26.2", "1.21.11"],
+			"options": ["26.3", "26.2", "1.21.11", "1.21.1"],
 			"default": "26.3"
 		},
 		{

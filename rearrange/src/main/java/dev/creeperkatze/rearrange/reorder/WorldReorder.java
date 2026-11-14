@@ -2,6 +2,7 @@ package dev.creeperkatze.rearrange.reorder;
 
 import dev.creeperkatze.rearrange.Reorder;
 import dev.creeperkatze.rearrange.WorldOrder;
+import dev.creeperkatze.rearrange.mixin.WorldListEntryAccessor;
 import dev.creeperkatze.rearrange.mixin.WorldSelectionListAccessor;
 import net.minecraft.client.gui.screens.worldselection.WorldSelectionList;
 import org.jspecify.annotations.Nullable;
@@ -11,7 +12,12 @@ public record WorldReorder(WorldSelectionList list) implements Reorder {
 	public @Nullable Move pickUp(int index) {
 		// The order is only saved from the full singleplayer list, not a filtered one
 		WorldSelectionListAccessor accessor = (WorldSelectionListAccessor) this.list;
-		if (accessor.rearrange$getEntryType() != WorldSelectionList.EntryType.SINGLEPLAYER || !accessor.rearrange$getFilter().isEmpty()) {
+		//? if >=1.21.9 {
+		boolean singleplayer = accessor.rearrange$getEntryType() == WorldSelectionList.EntryType.SINGLEPLAYER;
+		//?} else {
+		/*boolean singleplayer = true;
+		*///?}
+		if (!singleplayer || !accessor.rearrange$getFilter().isEmpty()) {
 			return null;
 		}
 		if (!this.list.children().stream().allMatch(WorldSelectionList.WorldListEntry.class::isInstance)) {
@@ -28,7 +34,7 @@ public record WorldReorder(WorldSelectionList list) implements Reorder {
 
 		@Override
 		public void drop(int index) {
-			WorldOrder.save(this.list.children().stream().map(entry -> entry.getLevelSummary().getLevelId()).toList());
+			WorldOrder.save(this.list.children().stream().map(entry -> ((WorldListEntryAccessor) entry).rearrange$getSummary().getLevelId()).toList());
 		}
 	}
 }

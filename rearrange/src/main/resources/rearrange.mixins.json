@@ -14,6 +14,7 @@
 		"ServerListAccessor",
 		"ServerSelectionListAccessor",
 		"TransferableSelectionListAccessor",
+		"WorldListEntryAccessor",
 		"WorldListEntryMixin",
 		"WorldSelectionListAccessor",
 		"WorldSelectionListMixin"

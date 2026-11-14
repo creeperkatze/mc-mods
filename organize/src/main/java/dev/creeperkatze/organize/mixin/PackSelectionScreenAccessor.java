@@ -21,6 +21,11 @@ public interface PackSelectionScreenAccessor {
 	@Accessor("model")
 	PackSelectionModel organize$getModel();
 
+	//? if >=1.21.9 {
 	@Invoker("populateLists")
 	void organize$populateLists(PackSelectionModel.@Nullable EntryBase transferredEntry);
+	//?} else {
+	/*@Invoker("populateLists")
+	void organize$populateLists();
+	*///?}
 }

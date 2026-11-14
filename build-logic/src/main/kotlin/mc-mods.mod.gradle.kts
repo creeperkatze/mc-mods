@@ -63,6 +63,8 @@ tasks.named<ProcessResources>("processResources") {
 		"mod_description" to modProperty("mod_description"),
 		"mod_license" to modProperty("mod_license"),
 		"minecraft_version" to minecraftVersion,
+		// Fabric reads ~1.21.1 as below 1.22, which would include every later 1.21 release
+		"minecraft_dependency" to if (isObfuscated) minecraftVersion else "~$minecraftVersion",
 		"java_version" to javaVersion.toString(),
 		"fabric_loader_version" to mcVersion("fabric-loader"),
 		"neoforge_version" to mcVersion("neoforge"),

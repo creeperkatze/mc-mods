@@ -8,6 +8,17 @@ stonecutter active "26.3-fabric"
 stonecutter parameters {
 	constants.match(node.metadata.project.substringAfterLast('-'), "fabric", "neoforge")
 
+	// 1.21.11 renamed ResourceLocation to Identifier and moved Util
+	replacements.string(current.parsed >= "1.21.11") {
+		replace("ResourceLocation", "Identifier")
+		replace("import net.minecraft.Util;", "import net.minecraft.util.Util;")
+	}
+
+	// 1.21.1 doesn't ship jspecify, only the JetBrains annotations
+	replacements.string(current.parsed >= "1.21.11") {
+		replace("org.jetbrains.annotations.Nullable", "org.jspecify.annotations.Nullable")
+	}
+
 	// 26.1 renamed GUI rendering from render to extract
 	replacements.string(current.parsed >= "26.1") {
 		replace("GuiGraphics", "GuiGraphicsExtractor")

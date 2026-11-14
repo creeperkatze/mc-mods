@@ -2,12 +2,18 @@ package dev.creeperkatze.accelerate;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
+//? if >=1.21.9 {
 import net.minecraft.resources.Identifier;
+//?}
 
 import java.util.List;
 
 public final class AccelerateKeybinds {
+	//? if >=1.21.9 {
 	private static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(Identifier.fromNamespaceAndPath(Accelerate.MOD_ID, "main"));
+	//?} else {
+	/*private static final String CATEGORY = "key.category." + Accelerate.MOD_ID + ".main";
+	*///?}
 
 	public static final KeyMapping FASTER = key("faster", InputConstants.KEY_PAGEUP);
 	public static final KeyMapping SLOWER = key("slower", InputConstants.KEY_PAGEDOWN);

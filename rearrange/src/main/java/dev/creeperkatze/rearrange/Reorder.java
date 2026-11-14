@@ -4,7 +4,6 @@ import dev.creeperkatze.rearrange.reorder.PackReorder;
 import dev.creeperkatze.rearrange.reorder.ServerReorder;
 import dev.creeperkatze.rearrange.reorder.WorldReorder;
 import net.minecraft.client.gui.components.AbstractSelectionList;
-import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.screens.multiplayer.ServerSelectionList;
 import net.minecraft.client.gui.screens.packs.TransferableSelectionList;
 import net.minecraft.client.gui.screens.worldselection.WorldSelectionList;
@@ -17,7 +16,7 @@ public interface Reorder {
 	@Nullable Move pickUp(int index);
 
 	// Identifies an entry for the animation, also after the list rebuilt its entries
-	default Object key(LayoutElement entry) {
+	default Object key(Object entry) {
 		return entry;
 	}
 

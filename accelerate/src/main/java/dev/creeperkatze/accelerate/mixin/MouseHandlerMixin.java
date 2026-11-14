@@ -6,6 +6,9 @@ import dev.creeperkatze.accelerate.FlightSpeed;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.MouseHandler;
 import net.minecraft.client.player.LocalPlayer;
+//? if <1.21.2 {
+/*import net.minecraft.world.entity.player.Inventory;
+*///?}
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -24,6 +27,7 @@ public class MouseHandlerMixin {
 		return speed;
 	}
 
+	//? if >=1.21.2 {
 	@WrapOperation(method = "onScroll", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/ScrollWheelHandler;getNextScrollWheelSelection(DII)I"))
 	private int accelerate$creativeScrollSpeed(double wheel, int currentSlot, int slotCount, Operation<Integer> original) {
 		LocalPlayer player = Minecraft.getInstance().player;
@@ -34,4 +38,16 @@ public class MouseHandlerMixin {
 		FlightSpeed.change(player, (int) wheel);
 		return currentSlot;
 	}
+	//?} else {
+	/*@WrapOperation(method = "onScroll", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Inventory;swapPaint(D)V"))
+	private void accelerate$creativeScrollSpeed(Inventory inventory, double wheel, Operation<Void> original) {
+		LocalPlayer player = Minecraft.getInstance().player;
+		if (!FlightSpeed.canChange(player)) {
+			original.call(inventory, wheel);
+			return;
+		}
+		FlightSpeed.updateCreativeBoost(player);
+		FlightSpeed.change(player, (int) wheel);
+	}
+	*///?}
 }

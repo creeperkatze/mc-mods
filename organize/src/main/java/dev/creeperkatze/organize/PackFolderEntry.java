@@ -2,16 +2,24 @@ package dev.creeperkatze.organize;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-//? if <26.1 {
+//? if >=1.21.9 && <26.1 {
 /*import net.minecraft.client.gui.components.AbstractScrollArea;
 *///?}
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.screens.packs.PackSelectionModel;
 import net.minecraft.client.gui.screens.packs.PackSelectionScreen;
 import net.minecraft.client.gui.screens.packs.TransferableSelectionList;
+//? if >=1.21.9 {
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.input.MouseButtonEvent;
+//?} else {
+/*import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.server.packs.repository.PackCompatibility;
+import net.minecraft.server.packs.repository.PackSource;
+*///?}
+//? if >=1.21.6 {
 import net.minecraft.client.renderer.RenderPipelines;
+//?}
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import org.jspecify.annotations.Nullable;
@@ -19,7 +27,11 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 
 // A folder of resource packs, or the way back up, in the available pack list
+//? if >=1.21.9 {
 public class PackFolderEntry extends TransferableSelectionList.Entry {
+//?} else {
+/*public class PackFolderEntry extends TransferableSelectionList.PackEntry {
+*///?}
 	private static final Identifier DEFAULT_ICON = Identifier.fromNamespaceAndPath(Organize.MOD_ID, "pack_folder");
 	private static final Identifier BACK_ICON = Identifier.fromNamespaceAndPath(Organize.MOD_ID, "pack_folder_back");
 	private static final Identifier OPEN_SPRITE = Identifier.withDefaultNamespace("transferable_list/select");
@@ -49,7 +61,11 @@ public class PackFolderEntry extends TransferableSelectionList.Entry {
 	private final StringWidget descriptionWidget;
 
 	private PackFolderEntry(TransferableSelectionList list, PackSelectionScreen screen, String folder, @Nullable Identifier icon, List<PackSelectionModel.Entry> packs, Component name, Component description) {
+		//? if >=1.21.9 {
 		list.super();
+		//?} else {
+		/*super(Minecraft.getInstance(), list, new FolderPack(name, description));
+		*///?}
 		this.list = list;
 		this.screen = screen;
 		this.folder = folder;
@@ -59,6 +75,10 @@ public class PackFolderEntry extends TransferableSelectionList.Entry {
 		Minecraft minecraft = Minecraft.getInstance();
 		this.nameWidget = new StringWidget(name, minecraft.font);
 		this.descriptionWidget = new StringWidget(description.copy().withColor(DESCRIPTION_COLOR), minecraft.font);
+		//? if <1.21.9 {
+		/*this.nameWidget.alignLeft();
+		this.descriptionWidget.alignLeft();
+		*///?}
 	}
 
 	public static PackFolderEntry folder(TransferableSelectionList list, PackSelectionScreen screen, String folder, String name, @Nullable Identifier icon, List<PackSelectionModel.Entry> packs) {
@@ -84,72 +104,113 @@ public class PackFolderEntry extends TransferableSelectionList.Entry {
 		return PackFolders.canSelectAny(this.packs);
 	}
 
-	private boolean isOverIcon(double mouseX, double mouseY) {
-		int x = this.getContentX();
-		int y = this.getContentY();
+	private static boolean isOverIcon(int x, int y, double mouseX, double mouseY) {
 		return mouseX >= x && mouseX < x + ICON_SIZE && mouseY >= y && mouseY < y + ICON_SIZE;
 	}
 
+	private static boolean hasShiftDown() {
+		//? if >=1.21.9 {
+		return Minecraft.getInstance().hasShiftDown();
+		//?} else {
+		/*return Screen.hasShiftDown();
+		*///?}
+	}
+
+	//? if >=1.21.9 {
 	@Override
 	public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float a) {
-		int x = this.getContentX();
-		int y = this.getContentY();
+		this.extract(graphics, this.getContentX(), this.getContentY(), mouseX, mouseY, hovered, a);
+	}
+	//?} else {
+	/*@Override
+	public void render(GuiGraphicsExtractor graphics, int index, int y, int x, int width, int height, int mouseX, int mouseY, boolean hovered, float a) {
+		this.extract(graphics, x, y, mouseX, mouseY, hovered, a);
+	}
+	*///?}
+
+	private void extract(GuiGraphicsExtractor graphics, int x, int y, int mouseX, int mouseY, boolean hovered, float a) {
 		if (this.icon != null) {
+			//? if >=1.21.6 {
 			graphics.blit(RenderPipelines.GUI_TEXTURED, this.icon, x, y, 0.0F, 0.0F, ICON_SIZE, ICON_SIZE, ICON_SIZE, ICON_SIZE);
+			//?} else {
+			/*graphics.blit(this.icon, x, y, 0.0F, 0.0F, ICON_SIZE, ICON_SIZE, ICON_SIZE, ICON_SIZE);
+			*///?}
 		} else {
-			graphics.blitSprite(RenderPipelines.GUI_TEXTURED, this.isBack() ? BACK_ICON : DEFAULT_ICON, x, y, ICON_SIZE, ICON_SIZE);
+			this.blitSprite(graphics, this.isBack() ? BACK_ICON : DEFAULT_ICON, x, y);
 		}
 		if (hovered || this.list.getSelected() == this && this.list.isFocused()) {
 			graphics.fill(x, y, x + ICON_SIZE, y + ICON_SIZE, HOVER_COLOR);
-			boolean overIcon = this.isOverIcon(mouseX, mouseY);
+			boolean overIcon = isOverIcon(x, y, mouseX, mouseY);
 			Identifier sprite;
 			if (this.isBack()) {
 				sprite = overIcon ? BACK_HIGHLIGHTED_SPRITE : BACK_SPRITE;
-			} else if (Minecraft.getInstance().hasShiftDown() && this.selects()) {
+			} else if (hasShiftDown() && this.selects()) {
 				sprite = overIcon ? SELECT_ALL_HIGHLIGHTED_SPRITE : SELECT_ALL_SPRITE;
-			} else if (Minecraft.getInstance().hasShiftDown()) {
+			} else if (hasShiftDown()) {
 				sprite = overIcon ? DESELECT_ALL_HIGHLIGHTED_SPRITE : DESELECT_ALL_SPRITE;
 			} else {
 				sprite = overIcon ? OPEN_HIGHLIGHTED_SPRITE : OPEN_SPRITE;
 			}
 			// Vanilla draws the back arrow on the left half of the icon, this mirrors the open arrow
 			int spriteX = this.isBack() ? x + BACK_ARROW_OFFSET : x;
-			graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, spriteX, y, ICON_SIZE, ICON_SIZE);
+			this.blitSprite(graphics, sprite, spriteX, y);
 			if (overIcon && !this.isBack()) {
-				graphics.setTooltipForNextFrame(this.selects() ? SELECT_ALL_HINT : DESELECT_ALL_HINT, mouseX, mouseY);
+				Component hint = this.selects() ? SELECT_ALL_HINT : DESELECT_ALL_HINT;
+				//? if >=1.21.6 {
+				graphics.setTooltipForNextFrame(hint, mouseX, mouseY);
+				//?} else {
+				/*this.screen.setTooltipForNextRenderPass(hint);
+				*///?}
 			}
 		}
 		//? if >=26.1 {
 		int textWidth = TEXT_WIDTH - (this.list.maxScrollAmount() > 0 ? this.list.scrollbarWidth() : 0);
-		//?} else {
+		//?} else if >=1.21.9 {
 		/*int textWidth = TEXT_WIDTH - (this.list.maxScrollAmount() > 0 ? AbstractScrollArea.SCROLLBAR_WIDTH : 0);
+		*///?} else {
+		/*int textWidth = TEXT_WIDTH - (this.list.getMaxScroll() > 0 ? 6 : 0);
 		*///?}
-		this.nameWidget.setMaxWidth(textWidth);
-		this.nameWidget.setPosition(x + ICON_SIZE + 2, y + 1);
-		//? if >=26.1 {
-		this.nameWidget.extractRenderState(graphics, mouseX, mouseY, a);
+		this.extractText(this.nameWidget, graphics, textWidth, x + ICON_SIZE + 2, y + 1, mouseX, mouseY, a);
+		this.extractText(this.descriptionWidget, graphics, textWidth, x + ICON_SIZE + 2, y + 12, mouseX, mouseY, a);
+	}
+
+	private void blitSprite(GuiGraphicsExtractor graphics, Identifier sprite, int x, int y) {
+		//? if >=1.21.6 {
+		graphics.blitSprite(RenderPipelines.GUI_TEXTURED, sprite, x, y, ICON_SIZE, ICON_SIZE);
 		//?} else {
-		/*this.nameWidget.render(graphics, mouseX, mouseY, a);
+		/*graphics.blitSprite(sprite, x, y, ICON_SIZE, ICON_SIZE);
 		*///?}
-		this.descriptionWidget.setMaxWidth(textWidth);
-		this.descriptionWidget.setPosition(x + ICON_SIZE + 2, y + 12);
-		//? if >=26.1 {
-		this.descriptionWidget.extractRenderState(graphics, mouseX, mouseY, a);
+	}
+
+	private void extractText(StringWidget widget, GuiGraphicsExtractor graphics, int width, int x, int y, int mouseX, int mouseY, float a) {
+		//? if >=1.21.9 {
+		widget.setMaxWidth(width);
 		//?} else {
-		/*this.descriptionWidget.render(graphics, mouseX, mouseY, a);
+		/*widget.setWidth(width);
+		*///?}
+		widget.setPosition(x, y);
+		//? if >=26.1 {
+		widget.extractRenderState(graphics, mouseX, mouseY, a);
+		//?} else {
+		/*widget.render(graphics, mouseX, mouseY, a);
 		*///?}
 	}
 
 	// A click opens the folder, a shift click selects or deselects all of its packs
-	@Override
-	public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
-		if (!this.isBack() && event.hasShiftDown() && this.selects()) {
+	private void click(boolean shift) {
+		if (!this.isBack() && shift && this.selects()) {
 			PackFolders.selectAll(this.packs);
-		} else if (!this.isBack() && event.hasShiftDown()) {
+		} else if (!this.isBack() && shift) {
 			PackFolders.deselectAll(this.packs);
 		} else {
 			PackFolders.open(this.screen, this.folder);
 		}
+	}
+
+	//? if >=1.21.9 {
+	@Override
+	public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+		this.click(event.hasShiftDown());
 		return true;
 	}
 
@@ -167,6 +228,19 @@ public class PackFolderEntry extends TransferableSelectionList.Entry {
 	public boolean shouldTakeFocusAfterInteraction() {
 		return false;
 	}
+	//?} else {
+	/*@Override
+	public boolean mouseClicked(double mouseX, double mouseY, int button) {
+		this.click(Screen.hasShiftDown());
+		return true;
+	}
+
+	// Enter and space in the pack list
+	@Override
+	public void keyboardSelection() {
+		PackFolders.open(this.screen, this.folder);
+	}
+	*///?}
 
 	@Override
 	public Component getNarration() {
@@ -177,4 +251,75 @@ public class PackFolderEntry extends TransferableSelectionList.Entry {
 	public String getPackId() {
 		return "";
 	}
+
+	//? if <1.21.9 {
+	/*// The vanilla pack entry needs a pack, this one can't be selected or moved
+	private record FolderPack(Component getTitle, Component getDescription) implements PackSelectionModel.Entry {
+		@Override
+		public Identifier getIconTexture() {
+			return DEFAULT_ICON;
+		}
+
+		@Override
+		public PackCompatibility getCompatibility() {
+			return PackCompatibility.COMPATIBLE;
+		}
+
+		@Override
+		public String getId() {
+			return "";
+		}
+
+		@Override
+		public PackSource getPackSource() {
+			return PackSource.DEFAULT;
+		}
+
+		@Override
+		public boolean isFixedPosition() {
+			return true;
+		}
+
+		@Override
+		public boolean isRequired() {
+			return true;
+		}
+
+		@Override
+		public void select() {
+		}
+
+		@Override
+		public void unselect() {
+		}
+
+		@Override
+		public void moveUp() {
+		}
+
+		@Override
+		public void moveDown() {
+		}
+
+		@Override
+		public boolean isSelected() {
+			return false;
+		}
+
+		@Override
+		public boolean canSelect() {
+			return false;
+		}
+
+		@Override
+		public boolean canMoveUp() {
+			return false;
+		}
+
+		@Override
+		public boolean canMoveDown() {
+			return false;
+		}
+	}
+	*///?}
 }

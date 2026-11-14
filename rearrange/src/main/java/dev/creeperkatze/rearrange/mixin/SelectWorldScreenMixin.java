@@ -34,10 +34,13 @@ public abstract class SelectWorldScreenMixin extends Screen {
 		this.rearrange$resetButton.position(this.searchBox);
 	}
 
+	// Older versions run init again instead
+	//? if >=1.21.9 {
 	@Inject(method = "repositionElements", at = @At("TAIL"))
 	private void rearrange$positionResetButton(CallbackInfo ci) {
 		if (this.rearrange$resetButton != null) {
 			this.rearrange$resetButton.position(this.searchBox);
 		}
 	}
+	//?}
 }

@@ -70,7 +70,11 @@ public final class PackFolderIcons {
 		Identifier location = Identifier.fromNamespaceAndPath(Organize.MOD_ID, "pack_folder/" + Hashing.sha1().hashUnencodedChars(file.toAbsolutePath().toString()));
 		try (InputStream stream = Files.newInputStream(file)) {
 			NativeImage image = NativeImage.read(stream);
+			//? if >=1.21.5 {
 			Minecraft.getInstance().getTextureManager().register(location, new DynamicTexture(location::toString, image));
+			//?} else {
+			/*Minecraft.getInstance().getTextureManager().register(location, new DynamicTexture(image));
+			*///?}
 			return location;
 		} catch (IOException e) {
 			Organize.LOGGER.warn("Failed to load pack folder icon {}", file, e);

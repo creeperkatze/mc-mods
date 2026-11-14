@@ -1,9 +1,13 @@
 package dev.creeperkatze.organize;
 
+//? if >=1.21.9 {
 import dev.creeperkatze.organize.mixin.AbstractSelectionListAccessor;
+//?}
 import dev.creeperkatze.organize.mixin.PackSelectionScreenAccessor;
 import net.minecraft.client.Minecraft;
+//? if >=1.21.9 {
 import net.minecraft.client.gui.layouts.LayoutElement;
+//?}
 import net.minecraft.client.gui.screens.packs.PackSelectionModel;
 import net.minecraft.client.gui.screens.packs.PackSelectionScreen;
 import net.minecraft.client.gui.screens.packs.TransferableSelectionList;
@@ -27,7 +31,9 @@ import java.util.stream.Stream;
 public final class PackFolders {
 	private static final String FILE_PREFIX = "file/";
 	private static final int MAX_DEPTH = 8;
+	//? if >=1.21.9 {
 	private static final int ENTRY_HEIGHT = 36;
+	//?}
 	private static final Comparator<String> NAME_ORDER = String.CASE_INSENSITIVE_ORDER.thenComparing(Comparator.naturalOrder());
 
 	private PackFolders() {
@@ -106,8 +112,14 @@ public final class PackFolders {
 			}
 		}
 		Path packDir = ((PackSelectionScreenAccessor) screen).organize$getPackDir();
+		//? if >=1.21.9 {
 		List<LayoutElement> rows = ((AbstractSelectionListAccessor) list).organize$getChildren();
+		// The first row is the header
 		int index = 1;
+		//?} else {
+		/*List<TransferableSelectionList.PackEntry> rows = list.children();
+		int index = 0;
+		*///?}
 		if (!folder.isEmpty()) {
 			add(rows, index++, PackFolderEntry.back(list, screen, parent(folder)));
 		}
@@ -116,14 +128,25 @@ public final class PackFolders {
 			Identifier icon = PackFolderIcons.get(packDir.resolve(path));
 			add(rows, index++, PackFolderEntry.folder(list, screen, path, subfolder.getKey(), icon, subfolder.getValue()));
 		}
+		//? if >=1.21.9 {
 		((AbstractSelectionListAccessor) list).organize$repositionEntries();
 		list.refreshScrollAmount();
+		//?} else {
+		/*list.clampScrollAmount();
+		*///?}
 	}
 
+	//? if >=1.21.9 {
 	private static void add(List<LayoutElement> rows, int index, PackFolderEntry entry) {
 		entry.setHeight(ENTRY_HEIGHT);
 		rows.add(index, entry);
 	}
+	//?} else {
+	/*// Rows all have the height of the list
+	private static void add(List<TransferableSelectionList.PackEntry> rows, int index, PackFolderEntry entry) {
+		rows.add(index, entry);
+	}
+	*///?}
 
 	public static boolean canSelectAny(List<PackSelectionModel.Entry> packs) {
 		return packs.stream().anyMatch(PackFolders::canSelect);
@@ -160,7 +183,11 @@ public final class PackFolders {
 	public static void open(PackSelectionScreen screen, String folder) {
 		((PackFolderScreen) screen).organize$setFolder(folder);
 		PackSelectionScreenAccessor accessor = (PackSelectionScreenAccessor) screen;
+		//? if >=1.21.9 {
 		accessor.organize$populateLists(null);
+		//?} else {
+		/*accessor.organize$populateLists();
+		*///?}
 		TransferableSelectionList available = accessor.organize$getAvailablePackList();
 		if (available != null) {
 			available.setScrollAmount(0.0);
