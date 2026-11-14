@@ -20,7 +20,7 @@ config = "gather.mixins.json"
 [[dependencies.${mod_id}]]
 modId = "neoforge"
 type = "required"
-versionRange = "[${neoforge_version},)"
+versionRange = "[${neoforge_dependency},)"
 ordering = "NONE"
 side = "CLIENT"
 

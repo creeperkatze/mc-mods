@@ -9,6 +9,7 @@ import dev.creeperkatze.illuminate.preview.IlluminateDebugEntry;
 //?}
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -24,9 +25,13 @@ import net.neoforged.neoforge.event.GameShuttingDownEvent;
 @EventBusSubscriber(modid = Illuminate.MOD_ID, value = Dist.CLIENT)
 @Mod(value = Illuminate.MOD_ID, dist = Dist.CLIENT)
 public class IlluminateNeoForge {
-	public IlluminateNeoForge(ModContainer container) {
+	public IlluminateNeoForge(IEventBus modBus, ModContainer container) {
 		Illuminate.init();
 		container.registerExtensionPoint(IConfigScreenFactory.class, (client, parent) -> IlluminateConfigScreen.create(parent));
+		//? if >=1.21.9 {
+		// Older NeoForge builds don't send mod bus events to @EventBusSubscriber classes
+		modBus.addListener(IlluminateNeoForge::registerDebugEntries);
+		//?}
 	}
 
 	@SubscribeEvent
@@ -40,8 +45,7 @@ public class IlluminateNeoForge {
 	}
 
 	//? if >=1.21.9 {
-	@SubscribeEvent
-	public static void registerDebugEntries(RegisterDebugEntriesEvent event) {
+	private static void registerDebugEntries(RegisterDebugEntriesEvent event) {
 		event.register(IlluminateDebugEntry.ID, new IlluminateDebugEntry());
 	}
 	//?}

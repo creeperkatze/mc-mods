@@ -1,3 +1,4 @@
+import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.language.jvm.tasks.ProcessResources
 
@@ -8,6 +9,7 @@ plugins {
 val modId = modProperty("mod_id")
 val javaVersion = mcVersion("java").toInt()
 val releaseVersion = "${modProperty("mod_version")}+$minecraftVersion"
+val fabricLoaderMinimum = extensions.getByType<VersionCatalogsExtension>().named("libs").version("fabric-loader-minimum")
 
 // Tells apart version projects of different mods, which share names like 26.3-fabric
 group = "${modProperty("maven_group")}.$modId"
@@ -66,8 +68,10 @@ tasks.named<ProcessResources>("processResources") {
 		// Fabric reads ~1.21.1 as below 1.22, which would include every later 1.21 release
 		"minecraft_dependency" to if (isObfuscated) minecraftVersion else "~$minecraftVersion",
 		"java_version" to javaVersion.toString(),
-		"fabric_loader_version" to mcVersion("fabric-loader"),
-		"neoforge_version" to mcVersion("neoforge"),
+		// A fixed floor instead of the loader built against, so packs on older loaders still work
+		"fabric_loader_minimum" to fabricLoaderMinimum,
+		// Any NeoForge build for this Minecraft version, not only the one built against
+		"neoforge_dependency" to mcVersion("neoforge").substringBeforeLast('.'),
 		"yacl_version" to mcVersion("yacl-$loader").removeSuffix("-$loader")
 	)
 	inputs.properties(properties)

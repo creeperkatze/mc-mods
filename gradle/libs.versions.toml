@@ -2,6 +2,8 @@
 loom = "1.19.3"
 moddev = "2.0.148"
 mod-publish = "2.2.1"
+# Oldest Fabric Loader the mods accept on every Minecraft version, like Fabric API on 1.21.1
+fabric-loader-minimum = "0.15.11"
 
 [libraries]
 loom-plugin = { module = "net.fabricmc:fabric-loom", version.ref = "loom" }
