@@ -8,22 +8,22 @@ stonecutter active "26.3-fabric"
 stonecutter parameters {
 	constants.match(node.metadata.project.substringAfterLast('-'), "fabric", "neoforge")
 
-	// 1.21.11 renamed ResourceLocation to Identifier and moved Util
+	// 1.21.5 renamed the nausea effect
+	replacements.string(current.parsed >= "1.21.5") {
+		replace("MobEffects.CONFUSION", "MobEffects.NAUSEA")
+	}
+
+	// 1.21.11 renamed ResourceLocation to Identifier, moved Util and renamed the camera getters
 	replacements.string(current.parsed >= "1.21.11") {
 		replace("ResourceLocation", "Identifier")
 		replace("import net.minecraft.Util;", "import net.minecraft.util.Util;")
 		replace("key.location()", "key.identifier()")
-	}
-
-	// Renamed somewhere between 1.21.1 and 1.21.11
-	replacements.string(current.parsed >= "1.21.11") {
 		replace("camera.getPosition()", "camera.position()")
 		replace("camera.getLookVector()", "camera.forwardVector()")
 		replace("camera.getLeftVector()", "camera.leftVector()")
-		replace("MobEffects.CONFUSION", "MobEffects.NAUSEA")
 	}
 
-	// 1.21.1 doesn't ship jspecify, only the JetBrains annotations
+	// 1.21.11 started shipping jspecify, older versions only have the JetBrains annotations
 	replacements.string(current.parsed >= "1.21.11") {
 		replace("org.jetbrains.annotations.Nullable", "org.jspecify.annotations.Nullable")
 	}
