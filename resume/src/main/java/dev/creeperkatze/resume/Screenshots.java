@@ -1,6 +1,7 @@
 package dev.creeperkatze.resume;
 
 import com.mojang.blaze3d.pipeline.RenderTarget;
+import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
 import net.minecraft.util.Util;
@@ -34,8 +35,13 @@ public final class Screenshots {
 		pending = place.screenshot();
 		//? if >=26.2 {
 		minecraft.renderFrame(true);
-		//?} else {
+		//?} else if >=1.21.9 {
 		/*minecraft.gameRenderer.render(minecraft.getDeltaTracker(), true);
+		*///?} else {
+		/*// Older versions draw into the main render target only while it is bound
+		minecraft.getMainRenderTarget().bindWrite(true);
+		minecraft.gameRenderer.render(minecraft.getTimer(), true);
+		minecraft.getMainRenderTarget().unbindWrite();
 		*///?}
 		pending = null;
 	}
@@ -46,13 +52,21 @@ public final class Screenshots {
 			return;
 		}
 		pending = null;
-		Screenshot.takeScreenshot(target, image -> Util.ioPool().execute(() -> {
+		//? if >=1.21.2 {
+		Screenshot.takeScreenshot(target, image -> save(image, file));
+		//?} else {
+		/*save(Screenshot.takeScreenshot(target), file);
+		*///?}
+	}
+
+	private static void save(NativeImage image, Path file) {
+		Util.ioPool().execute(() -> {
 			try (image) {
 				Files.createDirectories(file.getParent());
 				image.writeToFile(file);
 			} catch (IOException e) {
 				Resume.LOGGER.warn("Could not save the screenshot {}", file, e);
 			}
-		}));
+		});
 	}
 }

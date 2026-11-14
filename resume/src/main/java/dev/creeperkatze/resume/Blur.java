@@ -12,7 +12,12 @@ public final class Blur {
 	public static void apply(NativeImage image, int radius) {
 		int width = image.getWidth();
 		int height = image.getHeight();
+		// Older versions store pixels as ABGR. The blur treats every channel the same.
+		//? if >=1.21.2 {
 		int[] pixels = image.getPixels();
+		//?} else {
+		/*int[] pixels = image.getPixelsRGBA();
+		*///?}
 		int[] buffer = new int[pixels.length];
 		for (int pass = 0; pass < PASSES; pass++) {
 			blur(pixels, buffer, width, height, 1, width, radius);
@@ -20,7 +25,11 @@ public final class Blur {
 		}
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
+				//? if >=1.21.2 {
 				image.setPixel(x, y, pixels[y * width + x]);
+				//?} else {
+				/*image.setPixelRGBA(x, y, pixels[y * width + x]);
+				*///?}
 			}
 		}
 	}

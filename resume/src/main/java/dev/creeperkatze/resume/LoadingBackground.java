@@ -12,10 +12,18 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
 import net.minecraft.client.gui.screens.worldselection.SelectWorldScreen;
+//? if >=1.21.6 {
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.util.ARGB;
+//?} else {
+/*import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.util.FastColor;
+*///?}
+//? if <1.21.9 {
+/*import net.minecraft.client.gui.screens.ReceivingLevelScreen;
+*///?}
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.ARGB;
 import net.minecraft.util.Util;
 import org.jspecify.annotations.Nullable;
 
@@ -90,15 +98,19 @@ public final class LoadingBackground {
 		}
 		width = image.getWidth();
 		height = image.getHeight();
+		//? if >=1.21.5 {
 		Minecraft.getInstance().getTextureManager().register(TEXTURE,
 				new DynamicTexture(() -> "Resume loading background", image));
+		//?} else {
+		/*Minecraft.getInstance().getTextureManager().register(TEXTURE, new DynamicTexture(image));
+		*///?}
 		shown = file;
 		shownBlur = blur;
 		shownAt = Util.getMillis();
 	}
 
 	public static void onScreenChange(@Nullable Screen from, @Nullable Screen to) {
-		if (joining && from instanceof LevelLoadingScreen && !(to instanceof LevelLoadingScreen)) {
+		if (joining && isLevelLoading(from) && !isLevelLoading(to)) {
 			if (shown != null && Resume.config().fadeOutDuration > 0.0F) {
 				joining = false;
 				fadeStart = Util.getMillis();
@@ -113,13 +125,22 @@ public final class LoadingBackground {
 	}
 
 	public static boolean extract(Screen screen, GuiGraphicsExtractor graphics) {
-		boolean loadingScreen = screen instanceof LevelLoadingScreen || screen instanceof ConnectScreen
+		boolean loadingScreen = isLevelLoading(screen) || screen instanceof ConnectScreen
 				|| screen instanceof ProgressScreen || screen instanceof GenericMessageScreen;
 		if (!joining || shown == null || !loadingScreen) {
 			return false;
 		}
 		draw(graphics, screen.width, screen.height, 1.0F);
 		return true;
+	}
+
+	// Before 1.21.9 the world loads in two screens, generating it and then receiving it
+	private static boolean isLevelLoading(@Nullable Screen screen) {
+		//? if >=1.21.9 {
+		return screen instanceof LevelLoadingScreen;
+		//?} else {
+		/*return screen instanceof LevelLoadingScreen || screen instanceof ReceivingLevelScreen;
+		*///?}
 	}
 
 	public static void extractFade(GuiGraphicsExtractor graphics) {
@@ -139,11 +160,21 @@ public final class LoadingBackground {
 		float scale = Math.max((float) screenWidth / width, (float) screenHeight / height);
 		int sourceWidth = Math.min(width, Math.round(screenWidth / scale));
 		int sourceHeight = Math.min(height, Math.round(screenHeight / scale));
-		graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, 0, 0, (width - sourceWidth) / 2.0F,
-				(height - sourceHeight) / 2.0F, screenWidth, screenHeight, sourceWidth, sourceHeight, width, height,
-				ARGB.white(alpha));
+		float u = (width - sourceWidth) / 2.0F;
+		float v = (height - sourceHeight) / 2.0F;
 		float brightness = Resume.config().brightness * fadeIn();
+		//? if >=1.21.6 {
+		graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, 0, 0, u, v, screenWidth, screenHeight, sourceWidth,
+				sourceHeight, width, height, ARGB.white(alpha));
 		graphics.fill(0, 0, screenWidth, screenHeight, ARGB.black(alpha * (1.0F - brightness)));
+		//?} else {
+		/*RenderSystem.enableBlend();
+		graphics.setColor(1.0F, 1.0F, 1.0F, alpha);
+		graphics.blit(TEXTURE, 0, 0, screenWidth, screenHeight, u, v, sourceWidth, sourceHeight, width, height);
+		graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+		RenderSystem.disableBlend();
+		graphics.fill(0, 0, screenWidth, screenHeight, FastColor.ARGB32.color(Math.round(alpha * (1.0F - brightness) * 255.0F), 0));
+		*///?}
 	}
 
 	// Rises from 0 to 1 over the fade in duration after the screenshot first shows

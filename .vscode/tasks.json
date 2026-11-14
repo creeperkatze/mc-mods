@@ -59,21 +59,36 @@
 			"id": "mod",
 			"type": "pickString",
 			"description": "Mod",
-			"options": ["accelerate", "rearrange", "organize", "gather", "illuminate", "resume"],
+			"options": [
+				"accelerate",
+				"rearrange",
+				"organize",
+				"gather",
+				"illuminate",
+				"resume"
+			],
 			"default": "accelerate"
 		},
 		{
 			"id": "minecraft",
 			"type": "pickString",
 			"description": "Minecraft version",
-			"options": ["26.3", "26.2", "1.21.11", "1.21.1"],
+			"options": [
+				"26.3",
+				"26.2",
+				"1.21.11",
+				"1.21.1"
+			],
 			"default": "26.3"
 		},
 		{
 			"id": "loader",
 			"type": "pickString",
 			"description": "Loader",
-			"options": ["fabric", "neoforge"],
+			"options": [
+				"fabric",
+				"neoforge"
+			],
 			"default": "fabric"
 		}
 	]

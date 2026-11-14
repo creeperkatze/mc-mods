@@ -33,8 +33,15 @@ public class MinecraftMixin {
 		Resume.onJoin(Place.world(levelSourceAccess.getLevelId()));
 	}
 
+	//? if >=1.21.9 {
 	@Inject(method = "disconnect(Lnet/minecraft/client/gui/screens/Screen;ZZ)V", at = @At("HEAD"))
 	private void resume$captureScreenshot(Screen screen, boolean keepResourcePacks, boolean stopSound, CallbackInfo ci) {
 		Screenshots.onDisconnect((Minecraft) (Object) this);
 	}
+	//?} else {
+	/*@Inject(method = "disconnect(Lnet/minecraft/client/gui/screens/Screen;Z)V", at = @At("HEAD"))
+	private void resume$captureScreenshot(Screen screen, boolean keepResourcePacks, CallbackInfo ci) {
+		Screenshots.onDisconnect((Minecraft) (Object) this);
+	}
+	*///?}
 }
