@@ -4,7 +4,9 @@
 import dev.creeperkatze.illuminate.Illuminate;
 import dev.creeperkatze.illuminate.IlluminateCommands;
 import dev.creeperkatze.illuminate.config.IlluminateConfigScreen;
+//? if >=1.21.9 {
 import dev.creeperkatze.illuminate.preview.IlluminateDebugEntry;
+//?}
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -13,7 +15,9 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
+//? if >=1.21.9 {
 import net.neoforged.neoforge.client.event.RegisterDebugEntriesEvent;
+//?}
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.event.GameShuttingDownEvent;
 
@@ -35,10 +39,12 @@ public class IlluminateNeoForge {
 		event.getDispatcher().register(IlluminateCommands.create());
 	}
 
+	//? if >=1.21.9 {
 	@SubscribeEvent
 	public static void registerDebugEntries(RegisterDebugEntriesEvent event) {
 		event.register(IlluminateDebugEntry.ID, new IlluminateDebugEntry());
 	}
+	//?}
 
 	@SubscribeEvent
 	public static void onShuttingDown(GameShuttingDownEvent event) {

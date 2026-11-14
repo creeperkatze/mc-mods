@@ -19,7 +19,11 @@ public final class SubmergedLayer implements Layer {
 
 	@Override
 	public void paint(Canvas canvas, GameState state, Moment moment) {
+		//? if >=1.21.6 {
 		boolean submerged = moment.config().submerged && state.fluid() != FogType.NONE && state.fluid() != FogType.ATMOSPHERIC;
+		//?} else {
+		/*boolean submerged = moment.config().submerged && state.fluid() != FogType.NONE;
+		*///?}
 		if (submerged) {
 			fluid = state.fluid();
 		}

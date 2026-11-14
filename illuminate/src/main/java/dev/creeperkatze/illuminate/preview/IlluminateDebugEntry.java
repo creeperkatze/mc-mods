@@ -8,11 +8,13 @@ import dev.creeperkatze.illuminate.game.GameStateCollector;
 import dev.creeperkatze.illuminate.output.openrgb.OpenRgbOutput;
 import dev.creeperkatze.illuminate.output.signalrgb.SignalRgbOutput;
 import dev.creeperkatze.illuminate.scene.Rgb;
+//? if >=1.21.9 {
 import net.minecraft.client.gui.components.debug.DebugScreenDisplayer;
 import net.minecraft.client.gui.components.debug.DebugScreenEntry;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
+//?}
 import net.minecraft.world.level.material.FogType;
 import org.jspecify.annotations.Nullable;
 
@@ -21,11 +23,25 @@ import java.util.List;
 import java.util.Locale;
 
 // Illuminate's lines on the F3 screen, turned on in the game's debug options
+// Before 1.21.9 they are always shown, see DebugScreenOverlayMixin
+//? if >=1.21.9 {
 public final class IlluminateDebugEntry implements DebugScreenEntry {
 	public static final Identifier ID = Identifier.fromNamespaceAndPath(Illuminate.MOD_ID, Illuminate.MOD_ID);
 
 	@Override
 	public void display(DebugScreenDisplayer displayer, @Nullable Level serverOrClientLevel, @Nullable LevelChunk clientChunk, @Nullable LevelChunk serverChunk) {
+		displayer.addToGroup(ID, lines());
+	}
+
+	@Override
+	public boolean isAllowed(boolean reducedDebugInfo) {
+		// Nothing here gives away the world, so it shows with reduced debug info too
+		return true;
+	}
+//?} else {
+/*public final class IlluminateDebugEntry {
+*///?}
+	public static List<String> lines() {
 		LightingEngine engine = Illuminate.engine();
 		GameState state = GameStateCollector.current();
 		List<String> lines = new ArrayList<>();
@@ -44,13 +60,7 @@ public final class IlluminateDebugEntry implements DebugScreenEntry {
 		if (event != null) {
 			lines.add(format("Last event: %s, %.1fs ago", describe(event), (System.currentTimeMillis() - engine.lastEventAt()) / 1000.0F));
 		}
-		displayer.addToGroup(ID, lines);
-	}
-
-	@Override
-	public boolean isAllowed(boolean reducedDebugInfo) {
-		// Nothing here gives away the world, so it shows with reduced debug info too
-		return true;
+		return lines;
 	}
 
 	private static String signalRgb(@Nullable SignalRgbOutput output) {

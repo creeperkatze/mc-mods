@@ -12,6 +12,15 @@ stonecutter parameters {
 	replacements.string(current.parsed >= "1.21.11") {
 		replace("ResourceLocation", "Identifier")
 		replace("import net.minecraft.Util;", "import net.minecraft.util.Util;")
+		replace("key.location()", "key.identifier()")
+	}
+
+	// Renamed somewhere between 1.21.1 and 1.21.11
+	replacements.string(current.parsed >= "1.21.11") {
+		replace("camera.getPosition()", "camera.position()")
+		replace("camera.getLookVector()", "camera.forwardVector()")
+		replace("camera.getLeftVector()", "camera.leftVector()")
+		replace("MobEffects.CONFUSION", "MobEffects.NAUSEA")
 	}
 
 	// 1.21.1 doesn't ship jspecify, only the JetBrains annotations

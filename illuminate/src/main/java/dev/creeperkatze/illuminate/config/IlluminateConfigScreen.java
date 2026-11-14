@@ -294,8 +294,13 @@ public final class IlluminateConfigScreen {
 			Illuminate.LOGGER.error("Could not install the SignalRGB effect", e);
 			message = Component.translatable("illuminate.toast.effect_failed", e.getMessage());
 		}
+		//? if >=1.21.2 {
 		SystemToast.addOrUpdate(Minecraft.getInstance().gui.toastManager(),
 				SystemToast.SystemToastId.PERIODIC_NOTIFICATION, title, message);
+		//?} else {
+		/*SystemToast.addOrUpdate(Minecraft.getInstance().getToasts(),
+				SystemToast.SystemToastId.PERIODIC_NOTIFICATION, title, message);
+		*///?}
 	}
 
 	private static Component status(String status) {

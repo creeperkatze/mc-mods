@@ -33,7 +33,12 @@ public final class AtmosphereLayer implements Layer {
 			dimension = state.dimension();
 			particles.clear();
 		}
-		if (moment.config().weather && (state.fluid() == FogType.ATMOSPHERIC || state.fluid() == FogType.NONE)) {
+		//? if >=1.21.6 {
+		boolean outside = state.fluid() == FogType.ATMOSPHERIC || state.fluid() == FogType.NONE;
+		//?} else {
+		/*boolean outside = state.fluid() == FogType.NONE;
+		*///?}
+		if (moment.config().weather && outside) {
 			spawn(state, delta);
 		}
 

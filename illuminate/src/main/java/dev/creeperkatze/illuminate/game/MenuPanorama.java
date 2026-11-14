@@ -3,6 +3,9 @@ package dev.creeperkatze.illuminate.game;
 import com.mojang.blaze3d.platform.NativeImage;
 import dev.creeperkatze.illuminate.Illuminate;
 import dev.creeperkatze.illuminate.mixin.PanoramaAccessor;
+//? if <1.21.11 {
+/*import dev.creeperkatze.illuminate.mixin.ScreenPanoramaAccessor;
+*///?}
 import dev.creeperkatze.illuminate.scene.Canvas;
 import dev.creeperkatze.illuminate.scene.Rgb;
 import net.minecraft.client.Minecraft;
@@ -31,8 +34,10 @@ public final class MenuPanorama {
 	public static void tick(Minecraft client) {
 		//? if >=26.2 {
 		spin = ((PanoramaAccessor) client.gameRenderer.panorama()).illuminate$spin();
-		//?} else {
+		//?} else if >=1.21.11 {
 		/*spin = ((PanoramaAccessor) client.gameRenderer.getPanorama()).illuminate$spin();
+		*///?} else {
+		/*spin = ((PanoramaAccessor) ScreenPanoramaAccessor.illuminate$panorama()).illuminate$spin();
 		*///?}
 		//? if >=26.2 {
 		boolean loading = client.gui.overlay() != null;
@@ -102,7 +107,13 @@ public final class MenuPanorama {
 		int count = 0;
 		for (int y = y0; y < y1; y += step) {
 			for (int x = x0; x < x1; x += step) {
+				//? if >=1.21.2 {
 				Rgb pixel = Rgb.of(image.getPixel(x, y) & 0xFFFFFF);
+				//?} else {
+				/*// Older versions store pixels as ABGR
+				int abgr = image.getPixelRGBA(x, y);
+				Rgb pixel = Rgb.of((abgr & 0xFF) << 16 | (abgr & 0xFF00) | (abgr >> 16 & 0xFF));
+				*///?}
 				red += pixel.r();
 				green += pixel.g();
 				blue += pixel.b();
