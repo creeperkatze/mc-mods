@@ -13,6 +13,7 @@
 
 - Works with older Fabric Loader and NeoForge versions instead of only the newest ones.
 - The flicker warning only shows when SignalRGB and OpenRGB are both connected.
+- Settings with several choices now explain every choice at once.
 
 ### Fixed
 

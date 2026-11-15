@@ -29,6 +29,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -133,7 +134,7 @@ public final class IlluminateConfigScreen {
 				.build();
 		Option<Direction> direction = Option.<Direction>createBuilder()
 				.name(Component.translatable("illuminate.config.preview_direction"))
-				.description(preview)
+				.description(choice("preview_direction", Direction.class, Direction::caption))
 				.binding(Direction.NONE, () -> previewDirection, value -> previewDirection = value)
 				// Follows the selection right away so the direction never counts as an unsaved change
 				.addListener((option, event) -> previewDirection = option.pendingValue())
@@ -265,7 +266,7 @@ public final class IlluminateConfigScreen {
 		for (String device : deviceNames) {
 			openRgb.option(Option.<Placement>createBuilder()
 					.name(Component.literal(device))
-					.description(choice("placement"))
+					.description(choice("placement", Placement.class, Placement::caption))
 					.binding(Placement.CENTER, () -> config.placement(device), value -> config.setPlacement(device, value))
 					.controller(option -> EnumControllerBuilder.create(option).enumClass(Placement.class)
 							.formatValue(Placement::caption))
@@ -347,7 +348,7 @@ public final class IlluminateConfigScreen {
 			T defaultValue, Supplier<T> getter, Consumer<T> setter) {
 		return Option.<T>createBuilder()
 				.name(name(key))
-				.description(choice(key))
+				.description(choice(key, type, caption))
 				.binding(defaultValue, getter, setter)
 				.controller(option -> EnumControllerBuilder.create(option)
 						.enumClass(type)
@@ -366,11 +367,16 @@ public final class IlluminateConfigScreen {
 				.build();
 	}
 
-	private static <T extends Enum<T>> Function<T, OptionDescription> choice(String key) {
-		return value -> OptionDescription.of(Component.translatable("illuminate.config." + key + ".tooltip")
-				.append("\n\n")
-				.append(Component.translatable(
-						"illuminate.config." + key + "." + value.name().toLowerCase(Locale.ROOT) + ".tooltip")));
+	private static <T extends Enum<T>> OptionDescription choice(String key, Class<T> type,
+			Function<T, Component> caption) {
+		MutableComponent text = Component.translatable("illuminate.config." + key + ".tooltip");
+		for (T value : type.getEnumConstants()) {
+			text.append("\n\n").append(Component.translatable("illuminate.config.choice",
+					caption.apply(value).copy().withStyle(ChatFormatting.BOLD),
+					Component.translatable("illuminate.config." + key + "."
+							+ value.name().toLowerCase(Locale.ROOT) + ".tooltip")));
+		}
+		return OptionDescription.of(text);
 	}
 
 	private static Component name(String key) {
