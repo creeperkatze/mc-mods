@@ -5,6 +5,8 @@
 
 Gather turns Open to LAN into a real way to host your world for friends. Invite more players, name your server, decide who gets in and keep playing together even without an internet connection.
 
+![Showcase](https://raw.githubusercontent.com/creeperkatze/mc-mods/main/gather/media/screenshots/join.gif)
+
 ## ✨ Features
 
 ### Offline mode
