@@ -4,12 +4,16 @@ import dev.creeperkatze.illuminate.Illuminate;
 import dev.creeperkatze.illuminate.output.LightOutput;
 import dev.creeperkatze.illuminate.output.RateCounter;
 import dev.creeperkatze.illuminate.scene.Canvas;
+import org.jspecify.annotations.Nullable;
 
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 // Sends the scene to the Illuminate effect through SignalRGB's canvas event API
@@ -31,6 +35,9 @@ public final class SignalRgbOutput implements LightOutput {
 	private long lastSentAt;
 	private final RateCounter sends = new RateCounter();
 	private volatile long roundTripMillis;
+	private final ExecutorService switcher = Executors.newSingleThreadExecutor(Thread.ofPlatform().daemon().name("Illuminate Effect Switch").factory());
+	// The effect to go back to on release, only touched on the switcher thread
+	private @Nullable String previousEffect;
 
 	public SignalRgbOutput(int port) {
 		this.port = port;
@@ -61,7 +68,7 @@ public final class SignalRgbOutput implements LightOutput {
 		if (reachable && !applied) {
 			applied = true;
 			if (Illuminate.config().signalRgbApplyEffect && SignalRgbEffect.isInstalled()) {
-				SignalRgbEffect.apply();
+				switcher.execute(this::switchToIlluminate);
 			}
 		}
 		String payload = encode(canvas);
@@ -117,10 +124,31 @@ public final class SignalRgbOutput implements LightOutput {
 		return builder.toString();
 	}
 
+	// Runs on the switcher thread so reading the registry never holds up a frame
+	private void switchToIlluminate() {
+		String current = SignalRgbEffect.currentEffect();
+		if (current != null && !current.equals(SignalRgbEffect.NAME)) {
+			previousEffect = current;
+		}
+		SignalRgbEffect.apply(SignalRgbEffect.NAME);
+	}
+
+	// Leaves the effect alone if the player picked another one in the meantime
+	private void restorePreviousEffect() {
+		String previous = previousEffect;
+		previousEffect = null;
+		if (previous != null && SignalRgbEffect.NAME.equals(SignalRgbEffect.currentEffect())) {
+			SignalRgbEffect.apply(previous);
+		}
+	}
+
 	@Override
 	public void release() {
 		if (!lastPayload.isEmpty() && reachable) {
 			dispatch(RELEASE, System.currentTimeMillis());
+		}
+		if (applied) {
+			switcher.execute(this::restorePreviousEffect);
 		}
 		lastPayload = "";
 		applied = false;
@@ -129,6 +157,12 @@ public final class SignalRgbOutput implements LightOutput {
 	@Override
 	public void close() {
 		release();
+		switcher.shutdown();
+		try {
+			switcher.awaitTermination(2, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
 		status = "disabled";
 	}
 }

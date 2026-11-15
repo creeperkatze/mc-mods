@@ -120,7 +120,7 @@
 	"illuminate.config.warning": "Warning",
 	"illuminate.config.overlap": "SignalRGB and OpenRGB are both connected. A device controlled by both flickers, so turn it off in SignalRGB or set it to Off under Device Positions.",
 	"illuminate.config.signalrgb_apply_effect": "Switch Effect Automatically",
-	"illuminate.config.signalrgb_apply_effect.tooltip": "Switches SignalRGB to the Illuminate effect when Minecraft starts sending lighting.",
+	"illuminate.config.signalrgb_apply_effect.tooltip": "Switches SignalRGB to the Illuminate effect when Minecraft starts sending lighting, and back to your previous effect when it stops.",
 	"illuminate.config.signalrgb_effect": "SignalRGB Effect",
 	"illuminate.config.signalrgb_effect.tooltip": "Copies the Illuminate effect to %s. Restart SignalRGB afterwards.",
 	"illuminate.config.install": "Install",

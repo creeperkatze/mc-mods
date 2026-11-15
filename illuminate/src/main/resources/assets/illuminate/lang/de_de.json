@@ -112,7 +112,7 @@
 	"illuminate.config.warning": "Warnung",
 	"illuminate.config.overlap": "SignalRGB und OpenRGB sind beide aktiviert. Ein Gerät, welches von beiden gesteuert wird, wird flackern. Deaktiviere es in SignalRGB oder stelle es unter Gerätepositionen auf Aus.",
 	"illuminate.config.signalrgb_apply_effect": "Effekt automatisch wechseln",
-	"illuminate.config.signalrgb_apply_effect.tooltip": "Wechselt SignalRGB zum Illuminate-Effekt, sobald Minecraft Beleuchtungsdaten sendet.",
+	"illuminate.config.signalrgb_apply_effect.tooltip": "Wechselt SignalRGB zum Illuminate-Effekt, sobald Minecraft Beleuchtungsdaten sendet, und danach zurück zu deinem vorherigen Effekt.",
 	"illuminate.config.signalrgb_effect": "SignalRGB-Effekt",
 	"illuminate.config.signalrgb_effect.tooltip": "Kopiert den Illuminate-Effekt nach %s. Starte SignalRGB anschließend neu.",
 	"illuminate.config.install": "Installieren",

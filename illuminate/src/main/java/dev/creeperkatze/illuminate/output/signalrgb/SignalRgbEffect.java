@@ -1,9 +1,13 @@
 package dev.creeperkatze.illuminate.output.signalrgb;
 
 import dev.creeperkatze.illuminate.Illuminate;
+import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -13,12 +17,13 @@ import java.util.Objects;
 
 // The Illuminate lighting effect that SignalRGB loads from its user effects folder
 public final class SignalRgbEffect {
-	private static final String EFFECT = "Illuminate.html";
+	public static final String NAME = "Illuminate";
+	private static final String EFFECT = NAME + ".html";
 	// SignalRGB shows a PNG with the same name as the effect as its thumbnail
 	private static final String THUMBNAIL = "Illuminate.png";
 	private static final List<String> FILES = List.of(EFFECT, THUMBNAIL);
 	private static final String RESOURCES = "/assets/" + Illuminate.MOD_ID + "/signalrgb/";
-	private static final String APPLY_URI = "signalrgb://effect/apply/Illuminate?-silentlaunch-";
+	private static final String SELECTED_KEY = "HKCU\\Software\\WhirlwindFX\\SignalRgb\\effects\\selected";
 	// SignalRGB only exists for Windows.
 	private static final boolean SUPPORTED = Objects.requireNonNullElse(System.getenv("ILLUMINATE_OS"),
 			System.getProperty("os.name", "")).toLowerCase(Locale.ROOT).contains("windows");
@@ -74,16 +79,43 @@ public final class SignalRgbEffect {
 		}
 	}
 
-	// Asks SignalRGB to switch to the Illuminate effect without bringing its window
-	// up
-	public static void apply() {
+	// The name of the effect SignalRGB shows right now
+	// Only reads the registry, because the SignalRGB API for this is locked to Pro users
+	public static @Nullable String currentEffect() {
+		if (!supported()) {
+			return null;
+		}
+		try {
+			Process process = new ProcessBuilder("reg", "query", SELECTED_KEY, "/v", "name").redirectErrorStream(true).start();
+			String output = new String(process.getInputStream().readAllBytes(), Charset.defaultCharset());
+			if (process.waitFor() != 0) {
+				return null;
+			}
+			for (String line : output.split("\\R")) {
+				int type = line.indexOf("REG_SZ");
+				if (line.strip().startsWith("name") && type >= 0) {
+					String name = line.substring(type + "REG_SZ".length()).strip();
+					return name.isEmpty() ? null : name;
+				}
+			}
+		} catch (IOException e) {
+			Illuminate.LOGGER.warn("Could not read the current SignalRGB effect: {}", e.getMessage());
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
+		return null;
+	}
+
+	// Asks SignalRGB to switch to an effect without bringing its window up
+	public static void apply(String effect) {
 		if (!supported()) {
 			return;
 		}
+		String uri = "signalrgb://effect/apply/" + URLEncoder.encode(effect, StandardCharsets.UTF_8).replace("+", "%20") + "?-silentlaunch-";
 		try {
-			new ProcessBuilder("rundll32", "url.dll,FileProtocolHandler", APPLY_URI).start();
+			new ProcessBuilder("rundll32", "url.dll,FileProtocolHandler", uri).start();
 		} catch (IOException e) {
-			Illuminate.LOGGER.warn("Could not switch SignalRGB to the Illuminate effect: {}", e.getMessage());
+			Illuminate.LOGGER.warn("Could not switch SignalRGB to the {} effect: {}", effect, e.getMessage());
 		}
 	}
 
