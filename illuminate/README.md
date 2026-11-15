@@ -44,6 +44,15 @@ Instead of Device Positions, you can use the OpenRGB [Visual Map plugin](https:/
    - **Auto load**, so the map comes back when OpenRGB restarts.
 3. Turn on **Use Visual Map** in the Illuminate settings.
 
+### Hyperion
+
+Works with [Hyperion](https://hyperion-project.org) and [HyperHDR](https://github.com/awawa-dev/HyperHDR).
+
+1. Set up your LED layout in the Hyperion web interface, where the LEDs are around your screen.
+2. Turn on **Use Hyperion** in the Illuminate settings under **Devices**. Set **Hyperion Address** to the computer that runs Hyperion. The default port is `19444`.
+
+Illuminate uses priority 100 in Hyperion, so it covers screen capture while you play and gives the LEDs back when you stop.
+
 You can use SignalRGB and OpenRGB at the same time, as long as each device is controlled by only one of them. A device controlled by both flickers. Turn it off in SignalRGB or set it to **Off** under **Device Positions** in the OpenRGB section.
 
 ## ⚙️ Settings
@@ -93,6 +102,9 @@ Open the config screen from the Mods screen (Mod Menu on Fabric). The **Preview*
 | OpenRGB Address             | Address of the OpenRGB SDK server.                                                                                          | 127.0.0.1 |
 | OpenRGB Port                | Port of the OpenRGB SDK server.                                                                                             | 6742      |
 | Use Visual Map              | Lights your devices where you placed them in the OpenRGB Visual Map plugin, instead of using Device Positions.              | Off       |
+| Use Hyperion                | Sends the lighting to Hyperion or HyperHDR.                                                                                 | Off       |
+| Hyperion Address            | Address of the computer that runs Hyperion.                                                                                 | 127.0.0.1 |
+| Hyperion Port               | Port of the Hyperion JSON server.                                                                                           | 19444     |
 | Device Positions            | Where each OpenRGB device is in your room: _Left_, _Center_, _Right_, _Above_, _Below_, _Surround_, _Whole Scene_ or _Off_. | Center    |
 
 ## 🌐 Translating

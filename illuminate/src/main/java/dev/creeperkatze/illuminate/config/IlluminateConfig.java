@@ -94,6 +94,12 @@ public class IlluminateConfig {
 	@SerialEntry
 	public boolean openRgbVisualMap = false;
 	@SerialEntry
+	public boolean hyperion = false;
+	@SerialEntry
+	public String hyperionHost = "127.0.0.1";
+	@SerialEntry
+	public int hyperionPort = 19444;
+	@SerialEntry
 	public Map<String, Placement> openRgbPlacements = new LinkedHashMap<>();
 
 	@SerialEntry

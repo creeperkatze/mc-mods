@@ -8,6 +8,7 @@
 - Banner in the NeoForge mod list.
 - German translation.
 - Option to light OpenRGB devices from the layout of the OpenRGB Visual Map plugin.
+- Hyperion and HyperHDR support.
 
 ### Changed
 

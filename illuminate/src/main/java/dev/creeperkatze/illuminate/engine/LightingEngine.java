@@ -8,6 +8,7 @@ import dev.creeperkatze.illuminate.game.GameEvent;
 import dev.creeperkatze.illuminate.game.GameEvents;
 import dev.creeperkatze.illuminate.game.GameState;
 import dev.creeperkatze.illuminate.game.GameStateCollector;
+import dev.creeperkatze.illuminate.output.hyperion.HyperionOutput;
 import dev.creeperkatze.illuminate.output.openrgb.OpenRgbOutput;
 import dev.creeperkatze.illuminate.output.signalrgb.SignalRgbEffect;
 import dev.creeperkatze.illuminate.output.signalrgb.SignalRgbOutput;
@@ -27,6 +28,7 @@ public final class LightingEngine {
 	private volatile int @Nullable [] preview;
 	private volatile @Nullable SignalRgbOutput signalRgb;
 	private volatile @Nullable OpenRgbOutput openRgb;
+	private volatile @Nullable HyperionOutput hyperion;
 	private volatile float framesPerSecond;
 	private volatile float frameMillis;
 	private volatile long previewingUntil;
@@ -95,6 +97,10 @@ public final class LightingEngine {
 		return openRgb;
 	}
 
+	public @Nullable HyperionOutput hyperion() {
+		return hyperion;
+	}
+
 	public @Nullable GameEvent lastEvent() {
 		return lastEvent;
 	}
@@ -123,6 +129,15 @@ public final class LightingEngine {
 		}
 		OpenRgbOutput output = openRgb;
 		return output == null || !output.matches(config.openRgbHost, config.openRgbPort) ? "connecting" : output.status();
+	}
+
+	public String hyperionStatus() {
+		IlluminateConfig config = Illuminate.config();
+		if (!config.hyperion) {
+			return "disabled";
+		}
+		HyperionOutput output = hyperion;
+		return output == null || !output.matches(config.hyperionHost, config.hyperionPort) ? "connecting" : output.status();
 	}
 
 	public List<String> openRgbDevices() {
@@ -191,6 +206,10 @@ public final class LightingEngine {
 		if (open != null) {
 			open.send(canvas, millis, config.openRgbVisualMap ? device -> Placement.SURROUND : config::placement);
 		}
+		HyperionOutput hyper = hyperion;
+		if (hyper != null) {
+			hyper.send(canvas, millis);
+		}
 	}
 
 	private void syncOutputs(IlluminateConfig config) {
@@ -212,6 +231,15 @@ public final class LightingEngine {
 		if (config.openRgb && openRgb == null) {
 			openRgb = new OpenRgbOutput(config.openRgbHost, config.openRgbPort);
 		}
+
+		HyperionOutput hyper = hyperion;
+		if (hyper != null && (!config.hyperion || !hyper.matches(config.hyperionHost, config.hyperionPort))) {
+			hyper.close();
+			hyperion = null;
+		}
+		if (config.hyperion && hyperion == null) {
+			hyperion = new HyperionOutput(config.hyperionHost, config.hyperionPort);
+		}
 	}
 
 	private void releaseOutputs() {
@@ -223,6 +251,10 @@ public final class LightingEngine {
 		if (open != null) {
 			open.release();
 		}
+		HyperionOutput hyper = hyperion;
+		if (hyper != null) {
+			hyper.release();
+		}
 	}
 
 	private void closeOutputs() {
@@ -233,6 +265,10 @@ public final class LightingEngine {
 		OpenRgbOutput open = openRgb;
 		if (open != null) {
 			open.close();
+		}
+		HyperionOutput hyper = hyperion;
+		if (hyper != null) {
+			hyper.close();
 		}
 	}
 

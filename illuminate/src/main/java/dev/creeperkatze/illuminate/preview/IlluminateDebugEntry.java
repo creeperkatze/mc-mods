@@ -5,6 +5,7 @@ import dev.creeperkatze.illuminate.engine.LightingEngine;
 import dev.creeperkatze.illuminate.game.GameEvent;
 import dev.creeperkatze.illuminate.game.GameState;
 import dev.creeperkatze.illuminate.game.GameStateCollector;
+import dev.creeperkatze.illuminate.output.hyperion.HyperionOutput;
 import dev.creeperkatze.illuminate.output.openrgb.OpenRgbOutput;
 import dev.creeperkatze.illuminate.output.signalrgb.SignalRgbOutput;
 import dev.creeperkatze.illuminate.scene.Rgb;
@@ -46,7 +47,7 @@ public final class IlluminateDebugEntry implements DebugScreenEntry {
 		GameState state = GameStateCollector.current();
 		List<String> lines = new ArrayList<>();
 		lines.add(format("Illuminate: %.0f/%d FPS, %.2f ms", engine.framesPerSecond(), Illuminate.config().frameRate, engine.frameMillis()));
-		lines.add(signalRgb(engine.signalRgb()) + ", " + openRgb(engine.openRgb()));
+		lines.add(signalRgb(engine.signalRgb()) + ", " + openRgb(engine.openRgb()) + ", " + hyperion(engine.hyperion()));
 		lines.add(output(engine.preview()));
 		if (state.inWorld()) {
 			lines.add(format("Biome feel: %s, %s, fog #%06x", state.feel().name(), state.feel().motion().name().toLowerCase(Locale.ROOT), state.horizon().toRgb24()));
@@ -75,6 +76,13 @@ public final class IlluminateDebugEntry implements DebugScreenEntry {
 			return "OpenRGB " + (output == null ? "off" : output.status());
 		}
 		return format("OpenRGB %d devices %d LEDs %.0f/s", output.deviceNames().size(), output.ledCount(), output.writesPerSecond());
+	}
+
+	private static String hyperion(@Nullable HyperionOutput output) {
+		if (output == null || !"connected".equals(output.status())) {
+			return "Hyperion " + (output == null ? "off" : output.status());
+		}
+		return format("Hyperion %.0f/s %d ms", output.sendsPerSecond(), output.roundTripMillis());
 	}
 
 	private static String output(int @Nullable [] colors) {

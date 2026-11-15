@@ -243,13 +243,8 @@ public final class IlluminateConfigScreen {
 				.option(status(() -> Illuminate.engine().openRgbStatus()))
 				.option(toggle("openrgb", defaults.openRgb, () -> config.openRgb, value -> config.openRgb = value,
 						rebuild))
-				.option(Option.<String>createBuilder()
-						.name(name("openrgb_host"))
-						.description(description("openrgb_host"))
-						.binding(defaults.openRgbHost, () -> config.openRgbHost,
-								value -> config.openRgbHost = value.isBlank() ? defaults.openRgbHost : value.trim())
-						.controller(StringControllerBuilder::create)
-						.build())
+				.option(host("openrgb_host", defaults.openRgbHost, () -> config.openRgbHost,
+						value -> config.openRgbHost = value))
 				.option(port("openrgb_port", defaults.openRgbPort, () -> config.openRgbPort,
 						value -> config.openRgbPort = value))
 				.option(toggle("openrgb_visual_map", defaults.openRgbVisualMap, () -> config.openRgbVisualMap,
@@ -273,14 +268,34 @@ public final class IlluminateConfigScreen {
 					.build());
 		}
 
+		OptionGroup hyperion = OptionGroup.createBuilder()
+				.name(Component.translatable("illuminate.config.group.hyperion"))
+				.option(status(() -> Illuminate.engine().hyperionStatus()))
+				.option(toggle("hyperion", defaults.hyperion, () -> config.hyperion, value -> config.hyperion = value))
+				.option(host("hyperion_host", defaults.hyperionHost, () -> config.hyperionHost,
+						value -> config.hyperionHost = value))
+				.option(port("hyperion_port", defaults.hyperionPort, () -> config.hyperionPort,
+						value -> config.hyperionPort = value))
+				.build();
+
 		ConfigCategory.Builder category = ConfigCategory.createBuilder()
 				.name(Component.translatable("illuminate.config.category.devices"));
 		if (Illuminate.engine().signalRgbStatus().equals("connected")
 				&& Illuminate.engine().openRgbStatus().equals("connected")) {
 			category.option(warning(Component.translatable("illuminate.config.overlap")));
 		}
-		category.group(signalRgb.build()).group(openRgb.build());
+		category.group(signalRgb.build()).group(openRgb.build()).group(hyperion);
 		return category.build();
+	}
+
+	private static Option<String> host(String key, String defaultValue, Supplier<String> getter,
+			Consumer<String> setter) {
+		return Option.<String>createBuilder()
+				.name(name(key))
+				.description(description(key))
+				.binding(defaultValue, getter, value -> setter.accept(value.isBlank() ? defaultValue : value.trim()))
+				.controller(StringControllerBuilder::create)
+				.build();
 	}
 
 	private static Option<Component> warning(Component text) {

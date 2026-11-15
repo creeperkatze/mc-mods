@@ -45,7 +45,8 @@ final class LivePreviewImage implements ImageRenderer {
 		int statusY = y + height + 5;
 		graphics.text(font, Component.translatable("illuminate.preview.signalrgb", status(engine.signalRgbStatus())), x, statusY, TEXT);
 		graphics.text(font, Component.translatable("illuminate.preview.openrgb", status(engine.openRgbStatus())), x, statusY + 11, TEXT);
-		return height + 5 + 22;
+		graphics.text(font, Component.translatable("illuminate.preview.hyperion", status(engine.hyperionStatus())), x, statusY + 22, TEXT);
+		return height + 5 + 33;
 	}
 
 	private static Component status(String status) {
