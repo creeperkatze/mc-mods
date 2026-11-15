@@ -5,6 +5,8 @@
 
 Resume swaps the loading screen panorama for the last thing you saw before you quit. By the time your world has loaded, you already know where you were and what you were doing.
 
+![Showcase](https://raw.githubusercontent.com/creeperkatze/mc-mods/main/resume/media/screenshots/loading.gif)
+
 ## ✨ Features
 
 ### Screenshot
