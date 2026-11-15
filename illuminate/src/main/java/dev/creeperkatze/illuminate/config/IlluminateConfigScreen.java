@@ -27,12 +27,14 @@ import dev.isxander.yacl3.gui.controllers.LabelController;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.toasts.SystemToast;
+import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.net.URI;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
@@ -43,6 +45,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public final class IlluminateConfigScreen {
+	private static final String KOFI_URL = "https://ko-fi.com/creeperkatze";
+
 	private static Direction previewDirection = Direction.NONE;
 
 	private IlluminateConfigScreen() {
@@ -69,6 +73,10 @@ public final class IlluminateConfigScreen {
 				.category(devices(defaults, config, rebuild))
 				.category(preview())
 				.category(debug(defaults, config))
+				.category(ConfigCategory.createBuilder()
+						.name(Component.translatable("illuminate.config.category.support"))
+						.option(kofi())
+						.build())
 				.save(IlluminateConfig.HANDLER::save)
 				.screenInit(screen -> {
 					if (shown.getAndSet(screen) == null) {
@@ -109,6 +117,16 @@ public final class IlluminateConfigScreen {
 				.option(toggle("dim_in_menus", defaults.dimInMenus, () -> config.dimInMenus,
 						value -> config.dimInMenus = value))
 				.options(idle(defaults, config))
+				.build();
+	}
+
+	// YACL drops the icon font from option names, so the icon goes on the button
+	private static ButtonOption kofi() {
+		return ButtonOption.createBuilder()
+				.name(name("kofi"))
+				.description(description("kofi"))
+				.text(Icons.label(Icons.KOFI, Component.translatable("illuminate.config.open")))
+				.action((screen, button) -> ConfirmLinkScreen.confirmLinkNow(screen, URI.create(KOFI_URL), true))
 				.build();
 	}
 

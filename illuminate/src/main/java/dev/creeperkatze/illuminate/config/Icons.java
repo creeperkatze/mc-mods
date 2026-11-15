@@ -15,6 +15,7 @@ final class Icons {
 	static final char SIGNALRGB = '\uE001';
 	static final char OPENRGB = '\uE002';
 	static final char HYPERION = '\uE003';
+	static final char KOFI = '\uE004';
 
 	//? if >=1.21.9 {
 	private static final FontDescription FONT = new FontDescription.Resource(
