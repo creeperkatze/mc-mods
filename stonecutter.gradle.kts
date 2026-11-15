@@ -1,5 +1,4 @@
 plugins {
-	id("dev.kikugie.stonecutter")
 	id("mc-mods.root")
 }
 
@@ -10,11 +9,13 @@ stonecutter parameters {
 
 	// 1.21.5 renamed the nausea effect
 	replacements.string(current.parsed >= "1.21.5") {
+		include("**/*.java")
 		replace("MobEffects.CONFUSION", "MobEffects.NAUSEA")
 	}
 
 	// 1.21.11 renamed ResourceLocation to Identifier, moved Util and renamed the camera getters
 	replacements.string(current.parsed >= "1.21.11") {
+		include("**/*.java")
 		replace("ResourceLocation", "Identifier")
 		replace("import net.minecraft.Util;", "import net.minecraft.util.Util;")
 		replace("key.location()", "key.identifier()")
@@ -25,11 +26,13 @@ stonecutter parameters {
 
 	// 1.21.11 started shipping jspecify, older versions only have the JetBrains annotations
 	replacements.string(current.parsed >= "1.21.11") {
+		include("**/*.java")
 		replace("org.jetbrains.annotations.Nullable", "org.jspecify.annotations.Nullable")
 	}
 
 	// 26.1 renamed GUI rendering from render to extract
 	replacements.string(current.parsed >= "26.1") {
+		include("**/*.java")
 		replace("GuiGraphics", "GuiGraphicsExtractor")
 		replace("renderWidget", "extractWidgetRenderState")
 		replace("renderListItems", "extractListItems")
@@ -46,6 +49,7 @@ stonecutter parameters {
 
 	// 26.2 moved screens, toasts and the HUD from Minecraft to Gui
 	replacements.string(current.parsed >= "26.2") {
+		include("**/*.java")
 		replace("minecraft.setScreen(", "minecraft.gui.setScreen(")
 		replace(".getToastManager()", ".gui.toastManager()")
 		replace(".gui.getChat()", ".gui.hud.getChat()")
