@@ -274,7 +274,8 @@ public final class IlluminateConfigScreen {
 
 		ConfigCategory.Builder category = ConfigCategory.createBuilder()
 				.name(Component.translatable("illuminate.config.category.devices"));
-		if (windows && config.signalRgb && config.openRgb) {
+		if (Illuminate.engine().signalRgbStatus().equals("connected")
+				&& Illuminate.engine().openRgbStatus().equals("connected")) {
 			category.option(warning(Component.translatable("illuminate.config.overlap")));
 		}
 		category.group(signalRgb.build()).group(openRgb.build());
