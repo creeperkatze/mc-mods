@@ -35,6 +35,15 @@ Lights placed to your left or right react to hits from that side.
 2. Enable OpenRGB in the Illuminate settings under **Devices**. The default address is `127.0.0.1:6742`.
 3. Set where each device sits under **Device Positions** in the **OpenRGB** section of the **Devices** tab, so directional effects land on the right side.
 
+Instead of Device Positions, you can use the OpenRGB [Visual Map plugin](https://openrgb.org/plugin_visual_map.html):
+
+1. Place your devices on the map where they are around your screen.
+2. Under **Grid options**, turn on:
+   - **Auto register**, so the map shows up as a device Illuminate can light.
+   - **Hide members**, so the devices on the map are only lit through it. Otherwise they are also lit on their own and flicker.
+   - **Auto load**, so the map comes back when OpenRGB restarts.
+3. Turn on **Use Visual Map** in the Illuminate settings.
+
 You can use SignalRGB and OpenRGB at the same time, as long as each device is controlled by only one of them. A device controlled by both flickers. Turn it off in SignalRGB or set it to **Off** under **Device Positions** in the OpenRGB section.
 
 ## ⚙️ Settings
@@ -83,6 +92,7 @@ Open the config screen from the Mods screen (Mod Menu on Fabric). The **Preview*
 | Use OpenRGB                 | Controls your devices through the OpenRGB SDK server.                                                                       | Off       |
 | OpenRGB Address             | Address of the OpenRGB SDK server.                                                                                          | 127.0.0.1 |
 | OpenRGB Port                | Port of the OpenRGB SDK server.                                                                                             | 6742      |
+| Use Visual Map              | Lights your devices where you placed them in the OpenRGB Visual Map plugin, instead of using Device Positions.              | Off       |
 | Device Positions            | Where each OpenRGB device is in your room: _Left_, _Center_, _Right_, _Above_, _Below_, _Surround_, _Whole Scene_ or _Off_. | Center    |
 
 ## 🌐 Translating

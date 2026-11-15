@@ -10,8 +10,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 
 // Drives every device of an OpenRGB SDK server in direct mode
 public final class OpenRgbOutput implements LightOutput {
@@ -56,7 +56,7 @@ public final class OpenRgbOutput implements LightOutput {
 		return status;
 	}
 
-	public void send(Canvas canvas, long now, Map<String, Placement> placements) {
+	public void send(Canvas canvas, long now, Function<String, Placement> placements) {
 		writes.update(now);
 		OpenRgbClient current = client;
 		if (current == null) {
@@ -70,7 +70,7 @@ public final class OpenRgbOutput implements LightOutput {
 				return;
 			}
 			for (OpenRgbDevice device : devices) {
-				Placement placement = placements.getOrDefault(device.name, Placement.CENTER);
+				Placement placement = placements.apply(device.name);
 				if (placement == Placement.OFF || device.ledCount == 0) {
 					continue;
 				}

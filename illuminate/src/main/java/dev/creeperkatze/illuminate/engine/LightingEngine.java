@@ -3,6 +3,7 @@ package dev.creeperkatze.illuminate.engine;
 import dev.creeperkatze.illuminate.Illuminate;
 import dev.creeperkatze.illuminate.config.IdleMode;
 import dev.creeperkatze.illuminate.config.IlluminateConfig;
+import dev.creeperkatze.illuminate.config.Placement;
 import dev.creeperkatze.illuminate.game.GameEvent;
 import dev.creeperkatze.illuminate.game.GameEvents;
 import dev.creeperkatze.illuminate.game.GameState;
@@ -188,7 +189,7 @@ public final class LightingEngine {
 		}
 		OpenRgbOutput open = openRgb;
 		if (open != null) {
-			open.send(canvas, millis, config.openRgbPlacements);
+			open.send(canvas, millis, config.openRgbVisualMap ? device -> Placement.SURROUND : config::placement);
 		}
 	}
 

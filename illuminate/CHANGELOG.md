@@ -7,6 +7,7 @@
 - Backported to Minecraft 1.21.1.
 - Banner in the NeoForge mod list.
 - German translation.
+- Option to light OpenRGB devices from the layout of the OpenRGB Visual Map plugin.
 
 ### Changed
 

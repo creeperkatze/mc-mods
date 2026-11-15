@@ -124,6 +124,8 @@
 	"illuminate.config.openrgb_host.tooltip": "Address of the OpenRGB SDK server. Use 127.0.0.1 when it runs on this computer.",
 	"illuminate.config.openrgb_port": "OpenRGB Port",
 	"illuminate.config.openrgb_port.tooltip": "Port of the OpenRGB SDK server.",
+	"illuminate.config.openrgb_visual_map": "Use Visual Map",
+	"illuminate.config.openrgb_visual_map.tooltip": "Lights your devices where you placed them in the OpenRGB Visual Map plugin, instead of using Device Positions. In the Visual Map tab inside OpenRGB, turn on Auto register so Illuminate finds the map, Hide members so its devices do not flicker, and Auto load so the map comes back when OpenRGB restarts.",
 	"illuminate.config.device_positions": "Device Positions",
 	"illuminate.config.placement.tooltip": "Where this device is in your room. This decides which part of the lighting it shows.",
 	"illuminate.config.placement.left.tooltip": "For a device to the left of your screen.",

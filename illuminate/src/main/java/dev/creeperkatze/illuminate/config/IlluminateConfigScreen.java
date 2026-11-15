@@ -250,10 +250,15 @@ public final class IlluminateConfigScreen {
 						.controller(StringControllerBuilder::create)
 						.build())
 				.option(port("openrgb_port", defaults.openRgbPort, () -> config.openRgbPort,
-						value -> config.openRgbPort = value));
+						value -> config.openRgbPort = value))
+				.option(toggle("openrgb_visual_map", defaults.openRgbVisualMap, () -> config.openRgbVisualMap,
+						value -> config.openRgbVisualMap = value, rebuild));
 
-		Set<String> deviceNames = new LinkedHashSet<>(Illuminate.engine().openRgbDevices());
-		deviceNames.addAll(config.openRgbPlacements.keySet());
+		Set<String> deviceNames = new LinkedHashSet<>();
+		if (!config.openRgbVisualMap) {
+			deviceNames.addAll(Illuminate.engine().openRgbDevices());
+			deviceNames.addAll(config.openRgbPlacements.keySet());
+		}
 		if (!deviceNames.isEmpty()) {
 			openRgb.option(LabelOption.create(Component.translatable("illuminate.config.device_positions")));
 		}

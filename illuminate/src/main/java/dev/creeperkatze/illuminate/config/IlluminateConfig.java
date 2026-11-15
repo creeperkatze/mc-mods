@@ -92,6 +92,8 @@ public class IlluminateConfig {
 	@SerialEntry
 	public int openRgbPort = 6742;
 	@SerialEntry
+	public boolean openRgbVisualMap = false;
+	@SerialEntry
 	public Map<String, Placement> openRgbPlacements = new LinkedHashMap<>();
 
 	@SerialEntry
