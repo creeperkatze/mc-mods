@@ -216,7 +216,7 @@ public final class IlluminateConfigScreen {
 		boolean windows = SignalRgbEffect.supported();
 		OptionGroup.Builder signalRgb = OptionGroup.createBuilder()
 				.name(Component.translatable("illuminate.config.group.signalrgb"))
-				.option(LabelOption.create(status(Illuminate.engine().signalRgbStatus())));
+				.option(status(() -> Illuminate.engine().signalRgbStatus()));
 		List<Option<?>> signalRgbOptions = List.of(
 				toggle("signalrgb", defaults.signalRgb, () -> config.signalRgb, value -> config.signalRgb = value,
 						rebuild),
@@ -239,7 +239,7 @@ public final class IlluminateConfigScreen {
 
 		OptionGroup.Builder openRgb = OptionGroup.createBuilder()
 				.name(Component.translatable("illuminate.config.group.openrgb"))
-				.option(LabelOption.create(status(Illuminate.engine().openRgbStatus())))
+				.option(status(() -> Illuminate.engine().openRgbStatus()))
 				.option(toggle("openrgb", defaults.openRgb, () -> config.openRgb, value -> config.openRgb = value,
 						rebuild))
 				.option(Option.<String>createBuilder()
@@ -303,9 +303,13 @@ public final class IlluminateConfigScreen {
 		*///?}
 	}
 
-	private static Component status(String status) {
-		return Component.translatable("illuminate.config.status",
-				Component.translatable("illuminate.config.status." + status));
+	private static Option<Component> status(Supplier<String> status) {
+		return Option.<Component>createBuilder()
+				.name(Component.translatable("illuminate.config.status", ""))
+				.stateManager(new LiveStateManager<>(() -> Component.translatable("illuminate.config.status",
+						Component.translatable("illuminate.config.status." + status.get()))))
+				.customController(LabelController::new)
+				.build();
 	}
 
 	private static Option<Integer> port(String key, int defaultValue, Supplier<Integer> getter,

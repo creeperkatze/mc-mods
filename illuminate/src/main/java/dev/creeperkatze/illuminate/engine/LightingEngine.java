@@ -106,13 +106,22 @@ public final class LightingEngine {
 		if (!SignalRgbEffect.supported()) {
 			return "windows_only";
 		}
+		IlluminateConfig config = Illuminate.config();
+		if (!config.signalRgb) {
+			return "disabled";
+		}
+		// The engine thread swaps outputs on its next frame so a new setting can be ahead of it
 		SignalRgbOutput output = signalRgb;
-		return output == null ? "disabled" : output.status();
+		return output == null || !output.matches(config.signalRgbPort) ? "connecting" : output.status();
 	}
 
 	public String openRgbStatus() {
+		IlluminateConfig config = Illuminate.config();
+		if (!config.openRgb) {
+			return "disabled";
+		}
 		OpenRgbOutput output = openRgb;
-		return output == null ? "disabled" : output.status();
+		return output == null || !output.matches(config.openRgbHost, config.openRgbPort) ? "connecting" : output.status();
 	}
 
 	public List<String> openRgbDevices() {

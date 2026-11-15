@@ -12,6 +12,10 @@
 
 - Works with older Fabric Loader and NeoForge versions instead of only the newest ones.
 
+### Fixed
+
+- The SignalRGB and OpenRGB status now shows the correct state.
+
 ## [1.0.0] - 2026-11-10
 
 ### Added

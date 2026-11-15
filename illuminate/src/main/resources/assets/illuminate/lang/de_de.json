@@ -105,7 +105,7 @@
 	"illuminate.config.status.connecting": "Wird verbunden",
 	"illuminate.config.status.connected": "Verbunden",
 	"illuminate.config.status.unavailable": "Läuft nicht",
-	"illuminate.config.status.disabled": "Aus",
+	"illuminate.config.status.disabled": "Deaktiviert",
 	"illuminate.config.status.windows_only": "Nur unter Windows verfügbar",
 	"illuminate.config.signalrgb": "SignalRGB verwenden",
 	"illuminate.config.signalrgb.tooltip": "Sendet die Beleuchtung an den Illuminate-Effekt in SignalRGB. Positioniere deine Geräte auf der Leinwand in SignalRGB so, wie sie um deinen Bildschirm angeordnet sind.",
