@@ -104,7 +104,7 @@ Open the config screen from the Mods screen (Mod Menu on Fabric). The **Preview*
 | Use Visual Map              | Lights your devices where you placed them in the OpenRGB Visual Map plugin, instead of using Device Positions.              | Off       |
 | Use Hyperion                | Sends the lighting to Hyperion or HyperHDR.                                                                                 | Off       |
 | Hyperion Address            | Address of the computer that runs Hyperion.                                                                                 | 127.0.0.1 |
-| Hyperion Port               | Port of the Hyperion JSON server.                                                                                           | 19444     |
+| Hyperion Port               | Port Hyperion listens on for other apps.                                                                                    | 19444     |
 | Device Positions            | Where each OpenRGB device is in your room: _Left_, _Center_, _Right_, _Above_, _Below_, _Surround_, _Whole Scene_ or _Off_. | Center    |
 
 ## 🌐 Translating

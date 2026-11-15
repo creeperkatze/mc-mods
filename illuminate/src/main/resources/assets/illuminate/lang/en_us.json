@@ -139,7 +139,7 @@
 	"illuminate.config.hyperion_host": "Hyperion Address",
 	"illuminate.config.hyperion_host.tooltip": "Address of the computer that runs Hyperion. Use 127.0.0.1 when it runs on this computer.",
 	"illuminate.config.hyperion_port": "Hyperion Port",
-	"illuminate.config.hyperion_port.tooltip": "Port of the Hyperion JSON server.",
+	"illuminate.config.hyperion_port.tooltip": "Port Hyperion listens on for other apps. Only change it if you changed it in Hyperion.",
 	"illuminate.config.device_positions": "Device Positions",
 	"illuminate.config.choice": "%s: %s",
 	"illuminate.config.placement.tooltip": "Where this device is in your room. This decides which part of the lighting it shows.",
