@@ -216,7 +216,7 @@ public final class IlluminateConfigScreen {
 	private static ConfigCategory devices(IlluminateConfig defaults, IlluminateConfig config, OptionFlag rebuild) {
 		boolean windows = SignalRgbEffect.supported();
 		OptionGroup.Builder signalRgb = OptionGroup.createBuilder()
-				.name(Component.translatable("illuminate.config.group.signalrgb"))
+				.name(Icons.label(Icons.SIGNALRGB, Component.translatable("illuminate.config.group.signalrgb")))
 				.option(status(() -> Illuminate.engine().signalRgbStatus()));
 		List<Option<?>> signalRgbOptions = List.of(
 				toggle("signalrgb", defaults.signalRgb, () -> config.signalRgb, value -> config.signalRgb = value,
@@ -239,7 +239,7 @@ public final class IlluminateConfigScreen {
 		}
 
 		OptionGroup.Builder openRgb = OptionGroup.createBuilder()
-				.name(Component.translatable("illuminate.config.group.openrgb"))
+				.name(Icons.label(Icons.OPENRGB, Component.translatable("illuminate.config.group.openrgb")))
 				.option(status(() -> Illuminate.engine().openRgbStatus()))
 				.option(toggle("openrgb", defaults.openRgb, () -> config.openRgb, value -> config.openRgb = value,
 						rebuild))
@@ -269,7 +269,7 @@ public final class IlluminateConfigScreen {
 		}
 
 		OptionGroup hyperion = OptionGroup.createBuilder()
-				.name(Component.translatable("illuminate.config.group.hyperion"))
+				.name(Icons.label(Icons.HYPERION, Component.translatable("illuminate.config.group.hyperion")))
 				.option(status(() -> Illuminate.engine().hyperionStatus()))
 				.option(toggle("hyperion", defaults.hyperion, () -> config.hyperion, value -> config.hyperion = value))
 				.option(host("hyperion_host", defaults.hyperionHost, () -> config.hyperionHost,
@@ -329,7 +329,7 @@ public final class IlluminateConfigScreen {
 		return Option.<Component>createBuilder()
 				.name(Component.translatable("illuminate.config.status", ""))
 				.stateManager(new LiveStateManager<>(() -> Component.translatable("illuminate.config.status",
-						Component.translatable("illuminate.config.status." + status.get()))))
+						Icons.status(status.get()))))
 				.customController(LabelController::new)
 				.build();
 	}
