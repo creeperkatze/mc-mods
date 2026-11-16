@@ -19,10 +19,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 /*@Mixin(Gui.class)
 *///?}
 public class HudMixin {
+	// The tab list is the last layer that only draws while the HUD is shown, so F1 hides the preview with it
 	//? if >=26.1 {
-	@Inject(method = "extractRenderState", at = @At("TAIL"))
+	@Inject(method = "extractTabList", at = @At("TAIL"))
 	//?} else {
-	/*@Inject(method = "render", at = @At("TAIL"))
+	/*@Inject(method = "renderTabList", at = @At("TAIL"))
 	*///?}
 	private void illuminate$extractPreview(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, CallbackInfo ci) {
 		LightingPreview.extract(graphics);

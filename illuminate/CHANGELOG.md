@@ -22,6 +22,7 @@
 ### Fixed
 
 - The SignalRGB and OpenRGB status now shows the correct state.
+- The lighting preview and virtual room now hide with the rest of the HUD when you press F1.
 
 ## [1.0.0] - 2026-11-10
 

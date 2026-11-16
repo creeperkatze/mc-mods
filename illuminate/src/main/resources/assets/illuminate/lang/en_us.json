@@ -37,7 +37,7 @@
 	"illuminate.config.show_preview": "Show Preview",
 	"illuminate.config.show_preview.tooltip": "Shows your lights in the top left corner of the screen.",
 	"illuminate.config.show_virtual_room": "Show Virtual Room",
-	"illuminate.config.show_virtual_room.tooltip": "Shows a small desk setup lit by Illuminate in the top right corner. Useful for showing the mod without your own lights. Stays visible when you hide the HUD with F1.",
+	"illuminate.config.show_virtual_room.tooltip": "Shows a small desk setup lit by Illuminate in the top right corner. Useful for showing the mod without your own lights.",
 	"illuminate.config.log_events": "Log Events",
 	"illuminate.config.log_events.tooltip": "Writes damage, explosions, lightning and other events to the game log.",
 	"illuminate.config.group.world": "World",
