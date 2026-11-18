@@ -51,6 +51,6 @@ writeFileSync(
 writeFileSync(propertiesPath, properties.replace(/^mod_version=.*$/m, `mod_version=${next}`));
 git('add', propertiesPath, changelogPath);
 git('commit', '-m', `chore(${mod}): release ${next}`);
-git('tag', tag);
+git('tag', '-a', tag, '-m', `chore(${mod}): release ${next}`);
 git('push', '--atomic', 'origin', 'HEAD', `refs/tags/${tag}`);
 console.log(`Pushed ${tag}. The Release workflow takes it from here.`);
