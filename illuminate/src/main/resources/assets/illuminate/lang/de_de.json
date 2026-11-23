@@ -37,7 +37,7 @@
 	"illuminate.config.show_preview": "Vorschau anzeigen",
 	"illuminate.config.show_preview.tooltip": "Zeigt deine Beleuchtung in der oberen linken Ecke des Bildschirms an.",
 	"illuminate.config.show_virtual_room": "Virtuellen Raum anzeigen",
-	"illuminate.config.show_virtual_room.tooltip": "Zeigt oben rechts eine kleine Tischkonfiguration, die von Illuminate beleuchtet wird. Nützlich, um den Mod ohne eigene Beleuchtung zu demonstrieren. Bleibt sichtbar, wenn du das HUD mit F1 ausblendest.",
+	"illuminate.config.show_virtual_room.tooltip": "Zeigt oben rechts eine kleine Tischkonfiguration, die von Illuminate beleuchtet wird. Nützlich, um den Mod ohne eigene Beleuchtung zu demonstrieren.",
 	"illuminate.config.log_events": "Ereignisse protokollieren",
 	"illuminate.config.log_events.tooltip": "Schreibt Schadenswerte, Explosionen, Blitzeinschläge und andere Ereignisse in das Protokoll des Spiels.",
 	"illuminate.config.group.world": "Welt",
