@@ -1,17 +1,25 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
 	<rect width="128" height="128" fill="#c850b0"/>
 	<g fill="none" stroke="#fff" stroke-opacity="0.25" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
-		<path d="M10 28 V12 H26" transform="rotate(-8 18 20)"/>
-		<path d="M96 -6 H122 V18"/>
-		<path d="M120 100 V116 H104" transform="rotate(6 112 108)"/>
-		<path d="M-6 98 H10 V112" transform="rotate(10 2 105)"/>
-		<path d="M50 18 V12 H58"/>
+		<path d="M9 21 V9 H21"/>
+		<path d="M103 9 H119 V25"/>
+		<path d="M9 101 V119 H27"/>
+		<path d="M119 105 V119 H105"/>
 	</g>
-	<g transform="translate(64 64) scale(1.18) translate(-64 -64)">
-		<g fill="none" stroke="#fff" stroke-width="8.5" stroke-linecap="round" stroke-linejoin="round">
-			<rect x="32" y="40" width="64" height="48" rx="6"/>
-			<path d="M44 88 L59 70 L68 79 L77 70 L88 88"/>
+	<g transform="translate(64 64) scale(1.1) translate(-64 -64)">
+		<g transform="translate(6 2) rotate(-6 58 56)">
+			<rect x="20" y="26" width="76" height="60" rx="3" fill="none" stroke="#fff" stroke-width="8.5"/>
+			<g fill="#fff">
+				<path d="M29 77 V64 H50 V52 H40 V41 H45 V34 H61 V41 H66 V52 H56 V64 H87 V77 Z"/>
+				<rect x="74" y="38" width="8" height="8"/>
+			</g>
 		</g>
-		<circle cx="79" cy="54" r="5.5" fill="#fff"/>
+		<!-- Fill and stroke are separate paths because Figma breaks combined ones on import -->
+		<g transform="translate(-2 0)" stroke-linejoin="round">
+			<path d="M80 70 L104 86 L80 102 Z" fill="none" stroke="#c850b0" stroke-width="14"/>
+			<path d="M80 70 L104 86 L80 102 Z" fill="#c850b0"/>
+			<path d="M80 70 L104 86 L80 102 Z" fill="none" stroke="#fff" stroke-width="3"/>
+			<path d="M80 70 L104 86 L80 102 Z" fill="#fff"/>
+		</g>
 	</g>
 </svg>
