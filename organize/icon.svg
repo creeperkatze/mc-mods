@@ -1,15 +1,21 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
 	<rect width="128" height="128" fill="#3fae6a"/>
 	<g fill="none" stroke="#fff" stroke-opacity="0.25" stroke-width="6" stroke-linejoin="round">
-		<rect x="-13" y="5" width="34" height="22" rx="5" transform="rotate(-8 4 16)"/>
-		<rect x="88" y="13" width="26" height="18" rx="5" transform="rotate(10 101 22)"/>
-		<rect x="106" y="107" width="36" height="26" rx="5" transform="rotate(-12 124 120)"/>
-		<rect x="16" y="93" width="28" height="18" rx="5" transform="rotate(6 30 102)"/>
+		<rect x="-8" y="-10" width="30" height="16" rx="2" transform="rotate(-8 7 -2)"/>
+		<rect x="96" y="2" width="40" height="14" rx="2" transform="rotate(8 116 9)"/>
+		<rect x="-12" y="60" width="26" height="18" rx="2" transform="rotate(-10 1 69)"/>
+		<rect x="6" y="112" width="22" height="16" rx="2" transform="rotate(12 17 120)"/>
+		<rect x="90" y="116" width="44" height="18" rx="2" transform="rotate(-6 112 125)"/>
 	</g>
-	<g transform="translate(64 64) scale(1.18) translate(-64 -64)">
-		<g fill="none" stroke="#fff" stroke-width="8.5" stroke-linecap="round" stroke-linejoin="round">
-			<path d="M34 46 V84 A6 6 0 0 0 40 90 H88 A6 6 0 0 0 94 84 V56 A6 6 0 0 0 88 50 H64 L56 40 H40 A6 6 0 0 0 34 46 Z"/>
-			<path d="M34 60 H94"/>
+	<g transform="translate(64 64) scale(1.18) translate(-64 -64) translate(0 1)">
+		<g fill="#fff">
+			<path d="M24 27 A3 3 0 0 1 27 24 H34.64 L38 29 H49 A3 3 0 0 1 52 32 V45 A3 3 0 0 1 49 48 H27 A3 3 0 0 1 24 45 Z"/>
+			<rect x="58" y="33.75" width="44" height="8.5" rx="2"/>
+			<path d="M53 57 A3 3 0 0 1 56 54 H61.36 L64 59 H72 A3 3 0 0 1 75 62 V70 A3 3 0 0 1 72 73 H56 A3 3 0 0 1 53 70 Z"/>
+			<rect x="80" y="59.75" width="22" height="8.5" rx="2"/>
+			<path d="M53 86 A3 3 0 0 1 56 83 H61.36 L64 88 H72 A3 3 0 0 1 75 91 V99 A3 3 0 0 1 72 102 H56 A3 3 0 0 1 53 99 Z"/>
+			<rect x="80" y="88.75" width="22" height="8.5" rx="2"/>
 		</g>
+		<path d="M37 54 V93 H46 M37 64 H46" fill="none" stroke="#fff" stroke-width="6" stroke-linejoin="round"/>
 	</g>
 </svg>
