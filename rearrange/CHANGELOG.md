@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-11-24
+
 ### Changed
 
 - Reworked mod icon.
