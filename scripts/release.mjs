@@ -53,4 +53,4 @@ git('add', propertiesPath, changelogPath);
 git('commit', '-m', `chore(${mod}): release ${next}`);
 git('tag', '-a', tag, '-m', `chore(${mod}): release ${next}`);
 git('push', '--atomic', 'origin', 'HEAD', `refs/tags/${tag}`);
-console.log(`Pushed ${tag}. The Release workflow takes it from here.`);
+console.log(`Pushed ${tag}`);
