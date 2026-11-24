@@ -4,7 +4,7 @@
 
 ### Changed
 
-- New mod icon.
+- Reworked mod icon.
 
 ## [1.1.1] - 2026-11-14
 
