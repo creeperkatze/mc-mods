@@ -18,6 +18,7 @@
 - The flicker warning only shows when SignalRGB and OpenRGB are both connected.
 - Settings with several choices now explain every choice at once.
 - The device settings show an icon for each app and a colored dot for its status.
+- Reworked mod icon.
 
 ### Fixed
 
