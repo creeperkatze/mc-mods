@@ -7,19 +7,12 @@
 		<path d="M119 105 V119 H105"/>
 	</g>
 	<g transform="translate(64 64) scale(1.1) translate(-64 -64)">
-		<g transform="translate(6 2) rotate(-6 58 56)">
+		<g transform="translate(5.82 8)">
 			<rect x="20" y="26" width="76" height="60" rx="3" fill="none" stroke="#fff" stroke-width="8.5"/>
 			<g fill="#fff">
 				<path d="M29 77 V64 H50 V52 H40 V41 H45 V34 H61 V41 H66 V52 H56 V64 H87 V77 Z"/>
 				<rect x="74" y="38" width="8" height="8"/>
 			</g>
-		</g>
-		<!-- Fill and stroke are separate paths because Figma breaks combined ones on import -->
-		<g transform="translate(-2 0)" stroke-linejoin="round">
-			<path d="M80 70 L104 86 L80 102 Z" fill="none" stroke="#c850b0" stroke-width="14"/>
-			<path d="M80 70 L104 86 L80 102 Z" fill="#c850b0"/>
-			<path d="M80 70 L104 86 L80 102 Z" fill="none" stroke="#fff" stroke-width="3"/>
-			<path d="M80 70 L104 86 L80 102 Z" fill="#fff"/>
 		</g>
 	</g>
 </svg>
