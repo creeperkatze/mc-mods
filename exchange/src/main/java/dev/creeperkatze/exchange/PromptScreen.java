@@ -6,6 +6,7 @@ import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.network.chat.Component;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 final class PromptScreen extends ConfirmScreen {
@@ -14,20 +15,28 @@ final class PromptScreen extends ConfirmScreen {
 	private final Component skipLabel;
 	private final Runnable onSkip;
 
-	PromptScreen(List<LodMod> targets, Component skipLabel, Consumer<LodMod> onCopy, Runnable onSkip, Runnable onLater) {
-		super(later -> onLater.run(), Component.translatable("exchange.prompt.title"), message(targets));
+	PromptScreen(List<LodMod> targets, Map<LodMod, Long> missing, Component skipLabel, Consumer<LodMod> onCopy, Runnable onSkip, Runnable onLater) {
+		super(later -> onLater.run(), Component.translatable("exchange.prompt.title"), message(targets, missing));
 		this.targets = targets;
 		this.skipLabel = skipLabel;
 		this.onCopy = onCopy;
 		this.onSkip = onSkip;
 	}
 
-	private static Component message(List<LodMod> targets) {
-		if (targets.size() > 1) {
-			return Component.translatable("exchange.prompt.message.both");
-		}
+	// Targets come sorted by how much they gain
+	private static Component message(List<LodMod> targets, Map<LodMod, Long> missing) {
 		LodMod target = targets.getFirst();
-		return Component.translatable("exchange.prompt.message", target.other().displayName(), target.displayName());
+		Component source = target.other().displayName();
+		if (targets.size() > 1) {
+			return Component.translatable(
+				"exchange.prompt.message.both", source, chunks(missing.get(target)), target.displayName(), chunks(missing.get(target.other()))
+			);
+		}
+		return Component.translatable("exchange.prompt.message", source, chunks(missing.get(target)), target.displayName());
+	}
+
+	private static String chunks(long count) {
+		return String.format("%,d", count);
 	}
 
 	@Override

@@ -25,7 +25,7 @@ Areas the target mod already has stay as they are. Exchange only fills in what i
 2. Open your world and press **Copy to Voxy** or **Copy to Distant Horizons**.
 3. To copy again later, press **Copy LODs...** on the world's **Edit** screen.
 
-Exchange asks once per world when it opens. Skipping is remembered too.
+After you copy or skip, Exchange only asks again once you've explored a lot more with the other mod.
 
 ## ⚠️ Limitations
 

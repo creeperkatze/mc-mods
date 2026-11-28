@@ -1,6 +1,5 @@
 package dev.creeperkatze.exchange;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -20,15 +19,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.EnumSet;
+import java.util.EnumMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 import java.util.stream.Stream;
 
 public final class LodWorld {
 	// Both mods create small empty databases on the first world load
 	private static final long MIN_LOD_BYTES = 1 << 20;
-	private static final String ANSWERS_FILE = "exchange.json";
+	private static final long MIN_GROWTH_BYTES = 16 << 20;
+	private static final String REMEMBERED_FILE = "exchange.json";
 
 	private final Path root;
 	private final long seed;
@@ -76,51 +76,66 @@ public final class LodWorld {
 	}
 
 	public boolean hasLods(LodMod mod) {
+		return this.lodBytes(mod) >= MIN_LOD_BYTES;
+	}
+
+	private long lodBytes(LodMod mod) {
 		if (mod == LodMod.VOXY) {
-			return size(this.voxyPath()) >= MIN_LOD_BYTES;
+			return size(this.voxyPath());
 		}
 		long bytes = 0;
 		for (Dimension dimension : this.dimensions) {
 			Path database = dimension.dhDatabase();
 			bytes += size(database) + size(database.resolveSibling(database.getFileName() + "-wal"));
 		}
-		return bytes >= MIN_LOD_BYTES;
+		return bytes;
 	}
 
-	// Targets that were copied to or skipped
-	public Set<LodMod> answered() {
-		Set<LodMod> answered = EnumSet.noneOf(LodMod.class);
-		Path file = this.root.resolve(ANSWERS_FILE);
-		if (!Files.isRegularFile(file)) {
-			return answered;
+	// Offers a target again once its source grew noticeably since it was copied or skipped
+	public boolean shouldOffer(LodMod target) {
+		long bytes = this.lodBytes(target.other());
+		if (bytes < MIN_LOD_BYTES) {
+			return false;
 		}
-		try {
-			JsonElement json = JsonParser.parseString(Files.readString(file));
-			for (JsonElement entry : json.getAsJsonObject().getAsJsonArray("answered")) {
-				LodMod mod = LodMod.byKey(entry.getAsString());
-				if (mod != null) {
-					answered.add(mod);
-				}
-			}
-		} catch (Exception e) {
-			Exchange.LOGGER.warn("Failed to read {}", file, e);
-		}
-		return answered;
+		Long remembered = this.remembered().get(target);
+		// Voxy's database shrinks and grows a bit on its own when it compacts
+		return remembered == null || bytes >= remembered + Math.max(MIN_GROWTH_BYTES, remembered / 4);
 	}
 
-	public void markAnswered(Collection<LodMod> mods) {
-		Set<LodMod> answered = this.answered();
-		answered.addAll(mods);
-		JsonArray array = new JsonArray();
-		answered.forEach(mod -> array.add(mod.key()));
+	// Remembers how big each target's source is right now
+	public void remember(Collection<LodMod> targets) {
+		Map<LodMod, Long> remembered = this.remembered();
+		for (LodMod target : targets) {
+			remembered.put(target, this.lodBytes(target.other()));
+		}
 		JsonObject json = new JsonObject();
-		json.add("answered", array);
-		Path file = this.root.resolve(ANSWERS_FILE);
+		remembered.forEach((target, bytes) -> json.addProperty(target.key(), bytes));
+		Path file = this.root.resolve(REMEMBERED_FILE);
 		try {
 			Files.writeString(file, json.toString());
 		} catch (IOException e) {
 			Exchange.LOGGER.warn("Failed to write {}", file, e);
 		}
+	}
+
+	private Map<LodMod, Long> remembered() {
+		Map<LodMod, Long> remembered = new EnumMap<>(LodMod.class);
+		Path file = this.root.resolve(REMEMBERED_FILE);
+		if (!Files.isRegularFile(file)) {
+			return remembered;
+		}
+		try {
+			JsonObject json = JsonParser.parseString(Files.readString(file)).getAsJsonObject();
+			for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
+				LodMod target = LodMod.byKey(entry.getKey());
+				if (target != null && entry.getValue().isJsonPrimitive() && entry.getValue().getAsJsonPrimitive().isNumber()) {
+					remembered.put(target, entry.getValue().getAsLong());
+				}
+			}
+		} catch (Exception e) {
+			Exchange.LOGGER.warn("Failed to read {}", file, e);
+		}
+		return remembered;
 	}
 
 	private static long size(Path path) {
