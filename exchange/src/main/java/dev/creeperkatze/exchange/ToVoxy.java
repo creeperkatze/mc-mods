@@ -49,19 +49,22 @@ final class ToVoxy {
 		List<LodWorld.Dimension> dimensions = this.world.dimensions().stream()
 			.filter(dimension -> Files.isRegularFile(dimension.dhDatabase()))
 			.toList();
-		for (int i = 0; i < dimensions.size() && !this.job.isStopped(); i++) {
-			this.copy(dimensions.get(i), i, dimensions.size());
+		for (LodWorld.Dimension dimension : dimensions) {
+			if (this.job.isStopped()) {
+				break;
+			}
+			this.copy(dimension);
 		}
 	}
 
-	private void copy(LodWorld.Dimension dimension, int index, int count) throws Exception {
+	private void copy(LodWorld.Dimension dimension) throws Exception {
 		try (DhDatabase database = DhDatabase.open(dimension.dhDatabase(), false)) {
 			int rows = database.hasLods() ? database.count() : 0;
 			// Distant Horizons creates empty databases for every dimension it loads
 			if (rows == 0) {
 				return;
 			}
-			this.job.startDimension(dimension, index, count, rows);
+			this.job.startDimension(dimension, database.positions());
 			try (VoxyWorld voxy = VoxyWorld.open(this.world.voxyPath(), VoxyIds.worldId(dimension.level(), this.world.seed()))) {
 				Writer writer = new Writer(dimension, voxy);
 				try (Workers workers = new Workers()) {
@@ -70,11 +73,13 @@ final class ToVoxy {
 							return false;
 						}
 						String area = dimension.level().identifier() + " " + row.x() * DhSection.WIDTH + ", " + row.z() * DhSection.WIDTH;
+						this.job.update(row.x(), row.z(), ProgressGrid.Stage.QUEUED);
 						workers.submit(area, () -> {
 							try {
+								this.job.update(row.x(), row.z(), ProgressGrid.Stage.READING);
 								writer.write(row);
 							} finally {
-								this.job.advance();
+								this.job.update(row.x(), row.z(), ProgressGrid.Stage.DONE);
 							}
 						});
 						return true;
@@ -115,6 +120,7 @@ final class ToVoxy {
 		void write(DhRow row) throws IOException {
 			DhSection area = DhSection.decode(row, row.format());
 			long[] ids = this.voxyIds(area.mapping);
+			ToVoxy.this.job.update(row.x(), row.z(), ProgressGrid.Stage.WRITING);
 			for (int x = 0; x < CHUNKS_PER_ROW; x++) {
 				for (int z = 0; z < CHUNKS_PER_ROW; z++) {
 					this.writeChunk(area, ids, row.x() * CHUNKS_PER_ROW + x, row.z() * CHUNKS_PER_ROW + z, x * CHUNK, z * CHUNK);

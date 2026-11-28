@@ -12,6 +12,7 @@ import it.unimi.dsi.fastutil.longs.Long2IntMap;
 import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.LongArrays;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import org.jspecify.annotations.Nullable;
@@ -41,12 +42,15 @@ final class ToDistantHorizons {
 		List<LodWorld.Dimension> dimensions = this.world.dimensions().stream()
 			.filter(dimension -> Files.isDirectory(this.world.voxyPath().resolve(VoxyIds.worldId(dimension.level(), this.world.seed()))))
 			.toList();
-		for (int i = 0; i < dimensions.size() && !this.job.isStopped(); i++) {
-			this.copy(dimensions.get(i), i, dimensions.size());
+		for (LodWorld.Dimension dimension : dimensions) {
+			if (this.job.isStopped()) {
+				break;
+			}
+			this.copy(dimension);
 		}
 	}
 
-	private void copy(LodWorld.Dimension dimension, int index, int count) throws Exception {
+	private void copy(LodWorld.Dimension dimension) throws Exception {
 		try (VoxyReader voxy = VoxyReader.open(this.world.voxyPath(), VoxyIds.worldId(dimension.level(), this.world.seed()))) {
 			Long2ObjectMap<IntList> columns = new Long2ObjectOpenHashMap<>();
 			for (long key : voxy.sections(0)) {
@@ -59,21 +63,28 @@ final class ToDistantHorizons {
 			if (rows.isEmpty()) {
 				return;
 			}
-			this.job.startDimension(dimension, index, count, rows.size());
+			this.job.startDimension(dimension, rows);
+			long[] ordered = rows.toLongArray();
+			ProgressGrid grid = this.job.grid();
+			if (grid != null) {
+				LongArrays.quickSort(ordered, (a, b) -> a == b ? 0 : grid.cell(a) != grid.cell(b) ? Integer.compare(grid.cell(a), grid.cell(b)) : Long.compare(a, b));
+			}
 			try (DhDatabase database = DhDatabase.open(dimension.dhDatabase(), true)) {
-				Writer writer = new Writer(dimension, voxy, database, columns);
+				Writer writer = new Writer(dimension, voxy, database, columns, this.job);
 				try (Workers workers = new Workers()) {
-					for (long row : rows) {
+					for (long row : ordered) {
 						if (this.job.isStopped()) {
 							break;
 						}
 						int x = DhDatabase.unpackX(row);
 						int z = DhDatabase.unpackZ(row);
+						this.job.update(x, z, ProgressGrid.Stage.QUEUED);
 						workers.submit(dimension.level().identifier() + " " + x * DhSection.WIDTH + ", " + z * DhSection.WIDTH, () -> {
 							try {
+								this.job.update(x, z, ProgressGrid.Stage.READING);
 								writer.write(x, z);
 							} finally {
-								this.job.advance();
+								this.job.update(x, z, ProgressGrid.Stage.DONE);
 							}
 						});
 					}
@@ -84,6 +95,7 @@ final class ToDistantHorizons {
 
 	private static final class Writer {
 		private final VoxyReader voxy;
+		private final LodCopy job;
 		private final DhDatabase database;
 		private final Long2ObjectMap<IntList> columns;
 		private final LongSet existing;
@@ -94,8 +106,9 @@ final class ToDistantHorizons {
 		private final ThreadLocal<long[]> voxels;
 		private final ThreadLocal<Runs> runs;
 
-		Writer(LodWorld.Dimension dimension, VoxyReader voxy, DhDatabase database, Long2ObjectMap<IntList> columns) throws SQLException {
+		Writer(LodWorld.Dimension dimension, VoxyReader voxy, DhDatabase database, Long2ObjectMap<IntList> columns, LodCopy job) throws SQLException {
 			this.voxy = voxy;
+			this.job = job;
 			this.database = database;
 			this.columns = columns;
 			this.existing = database.positions();
@@ -142,6 +155,7 @@ final class ToDistantHorizons {
 				}
 			}
 			if (changed) {
+				this.job.update(x, z, ProgressGrid.Stage.WRITING);
 				boolean applyToChildren = existingRow != null && existingRow.applyToChildren();
 				boolean regenerate = existingRow != null && existingRow.regenerate();
 				this.database.write(area.encode(x, z, this.database.format(), applyToChildren, regenerate));

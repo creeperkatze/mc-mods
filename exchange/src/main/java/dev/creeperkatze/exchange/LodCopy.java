@@ -1,6 +1,6 @@
 package dev.creeperkatze.exchange;
 
-import net.minecraft.network.chat.Component;
+import it.unimi.dsi.fastutil.longs.LongCollection;
 import org.jspecify.annotations.Nullable;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -17,9 +17,8 @@ public final class LodCopy {
 	private final LodMod target;
 	private final AtomicLong done = new AtomicLong();
 	private volatile long total;
+	private volatile @Nullable ProgressGrid grid;
 	private volatile LodWorld.@Nullable Dimension dimension;
-	private volatile int dimensionIndex;
-	private volatile int dimensionCount;
 	private volatile boolean stopped;
 	private volatile State state = State.RUNNING;
 
@@ -64,16 +63,30 @@ public final class LodCopy {
 		return this.target;
 	}
 
-	void startDimension(LodWorld.Dimension dimension, int index, int count, long total) {
-		this.done.set(0);
-		this.total = total;
-		this.dimensionIndex = index;
-		this.dimensionCount = count;
+	// Takes the Distant Horizons rows the dimension will copy as packed positions
+	void startDimension(LodWorld.Dimension dimension, LongCollection rows) {
 		this.dimension = dimension;
+		this.done.set(0);
+		this.total = rows.size();
+		this.grid = ProgressGrid.of(rows);
 	}
 
-	void advance() {
-		this.done.incrementAndGet();
+	void update(int x, int z, ProgressGrid.Stage stage) {
+		if (stage == ProgressGrid.Stage.DONE) {
+			this.done.incrementAndGet();
+		}
+		ProgressGrid grid = this.grid;
+		if (grid != null) {
+			grid.update(x, z, stage);
+		}
+	}
+
+	public LodWorld.@Nullable Dimension dimension() {
+		return this.dimension;
+	}
+
+	public @Nullable ProgressGrid grid() {
+		return this.grid;
 	}
 
 	public long done() {
@@ -82,13 +95,5 @@ public final class LodCopy {
 
 	public long total() {
 		return this.total;
-	}
-
-	public Component status() {
-		LodWorld.@Nullable Dimension dimension = this.dimension;
-		if (dimension == null) {
-			return Component.translatable("exchange.progress.preparing");
-		}
-		return Component.translatable("exchange.progress.dimension", dimension.name(), this.dimensionIndex + 1, this.dimensionCount);
 	}
 }

@@ -7,7 +7,6 @@ import com.google.gson.JsonParser;
 import dev.creeperkatze.exchange.dh.DhDatabase;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.WorldStem;
 import net.minecraft.world.level.Level;
@@ -37,9 +36,6 @@ public final class LodWorld {
 	private final List<Dimension> dimensions;
 
 	public record Dimension(ResourceKey<Level> level, int minY, int height, Path dhDatabase) {
-		public Component name() {
-			return Component.literal(this.level.identifier().toString());
-		}
 	}
 
 	private LodWorld(Path root, long seed, RegistryAccess registries, List<Dimension> dimensions) {
