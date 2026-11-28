@@ -1,0 +1,23 @@
+{
+	"exchange.mod.distant_horizons": "Distant Horizons",
+	"exchange.mod.voxy": "Voxy",
+	"exchange.prompt.title": "Copy your LODs?",
+	"exchange.prompt.message": "This world has %s LODs. Copy them to %s so you don't have to explore it again? This can take a few minutes. Areas it already has stay as they are.",
+	"exchange.prompt.message.both": "This world has LODs from both Distant Horizons and Voxy. Copy them over to fill in what the other one is missing? This can take a few minutes.",
+	"exchange.prompt.copy": "Copy to %s",
+	"exchange.prompt.skip": "Skip",
+	"exchange.edit.copy": "Copy LODs...",
+	"exchange.edit.copy.needs_both": "Needs both Distant Horizons and Voxy installed.",
+	"exchange.edit.none.title": "No LODs to copy",
+	"exchange.edit.none.message": "This world has no Distant Horizons or Voxy LODs yet.",
+	"exchange.notice.title": "%s is needed",
+	"exchange.notice.message": "This world has %1$s LODs. To copy them to %2$s, install %1$s next to %2$s for one launch and open the world again.",
+	"exchange.progress.title": "Copying LODs to %s",
+	"exchange.progress.preparing": "Preparing...",
+	"exchange.progress.dimension": "%s (%s of %s)",
+	"exchange.progress.stop": "Stop",
+	"exchange.done.title": "Copied LODs to %s",
+	"exchange.done.message": "You can remove %s now if you don't need it anymore.",
+	"exchange.failed.title": "Couldn't copy the LODs",
+	"exchange.failed.message": "Something went wrong, the log has the details. Your world opens as usual."
+}

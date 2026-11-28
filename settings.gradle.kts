@@ -22,8 +22,12 @@ val modTargets = mapOf(
 	"organize" to listOf("1.21.1", "1.21.11", "26.2", "26.3"),
 	"gather" to listOf("26.2", "26.3"),
 	"illuminate" to listOf("1.21.1", "1.21.11", "26.2", "26.3"),
-	"resume" to listOf("1.21.1", "1.21.11", "26.2", "26.3")
+	"resume" to listOf("1.21.1", "1.21.11", "26.2", "26.3"),
+	"exchange" to listOf("26.2", "26.3")
 )
+
+// Voxy only exists for Fabric
+val fabricOnlyMods = setOf("exchange")
 
 dependencyResolutionManagement {
 	versionCatalogs {
@@ -41,8 +45,10 @@ stonecutter {
 			branch(mod) {
 				targets.forEach { minecraft ->
 					listOf("fabric", "neoforge").forEach { loader ->
-						version("$minecraft-$loader", minecraft)
-							.buildscript("build.$loader.gradle.kts")
+						if (loader == "fabric" || mod !in fabricOnlyMods) {
+							version("$minecraft-$loader", minecraft)
+								.buildscript("build.$loader.gradle.kts")
+						}
 					}
 				}
 			}

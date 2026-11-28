@@ -1,0 +1,48 @@
+package dev.creeperkatze.exchange;
+
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.layouts.LinearLayout;
+import net.minecraft.client.gui.screens.ConfirmScreen;
+import net.minecraft.network.chat.Component;
+
+import java.util.List;
+import java.util.function.Consumer;
+
+// Asks which mod to copy the LODs to
+final class PromptScreen extends ConfirmScreen {
+	private final List<LodMod> targets;
+	private final Consumer<LodMod> onCopy;
+	private final Component skipLabel;
+	private final Runnable onSkip;
+
+	PromptScreen(List<LodMod> targets, Component skipLabel, Consumer<LodMod> onCopy, Runnable onSkip, Runnable onLater) {
+		super(later -> onLater.run(), Component.translatable("exchange.prompt.title"), message(targets));
+		this.targets = targets;
+		this.skipLabel = skipLabel;
+		this.onCopy = onCopy;
+		this.onSkip = onSkip;
+	}
+
+	private static Component message(List<LodMod> targets) {
+		if (targets.size() > 1) {
+			return Component.translatable("exchange.prompt.message.both");
+		}
+		LodMod target = targets.getFirst();
+		return Component.translatable("exchange.prompt.message", target.other().displayName(), target.displayName());
+	}
+
+	@Override
+	protected void addButtons(LinearLayout buttonLayout) {
+		for (LodMod target : this.targets) {
+			Component label = Component.translatable("exchange.prompt.copy", target.displayName());
+			buttonLayout.addChild(Button.builder(label, button -> this.onCopy.accept(target)).build());
+		}
+		Button skip = Button.builder(this.skipLabel, button -> this.onSkip.run()).build();
+		// Three buttons don't fit next to each other on small windows
+		if (this.targets.size() > 1) {
+			this.layout.addChild(skip);
+		} else {
+			buttonLayout.addChild(skip);
+		}
+	}
+}

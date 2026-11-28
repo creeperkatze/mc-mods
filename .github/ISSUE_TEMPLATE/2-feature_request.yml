@@ -13,6 +13,7 @@ body:
         - Gather
         - Illuminate
         - Resume
+        - Exchange
     validations:
       required: true
   - type: textarea

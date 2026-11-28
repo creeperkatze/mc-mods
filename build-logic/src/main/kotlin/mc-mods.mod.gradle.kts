@@ -26,6 +26,10 @@ repositories {
 	maven("https://maven.terraformersmc.com/releases/")
 	maven("https://maven.isxander.dev/releases/")
 	maven("https://maven.quiltmc.org/repository/release/")
+	exclusiveContent {
+		forRepository { maven("https://api.modrinth.com/maven") }
+		filter { includeGroup("maven.modrinth") }
+	}
 }
 
 // For the root runAll task the first mod of this target puts every other mod of it on its runtime classpath

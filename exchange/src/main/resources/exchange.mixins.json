@@ -1,0 +1,12 @@
+{
+	"required": true,
+	"package": "dev.creeperkatze.exchange.mixin",
+	"compatibilityLevel": "JAVA_${java_version}",
+	"client": ["EditWorldScreenMixin", "WorldOpenFlowsInvoker", "WorldOpenFlowsMixin"],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}
