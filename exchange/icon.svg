@@ -1,20 +1,40 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
 	<rect width="128" height="128" fill="#2bbab4"/>
-	<g fill="none" stroke="#fff" stroke-opacity="0.25" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
-		<path d="M-6 26 L8 16 L18 22 L28 12"/>
-		<path d="M106 10 L116 16 L134 4"/>
-		<path d="M-6 116 L10 108 L22 114"/>
-		<path d="M92 122 L106 112 L118 118 L134 110"/>
-	</g>
-	<g fill="none" stroke="#fff" stroke-width="8.5" stroke-linecap="round" stroke-linejoin="round">
-		<path d="M30 34 Q64 10 98 34"/>
-		<path d="M94.9 22.4 L98 34 L86.0 35.0"/>
-		<path d="M98 94 Q64 118 30 94"/>
-		<path d="M33.1 105.6 L30 94 L42.0 93.0"/>
+	<g fill="#fff" fill-opacity="0.25">
+		<rect x="-8" y="-6" width="16" height="16" rx="2" transform="rotate(-8 0 2)"/>
+		<rect x="118" y="2" width="10" height="10" rx="1.5" transform="rotate(10 123 7)"/>
+		<rect x="-5" y="112" width="10" height="10" rx="1.5" transform="rotate(6 0 117)"/>
+		<rect x="116" y="116" width="20" height="20" rx="2.5" transform="rotate(-10 126 126)"/>
 	</g>
 	<g fill="#fff">
-			<path d="M26 82 V64 H34 V59 H42 V62 H50 V82 Z"/>
-			<path d="M53 82 V54 H65 V50 H77 V82 Z"/>
-			<path d="M80 82 V58 H102 V82 Z"/>
+		<rect x="21.5" y="21.5" width="19" height="19" rx="2.5"/>
+		<rect x="43.5" y="21.5" width="19" height="19" rx="2.5"/>
+		<rect x="21.5" y="43.5" width="19" height="19" rx="2.5"/>
+		<rect x="43.5" y="43.5" width="19" height="19" rx="2.5"/>
+		<rect x="65.5" y="65.5" width="19" height="19" rx="2.5"/>
+		<rect x="65.5" y="87.5" width="19" height="19" rx="2.5"/>
+		<rect x="87.5" y="87.5" width="19" height="19" rx="2.5"/>
+		<rect x="65.5" y="21.5" width="41" height="41" rx="4"/>
+		<rect x="21.5" y="65.5" width="41" height="41" rx="4"/>
+		<rect x="87.5" y="65.5" width="8.5" height="8.5" rx="1.2"/>
+		<rect x="98" y="65.5" width="8.5" height="8.5" rx="1.2"/>
+		<rect x="87.5" y="76" width="8.5" height="8.5" rx="1.2"/>
+		<rect x="98" y="76" width="8.5" height="8.5" rx="1.2"/>
+	</g>
+	<g>
+		<g stroke-linecap="round" stroke-linejoin="round" fill="none">
+			<path d="M80.5 19.5 H95.5 A13 13 0 0 1 108.5 32.5 V47.5" stroke="#2bbab4" stroke-width="16"/>
+			<path d="M101.5 40.5 L108.5 47.5 L115.5 40.5" stroke="#2bbab4" stroke-width="16"/>
+			<path d="M80.5 19.5 H95.5 A13 13 0 0 1 108.5 32.5 V47.5" stroke="#fff" stroke-width="8"/>
+			<path d="M101.5 40.5 L108.5 47.5 L115.5 40.5" stroke="#fff" stroke-width="8"/>
+		</g>
+	</g>
+	<g transform="rotate(180 64 64)">
+		<g stroke-linecap="round" stroke-linejoin="round" fill="none">
+			<path d="M80.5 19.5 H95.5 A13 13 0 0 1 108.5 32.5 V47.5" stroke="#2bbab4" stroke-width="16"/>
+			<path d="M101.5 40.5 L108.5 47.5 L115.5 40.5" stroke="#2bbab4" stroke-width="16"/>
+			<path d="M80.5 19.5 H95.5 A13 13 0 0 1 108.5 32.5 V47.5" stroke="#fff" stroke-width="8"/>
+			<path d="M101.5 40.5 L108.5 47.5 L115.5 40.5" stroke="#fff" stroke-width="8"/>
+		</g>
 	</g>
 </svg>
