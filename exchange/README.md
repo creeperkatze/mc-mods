@@ -7,11 +7,11 @@ Exchange copies your saved Distant Horizons and Voxy LODs between the two mods w
 
 ### Both directions
 
-Switch from Distant Horizons to Voxy or from Voxy to Distant Horizons. Exchange reads the LODs the other mod saved for your world and writes them in the format the new one understands.
+Switch from Distant Horizons to Voxy or from Voxy to Distant Horizons. Exchange reads the LODs the other mod saved for your world, even after you removed it, and writes them in the format the new one understands.
 
 ### A prompt before the world opens
 
-When you open a singleplayer world that has LODs from one mod, Exchange asks if you want to copy them to the other. Copying shows its progress and can be stopped at any time. Next time you open the world, it picks up where it left off.
+When you open a singleplayer world that has LODs from the other mod, Exchange asks if you want to copy them to the one you have installed. Copying shows its progress and can be stopped at any time. Next time you open the world, it picks up where it left off.
 
 ### Nothing gets overwritten
 
@@ -19,9 +19,11 @@ Areas the target mod already has stay as they are. Exchange only fills in what i
 
 ## 📋 How to use
 
-1. Install Exchange together with **both** Distant Horizons and Voxy. Exchange needs each mod to read and write its own LODs.
+1. Install Exchange next to the LOD mod you're switching to. The old one can already be gone, since Exchange reads its LODs by itself.
 2. Open your world and press **Copy to Voxy** or **Copy to Distant Horizons**.
-3. Once it's done, remove the mod you don't want anymore.
+3. To copy again later, press **Copy LODs...** on the world's **Edit** screen.
+
+Exchange asks once per world when it opens. Skipping is remembered too.
 
 ## ⚠️ Limitations
 

@@ -8,7 +8,7 @@ neoforge = "26.3.0.101"
 yacl-fabric = "3.9.7+26.3-fabric"
 yacl-neoforge = "3.9.7+26.3-neoforge"
 voxy = "0.2.20-beta"
-# Voxy 0.2.20 injects into a Sodium method that 0.9.3 changed
+# Voxy 0.2.20 breaks with Sodium 0.9.3
 sodium = "mc26.3-0.9.2-fabric"
 distanthorizons = "3.3.4-26.3"
 

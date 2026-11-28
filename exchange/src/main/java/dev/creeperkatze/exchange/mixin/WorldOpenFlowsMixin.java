@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(WorldOpenFlows.class)
 public class WorldOpenFlowsMixin {
-	// The last step before the world loads, after every check and with the world's registries ready
+	// The world's registries are loaded by now
 	@Inject(method = "openWorldDoLoad", at = @At("HEAD"), cancellable = true)
 	private void exchange$offerCopy(LevelStorageSource.LevelStorageAccess worldAccess, WorldStem worldStem, PackRepository packRepository, CallbackInfo ci) {
 		WorldOpenFlowsInvoker flows = (WorldOpenFlowsInvoker) (Object) this;

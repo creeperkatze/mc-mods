@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-// A decoded 64x64 Distant Horizons area. Each column lists its data points from the top down
+// Columns list their data points from the top down
 public final class DhSection {
 	public static final int WIDTH = 64;
 	public static final int COLUMNS = WIDTH * WIDTH;
@@ -182,7 +182,7 @@ public final class DhSection {
 		}
 	}
 
-	// The varint layout of format 2 and later, split into separate passes so it compresses well
+	// Format 2 and later store each field in its own pass
 	private void readColumns(byte compression, byte @Nullable [] data, int minX, int maxX, int minZ, int maxZ) throws IOException {
 		if (data == null) {
 			return;
@@ -193,7 +193,7 @@ public final class DhSection {
 					this.columns[index(x, z)] = new long[readVarint(in)];
 				}
 			}
-			// Bit 0 marks a gap below the previous point, bit 1 a stored light value
+			// Bit 0 marks a gap below the previous point and bit 1 a stored light value
 			int[] flags = new int[this.count(minX, maxX, minZ, maxZ)];
 			int point = 0;
 			for (int x = minX; x < maxX; x++) {

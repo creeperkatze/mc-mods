@@ -4,16 +4,14 @@ import dev.creeperkatze.exchange.dh.DhDatabase;
 import dev.creeperkatze.exchange.dh.DhRow;
 import dev.creeperkatze.exchange.dh.DhSection;
 import dev.creeperkatze.exchange.dh.DhStates;
-import dev.creeperkatze.exchange.voxy.VoxyWorld;
+import dev.creeperkatze.exchange.voxy.VoxyIds;
+import dev.creeperkatze.exchange.voxy.VoxyReader;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
-import me.cortex.voxy.common.world.WorldEngine;
-import me.cortex.voxy.common.world.WorldSection;
-import me.cortex.voxy.common.world.other.Mapper;
 import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
@@ -24,9 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-// Writes Voxy's full detail sections into Distant Horizons, column by column, skipping columns Distant Horizons already has
 final class ToDistantHorizons {
-	private static final int SECTION = 32;
+	private static final int SECTION = VoxyIds.SECTION;
 	private static final int SECTIONS_PER_ROW = DhSection.WIDTH / SECTION;
 
 	private final LodWorld world;
@@ -39,7 +36,7 @@ final class ToDistantHorizons {
 
 	void run() throws Exception {
 		List<LodWorld.Dimension> dimensions = this.world.dimensions().stream()
-			.filter(dimension -> Files.isDirectory(this.world.voxyPath().resolve(VoxyWorld.worldId(dimension, this.world.seed()))))
+			.filter(dimension -> Files.isDirectory(this.world.voxyPath().resolve(VoxyIds.worldId(dimension.level(), this.world.seed()))))
 			.toList();
 		for (int i = 0; i < dimensions.size() && !this.job.isStopped(); i++) {
 			this.copy(dimensions.get(i), i, dimensions.size());
@@ -47,10 +44,10 @@ final class ToDistantHorizons {
 	}
 
 	private void copy(LodWorld.Dimension dimension, int index, int count) throws Exception {
-		try (VoxyWorld voxy = VoxyWorld.open(this.world.voxyPath(), VoxyWorld.worldId(dimension, this.world.seed()))) {
+		try (VoxyReader voxy = VoxyReader.open(this.world.voxyPath(), VoxyIds.worldId(dimension.level(), this.world.seed()))) {
 			Long2ObjectMap<IntList> columns = new Long2ObjectOpenHashMap<>();
 			for (long key : voxy.sections(0)) {
-				columns.computeIfAbsent(DhDatabase.pack(WorldEngine.getX(key), WorldEngine.getZ(key)), column -> new IntArrayList()).add(WorldEngine.getY(key));
+				columns.computeIfAbsent(DhDatabase.pack(VoxyIds.x(key), VoxyIds.z(key)), column -> new IntArrayList()).add(VoxyIds.y(key));
 			}
 			LongSet rows = new LongOpenHashSet();
 			for (long column : columns.keySet()) {
@@ -83,7 +80,7 @@ final class ToDistantHorizons {
 	}
 
 	private static final class Writer {
-		private final WorldEngine engine;
+		private final VoxyReader voxy;
 		private final DhDatabase database;
 		private final Long2ObjectMap<IntList> columns;
 		private final LongSet existing;
@@ -94,8 +91,8 @@ final class ToDistantHorizons {
 		private final ThreadLocal<long[]> voxels;
 		private final ThreadLocal<Runs> runs;
 
-		Writer(LodWorld.Dimension dimension, VoxyWorld voxy, DhDatabase database, Long2ObjectMap<IntList> columns) throws SQLException {
-			this.engine = voxy.engine();
+		Writer(LodWorld.Dimension dimension, VoxyReader voxy, DhDatabase database, Long2ObjectMap<IntList> columns) throws SQLException {
+			this.voxy = voxy;
 			this.database = database;
 			this.columns = columns;
 			this.existing = database.positions();
@@ -103,18 +100,8 @@ final class ToDistantHorizons {
 			this.height = dimension.height();
 			this.voxels = ThreadLocal.withInitial(() -> new long[SECTION * SECTION * this.height]);
 			this.runs = ThreadLocal.withInitial(() -> new Runs(this.height));
-
-			Mapper mapper = this.engine.getMapper();
-			Mapper.StateEntry[] states = mapper.getStateEntries();
-			this.blocks = new String[states.length];
-			for (Mapper.StateEntry state : states) {
-				this.blocks[state.id] = DhStates.serialize(state.state);
-			}
-			Mapper.BiomeEntry[] biomes = mapper.getBiomeEntries();
-			this.biomes = new String[biomes.length];
-			for (Mapper.BiomeEntry biome : biomes) {
-				this.biomes[biome.id] = biome.biome;
-			}
+			this.blocks = voxy.blocks();
+			this.biomes = voxy.biomes();
 		}
 
 		void write(int x, int z) throws IOException, SQLException {
@@ -155,8 +142,8 @@ final class ToDistantHorizons {
 			}
 		}
 
-		// Copies a whole Voxy column of sections into one array, indexed like a Voxy section but as tall as the dimension
-		private boolean load(int x, int z, long[] voxels) {
+		// Indexed like a Voxy section but as tall as the dimension
+		private boolean load(int x, int z, long[] voxels) throws IOException {
 			IntList ys = this.columns.get(DhDatabase.pack(x, z));
 			if (ys == null) {
 				return false;
@@ -165,27 +152,22 @@ final class ToDistantHorizons {
 			boolean loaded = false;
 			for (int i = 0; i < ys.size(); i++) {
 				int y = ys.getInt(i);
-				WorldSection section = this.engine.acquireIfExists(0, x, y, z);
-				if (section == null) {
+				long[] data = this.voxy.read(VoxyIds.sectionKey(0, x, y, z));
+				if (data == null) {
 					continue;
 				}
-				try {
-					long[] data = section._unsafeGetRawDataArray();
-					for (int localY = 0; localY < SECTION; localY++) {
-						int relativeY = y * SECTION + localY - this.minY;
-						if (relativeY >= 0 && relativeY < this.height) {
-							System.arraycopy(data, localY * SECTION * SECTION, voxels, relativeY * SECTION * SECTION, SECTION * SECTION);
-							loaded = true;
-						}
+				for (int localY = 0; localY < SECTION; localY++) {
+					int relativeY = y * SECTION + localY - this.minY;
+					if (relativeY >= 0 && relativeY < this.height) {
+						System.arraycopy(data, localY * SECTION * SECTION, voxels, relativeY * SECTION * SECTION, SECTION * SECTION);
+						loaded = true;
 					}
-				} finally {
-					section.release();
 				}
 			}
 			return loaded;
 		}
 
-		// Merges equal voxels from the top down into Distant Horizons points, or returns null where Voxy has nothing
+		// Null where Voxy has no data
 		private long @Nullable [] column(long[] voxels, int x, int z, List<String> mapping, Map<String, Integer> ids) {
 			Runs runs = this.runs.get();
 			int count = 0;
@@ -193,13 +175,13 @@ final class ToDistantHorizons {
 			int y = this.height - 1;
 			while (y >= 0) {
 				long voxel = this.voxel(voxels, x, y, z);
-				int block = Mapper.getBlockId(voxel);
-				int biome = block == 0 ? -1 : Mapper.getBiomeId(voxel);
+				int block = VoxyIds.blockId(voxel);
+				int biome = block == 0 ? -1 : VoxyIds.biomeId(voxel);
 				hasData |= voxel != 0;
 				int top = y;
 				while (y > 0) {
 					long below = this.voxel(voxels, x, y - 1, z);
-					if (Mapper.getBlockId(below) != block || block != 0 && Mapper.getBiomeId(below) != biome) {
+					if (VoxyIds.blockId(below) != block || block != 0 && VoxyIds.biomeId(below) != biome) {
 						break;
 					}
 					hasData |= below != 0;
@@ -229,7 +211,7 @@ final class ToDistantHorizons {
 				int skyLight = 15;
 				int blockLight = 0;
 				if (runs.top[i] + 1 < this.height) {
-					int light = Mapper.getLightId(this.voxel(voxels, x, runs.top[i] + 1, z));
+					int light = VoxyIds.light(this.voxel(voxels, x, runs.top[i] + 1, z));
 					skyLight = light & 0xF;
 					blockLight = light >> 4 & 0xF;
 				}
@@ -264,7 +246,7 @@ final class ToDistantHorizons {
 			this.biome = new int[height];
 		}
 
-		// Air has no biome in Voxy, so it borrows the one of the nearest block, preferring the one below
+		// Voxy air has no biome. It borrows the one of the nearest block and prefers the one below.
 		int biomeAt(int index, int count) {
 			if (this.biome[index] >= 0) {
 				return this.biome[index];

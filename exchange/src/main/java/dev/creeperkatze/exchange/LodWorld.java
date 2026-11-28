@@ -5,7 +5,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dev.creeperkatze.exchange.dh.DhDatabase;
-import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -16,7 +15,6 @@ import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.level.storage.LevelStorageSource;
-import org.jspecify.annotations.Nullable;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -28,9 +26,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-// The dimensions of a singleplayer world and where both mods keep their LODs for it
 public final class LodWorld {
-	// Both mods create small empty databases as soon as a world is opened once
+	// Both mods create small empty databases on the first world load
 	private static final long MIN_LOD_BYTES = 1 << 20;
 	private static final String ANSWERS_FILE = "exchange.json";
 
@@ -39,7 +36,7 @@ public final class LodWorld {
 	private final RegistryAccess registries;
 	private final List<Dimension> dimensions;
 
-	public record Dimension(ResourceKey<Level> level, @Nullable ResourceKey<DimensionType> type, int minY, int height, Path dhDatabase) {
+	public record Dimension(ResourceKey<Level> level, int minY, int height, Path dhDatabase) {
 		public Component name() {
 			return Component.literal(this.level.identifier().toString());
 		}
@@ -57,9 +54,9 @@ public final class LodWorld {
 		List<Dimension> dimensions = new ArrayList<>();
 		registries.lookupOrThrow(Registries.LEVEL_STEM).listElements().forEach(levelStem -> {
 			ResourceKey<Level> level = Registries.levelStemToLevel(levelStem.key());
-			Holder<DimensionType> type = levelStem.value().type();
+			DimensionType type = levelStem.value().type().value();
 			Path database = access.getDimensionPath(level).resolve("data").resolve(DhDatabase.FILE_NAME);
-			dimensions.add(new Dimension(level, type.unwrapKey().orElse(null), type.value().minY(), type.value().height(), database));
+			dimensions.add(new Dimension(level, type.minY(), type.height(), database));
 		});
 		long seed = stem.worldDataAndGenSettings().genSettings().options().seed();
 		Path root = access.getLevelPath(LevelResource.ROOT).toAbsolutePath().normalize();
@@ -94,7 +91,7 @@ public final class LodWorld {
 		return bytes >= MIN_LOD_BYTES;
 	}
 
-	// The mods LODs were already copied to or the player said no to
+	// Targets that were copied to or skipped
 	public Set<LodMod> answered() {
 		Set<LodMod> answered = EnumSet.noneOf(LodMod.class);
 		Path file = this.root.resolve(ANSWERS_FILE);

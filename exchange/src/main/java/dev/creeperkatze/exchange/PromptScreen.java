@@ -8,7 +8,6 @@ import net.minecraft.network.chat.Component;
 import java.util.List;
 import java.util.function.Consumer;
 
-// Asks which mod to copy the LODs to
 final class PromptScreen extends ConfirmScreen {
 	private final List<LodMod> targets;
 	private final Consumer<LodMod> onCopy;
@@ -38,7 +37,7 @@ final class PromptScreen extends ConfirmScreen {
 			buttonLayout.addChild(Button.builder(label, button -> this.onCopy.accept(target)).build());
 		}
 		Button skip = Button.builder(this.skipLabel, button -> this.onSkip.run()).build();
-		// Three buttons don't fit next to each other on small windows
+		// Three buttons don't fit in one row on small windows
 		if (this.targets.size() > 1) {
 			this.layout.addChild(skip);
 		} else {

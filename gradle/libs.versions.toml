@@ -4,13 +4,17 @@ moddev = "2.0.148"
 mod-publish = "2.2.1"
 # Oldest Fabric Loader the mods accept on every Minecraft version, like Fabric API on 1.21.1
 fabric-loader-minimum = "0.15.11"
-# Bundled by Voxy, so Migrate only compiles against them
+# Bundled to read and write LODs without the mod that saved them
+sqlite-jdbc = "3.50.3.0"
+rocksdbjni = "10.2.1"
+aircompressor = "0.27"
 xz = "1.10"
-lwjgl-zstd = "3.4.1"
 
 [libraries]
+sqlite-jdbc = { module = "org.xerial:sqlite-jdbc", version.ref = "sqlite-jdbc" }
+rocksdbjni = { module = "org.rocksdb:rocksdbjni", version.ref = "rocksdbjni" }
+aircompressor = { module = "io.airlift:aircompressor", version.ref = "aircompressor" }
 xz = { module = "org.tukaani:xz", version.ref = "xz" }
-lwjgl-zstd = { module = "org.lwjgl:lwjgl-zstd", version.ref = "lwjgl-zstd" }
 loom-plugin = { module = "net.fabricmc:fabric-loom", version.ref = "loom" }
 moddev-plugin = { module = "net.neoforged.moddev:net.neoforged.moddev.gradle.plugin", version.ref = "moddev" }
 mod-publish-plugin = { module = "me.modmuss50.mod-publish-plugin:me.modmuss50.mod-publish-plugin.gradle.plugin", version.ref = "mod-publish" }

@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-// Offers to copy LODs between the two mods right before a singleplayer world loads, or from its Edit screen
 public final class CopyFlow {
 	private static final int EDIT_BUTTON_WIDTH = 200;
 
@@ -31,7 +30,7 @@ public final class CopyFlow {
 	private CopyFlow() {
 	}
 
-	// Returns true when it took over and runs load itself later
+	// Returns true when it takes over and runs load later
 	public static boolean beforeWorldLoad(LevelStorageSource.LevelStorageAccess access, WorldStem stem, Runnable load) {
 		if (loading || !LodMod.VOXY.isLoaded() && !LodMod.DISTANT_HORIZONS.isLoaded()) {
 			return false;
@@ -39,43 +38,45 @@ public final class CopyFlow {
 		try {
 			LodWorld world = LodWorld.of(access, stem);
 			Set<LodMod> answered = world.answered();
-			List<LodMod> ready = new ArrayList<>();
-			List<LodMod> missingSource = new ArrayList<>();
-			for (LodMod target : LodMod.values()) {
-				if (target.isLoaded() && !answered.contains(target) && world.hasLods(target.other())) {
-					(target.other().isLoaded() ? ready : missingSource).add(target);
-				}
+			List<LodMod> targets = targets(world).stream().filter(target -> !answered.contains(target)).toList();
+			if (targets.isEmpty()) {
+				return false;
 			}
 			Runnable then = () -> load(load);
-			if (!ready.isEmpty()) {
-				prompt(world, ready, Component.translatable("exchange.prompt.skip"), () -> {
-					world.markAnswered(ready);
-					then.run();
-				}, then);
-				return true;
-			}
-			if (!missingSource.isEmpty()) {
-				notice(world, missingSource, then);
-				return true;
-			}
+			prompt(world, targets, Component.translatable("exchange.prompt.skip"), () -> {
+				world.markAnswered(targets);
+				then.run();
+			}, then);
+			return true;
 		} catch (Exception e) {
 			Exchange.LOGGER.error("Failed to check the world for LODs", e);
 		}
 		return false;
 	}
 
+	// Only the target mod has to be installed
+	private static List<LodMod> targets(LodWorld world) {
+		List<LodMod> targets = new ArrayList<>();
+		for (LodMod target : LodMod.values()) {
+			if (target.isLoaded() && world.hasLods(target.other())) {
+				targets.add(target);
+			}
+		}
+		return targets;
+	}
+
 	public static Button editScreenButton(Screen editScreen, LevelStorageSource.LevelStorageAccess access) {
 		Button button = Button.builder(Component.translatable("exchange.edit.copy"), pressed -> copyFromEditScreen(editScreen, access))
 			.width(EDIT_BUTTON_WIDTH)
 			.build();
-		if (!LodMod.VOXY.isLoaded() || !LodMod.DISTANT_HORIZONS.isLoaded()) {
+		if (!LodMod.VOXY.isLoaded() && !LodMod.DISTANT_HORIZONS.isLoaded()) {
 			button.active = false;
-			button.setTooltip(Tooltip.create(Component.translatable("exchange.edit.copy.needs_both")));
+			button.setTooltip(Tooltip.create(Component.translatable("exchange.edit.copy.needs_mod")));
 		}
 		return button;
 	}
 
-	// Asks every time, even when the world was already copied or skipped
+	// Asks even if the world was already copied or skipped
 	private static void copyFromEditScreen(Screen editScreen, LevelStorageSource.LevelStorageAccess access) {
 		Minecraft minecraft = Minecraft.getInstance();
 		Runnable back = () -> minecraft.gui.setScreen(editScreen);
@@ -87,12 +88,7 @@ public final class CopyFlow {
 			failed(back);
 			return;
 		}
-		List<LodMod> targets = new ArrayList<>();
-		for (LodMod target : LodMod.values()) {
-			if (world.hasLods(target.other())) {
-				targets.add(target);
-			}
-		}
+		List<LodMod> targets = targets(world);
 		if (targets.isEmpty()) {
 			minecraft.gui.setScreen(new AlertScreen(back, Component.translatable("exchange.edit.none.title"), Component.translatable("exchange.edit.none.message")));
 			return;
@@ -119,17 +115,6 @@ public final class CopyFlow {
 		Minecraft.getInstance().gui.setScreen(new PromptScreen(targets, skipLabel, target -> copy(world, target, then), onSkip, then));
 	}
 
-	// The LODs can't be read without the mod that wrote them
-	private static void notice(LodWorld world, List<LodMod> targets, Runnable then) {
-		LodMod target = targets.getFirst();
-		LodMod source = target.other();
-		Component title = Component.translatable("exchange.notice.title", source.displayName());
-		Component message = Component.translatable("exchange.notice.message", source.displayName(), target.displayName());
-		Minecraft.getInstance().gui.setScreen(new AlertScreen(() -> {
-			world.markAnswered(targets);
-			then.run();
-		}, title, message));
-	}
 
 	private static void copy(LodWorld world, LodMod target, Runnable then) {
 		LodCopy job = new LodCopy(world, target);
@@ -142,10 +127,10 @@ public final class CopyFlow {
 		LodMod target = job.target();
 		switch (job.state()) {
 			case COMPLETED -> {
-				// The copy now has the LODs too, so copying them back makes no sense
+				// Both mods have the LODs now
 				world.markAnswered(List.of(LodMod.values()));
 				Component title = Component.translatable("exchange.done.title", target.displayName());
-				Component message = Component.translatable("exchange.done.message", target.other().displayName());
+				Component message = target.other().isLoaded() ? Component.translatable("exchange.done.message", target.other().displayName()) : null;
 				SystemToast.add(minecraft.gui.toastManager(), SystemToast.SystemToastId.PERIODIC_NOTIFICATION, title, message);
 				then.run();
 			}

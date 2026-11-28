@@ -2,7 +2,7 @@ package dev.creeperkatze.exchange.dh;
 
 import org.jspecify.annotations.Nullable;
 
-// One full detail row of the FullData table, a 64x64 block area with its blobs still compressed
+// A full detail FullData row with its blobs still compressed
 public record DhRow(
 	int x,
 	int z,

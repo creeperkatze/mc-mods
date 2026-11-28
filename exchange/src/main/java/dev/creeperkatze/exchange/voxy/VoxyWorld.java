@@ -1,6 +1,5 @@
 package dev.creeperkatze.exchange.voxy;
 
-import dev.creeperkatze.exchange.LodWorld;
 import dev.creeperkatze.exchange.Exchange;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
@@ -10,9 +9,7 @@ import me.cortex.voxy.common.config.section.SectionStorage;
 import me.cortex.voxy.common.config.section.SectionStorageConfig;
 import me.cortex.voxy.common.world.WorldEngine;
 import me.cortex.voxy.common.world.WorldSection;
-import me.cortex.voxy.commonImpl.WorldIdentifier;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.level.biome.BiomeManager;
 
 import java.nio.file.Path;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -21,10 +18,10 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 
-// The Voxy storage of one dimension, opened without a running Voxy instance
+// Writes through Voxy's own classes without a running Voxy instance
 public final class VoxyWorld implements AutoCloseable {
 	private static final int SAVE_THREADS = 2;
-	// Every queued section holds 256 KiB until it is written
+	// Each queued section holds 256 KiB
 	private static final int MAX_QUEUED_SAVES = 256;
 	private static final ThreadLocal<Boolean> SAVER_THREAD = ThreadLocal.withInitial(() -> false);
 
@@ -43,10 +40,6 @@ public final class VoxyWorld implements AutoCloseable {
 	private VoxyWorld(SectionStorage storage) {
 		this.engine = new WorldEngine(storage);
 		this.engine.setSaveCallback(this::queueSave);
-	}
-
-	public static String worldId(LodWorld.Dimension dimension, long seed) {
-		return new WorldIdentifier(dimension.level(), BiomeManager.obfuscateSeed(seed), dimension.type()).getWorldId();
 	}
 
 	public static VoxyWorld open(Path basePath, String worldId) {
@@ -71,7 +64,7 @@ public final class VoxyWorld implements AutoCloseable {
 		return sections;
 	}
 
-	// Does what Voxy's own saving service does, on threads of its own
+	// Mirrors Voxy's saving service
 	private boolean queueSave(WorldEngine engine, WorldSection section, boolean nonBlocking, boolean alreadyAcquired) {
 		if (!section.exchangeIsInSaveQueue(true)) {
 			return false;
@@ -79,7 +72,7 @@ public final class VoxyWorld implements AutoCloseable {
 		if (!alreadyAcquired) {
 			section.acquire();
 		}
-		// Savers queue sections again when they change while being written, so only they may never wait
+		// Savers requeue sections that changed during a save. They must never wait on themselves.
 		while (!nonBlocking && !SAVER_THREAD.get() && this.saver.getQueue().size() > MAX_QUEUED_SAVES) {
 			LockSupport.parkNanos(100_000);
 		}
@@ -112,14 +105,14 @@ public final class VoxyWorld implements AutoCloseable {
 		try {
 			this.engine.free();
 		} catch (IllegalStateException e) {
-			// Free refuses while sections are still loaded, but the storage has to close either way
+			// The storage has to close even if free refuses
 			Exchange.LOGGER.warn("Voxy sections were still loaded after copying", e);
 			this.engine.storage.flush();
 			this.engine.storage.close();
 		}
 	}
 
-	// Same fields as the config.json Voxy writes next to its storage
+	// Matches the config.json Voxy writes
 	public static final class StorageFile {
 		public int version = 1;
 		public boolean disabled = false;

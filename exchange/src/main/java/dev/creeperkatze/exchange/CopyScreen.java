@@ -8,7 +8,7 @@ import net.minecraft.util.Mth;
 
 import java.util.function.Consumer;
 
-// Shows the progress of a job, laid out like vanilla's Optimize World screen
+// Laid out like vanilla's Optimize World screen
 final class CopyScreen extends Screen {
 	private static final int TEXT_COLOR = 0xFFA0A0A0;
 	private static final int BAR_BACKGROUND = 0xFF000000;
@@ -39,7 +39,7 @@ final class CopyScreen extends Screen {
 	public void tick() {
 		if (!this.finished && this.job.state() != LodCopy.State.RUNNING) {
 			this.finished = true;
-			// Loading the world swaps the screen, which breaks screen events if it happens during this tick
+			// Swapping the screen during its own tick breaks Fabric's screen events
 			this.minecraft.schedule(() -> this.onFinished.accept(this.job));
 		}
 	}

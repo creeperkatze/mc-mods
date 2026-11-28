@@ -25,7 +25,7 @@ public abstract class EditWorldScreenMixin extends Screen {
 		super(title);
 	}
 
-	// Below Optimize World, before the spacer above Save and Cancel
+	// Right below Optimize World
 	@Inject(method = "<init>", at = @At(value = "NEW", target = "net/minecraft/client/gui/layouts/SpacerElement", ordinal = 1))
 	private void exchange$addCopyButton(Minecraft minecraft, LevelStorageSource.LevelStorageAccess levelAccess, String name, BooleanConsumer callback, CallbackInfo ci) {
 		this.layout.addChild(CopyFlow.editScreenButton(this, levelAccess));

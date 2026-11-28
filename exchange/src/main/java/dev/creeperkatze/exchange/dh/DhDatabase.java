@@ -3,6 +3,7 @@ package dev.creeperkatze.exchange.dh;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import org.jspecify.annotations.Nullable;
+import org.sqlite.JDBC;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,7 +11,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,15 +18,11 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 import java.util.function.Predicate;
 
-// The DistantHorizons.sqlite file of one dimension, opened through the SQLite driver Distant Horizons bundles
 public final class DhDatabase implements AutoCloseable {
 	public static final String FILE_NAME = "DistantHorizons.sqlite";
-	private static final String[][] DRIVERS = {
-		{"dh_sqlite.JDBC", "jdbc:dh_sqlite:"},
-		{"org.sqlite.JDBC", "jdbc:sqlite:"}
-	};
 	private static final String SCRIPT_FOLDER = "sqlScripts/";
 	private static final int WRITES_PER_COMMIT = 64;
 	private static final String COLUMNS = "PosX, PosZ, DataFormatVersion, CompressionMode, Data, NorthAdjData, SouthAdjData, EastAdjData, WestAdjData, "
@@ -85,15 +81,7 @@ public final class DhDatabase implements AutoCloseable {
 	}
 
 	private static Connection connect(Path file) throws SQLException {
-		for (String[] driver : DRIVERS) {
-			try {
-				Class.forName(driver[0]);
-			} catch (ClassNotFoundException e) {
-				continue;
-			}
-			return DriverManager.getConnection(driver[1] + file);
-		}
-		throw new SQLException("Distant Horizons' SQLite driver wasn't found");
+		return new JDBC().connect(JDBC.PREFIX + file, new Properties());
 	}
 
 	// The newest data format the installed Distant Horizons reads
@@ -138,7 +126,7 @@ public final class DhDatabase implements AutoCloseable {
 		return (int) packed;
 	}
 
-	// Stops early once the consumer returns false
+	// Stops once the consumer returns false
 	public void forEachRow(Predicate<DhRow> consumer) throws SQLException {
 		try (Statement statement = this.connection.createStatement();
 			ResultSet result = statement.executeQuery("SELECT " + COLUMNS + " FROM FullData WHERE DetailLevel = 0")) {
@@ -211,7 +199,7 @@ public final class DhDatabase implements AutoCloseable {
 		);
 	}
 
-	// Runs the update scripts from the Distant Horizons jar the same way Distant Horizons does, so it accepts the file later
+	// Runs Distant Horizons' own update scripts the way it does
 	private void updateSchema() throws SQLException, IOException {
 		try (Statement statement = this.connection.createStatement()) {
 			statement.execute("""
@@ -222,7 +210,7 @@ public final class DhDatabase implements AutoCloseable {
 				)""");
 		}
 		for (String name : scriptNames()) {
-			// Only versions that know block model LODs ship the script that regenerates older ones
+			// Only versions with block model LODs ship this script
 			if (name.contains("regenerateOldLods")) {
 				this.format = DhSection.FORMAT_BLOCK_MODELS;
 			}

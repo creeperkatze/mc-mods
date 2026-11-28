@@ -5,7 +5,6 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-// Copies the LODs of one world to the target mod on a background thread
 public final class LodCopy {
 	public enum State {
 		RUNNING,

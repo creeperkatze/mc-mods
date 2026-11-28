@@ -4,6 +4,7 @@ import dev.creeperkatze.exchange.dh.DhDatabase;
 import dev.creeperkatze.exchange.dh.DhRow;
 import dev.creeperkatze.exchange.dh.DhSection;
 import dev.creeperkatze.exchange.dh.DhStates;
+import dev.creeperkatze.exchange.voxy.VoxyIds;
 import dev.creeperkatze.exchange.voxy.VoxyWorld;
 import it.unimi.dsi.fastutil.longs.LongSet;
 import me.cortex.voxy.common.voxelization.VoxelizedSection;
@@ -27,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-// Writes every full detail Distant Horizons area into Voxy, chunk by chunk, skipping chunks Voxy already has
 final class ToVoxy {
 	private static final int CHUNK = 16;
 	private static final int CHUNKS_PER_ROW = DhSection.WIDTH / CHUNK;
@@ -62,7 +62,7 @@ final class ToVoxy {
 				return;
 			}
 			this.job.startDimension(dimension, index, count, rows);
-			try (VoxyWorld voxy = VoxyWorld.open(this.world.voxyPath(), VoxyWorld.worldId(dimension, this.world.seed()))) {
+			try (VoxyWorld voxy = VoxyWorld.open(this.world.voxyPath(), VoxyIds.worldId(dimension.level(), this.world.seed()))) {
 				Writer writer = new Writer(dimension, voxy);
 				try (Workers workers = new Workers()) {
 					database.forEachRow(row -> {
@@ -122,7 +122,7 @@ final class ToVoxy {
 			}
 		}
 
-		// Voxy ids without light for every entry of the Distant Horizons mapping
+		// Voxy ids without light
 		private long[] voxyIds(List<String> mapping) {
 			long[] ids = new long[mapping.size()];
 			for (int i = 0; i < ids.length; i++) {
@@ -169,7 +169,7 @@ final class ToVoxy {
 			}
 		}
 
-		// A point's light is the light right above it, so the voxels of a point take the light of the next point down
+		// A point stores the light above it. Its voxels take the light of the next point down.
 		private void fillColumn(long[] blocks, long[] points, long[] ids, int x, int z) {
 			for (int i = 0; i < points.length; i++) {
 				long point = points[i];
@@ -187,7 +187,7 @@ final class ToVoxy {
 			}
 		}
 
-		// Voxy ingests whole chunks, so any voxel with a block or light means it already has this chunk
+		// Voxy saves whole chunks. Any block or light means it has the chunk.
 		private boolean hasChunk(int chunkX, int chunkZ) {
 			int x = chunkX >> 1;
 			int z = chunkZ >> 1;

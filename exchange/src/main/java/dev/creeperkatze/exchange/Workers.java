@@ -5,7 +5,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-// Converts many areas at once and keeps going when one of them fails
 final class Workers implements AutoCloseable {
 	private static final int THREADS = Math.clamp(Runtime.getRuntime().availableProcessors() - 2, 1, 8);
 	private static final int MAX_LOGGED_FAILURES = 10;

@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-// Block states and biomes as Distant Horizons writes them into its id mappings
+// Block state and biome names as Distant Horizons writes them
 public final class DhStates {
 	public static final String AIR = "AIR";
 	public static final String DEFAULT_BIOME = "minecraft:plains";
@@ -79,7 +79,7 @@ public final class DhStates {
 		return states;
 	}
 
-	// Sorted by name, with toString values like Distant Horizons
+	// Sorted by name with toString values like Distant Horizons
 	private static String properties(BlockState state) {
 		List<Property<?>> properties = new ArrayList<>(state.getProperties());
 		properties.sort(Comparator.comparing(Property::getName));
