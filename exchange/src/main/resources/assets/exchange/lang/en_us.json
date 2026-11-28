@@ -11,7 +11,6 @@
 	"exchange.edit.none.title": "No LODs to copy",
 	"exchange.edit.none.message": "This world has no LODs that one of your installed mods could use.",
 	"exchange.progress.title": "Copying LODs to %s",
-	"exchange.progress.stop": "Stop",
 	"exchange.progress.dimension": "%s: %s%%",
 	"exchange.done.title": "Copied LODs to %s",
 	"exchange.done.message": "You can remove %s now if you don't need it anymore.",

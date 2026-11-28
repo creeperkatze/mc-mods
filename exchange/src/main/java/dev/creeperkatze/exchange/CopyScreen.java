@@ -3,6 +3,7 @@ package dev.creeperkatze.exchange;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
 import java.util.function.Consumer;
@@ -30,12 +31,12 @@ final class CopyScreen extends Screen {
 
 	@Override
 	protected void init() {
-		Button stop = Button.builder(Component.translatable("exchange.progress.stop"), button -> {
+		Button cancel = Button.builder(CommonComponents.GUI_CANCEL, button -> {
 			this.job.stop();
 			button.active = false;
 		}).bounds((this.width - 200) / 2, this.height / 2 + GRID_SIZE / 2 + 26, 200, 20).build();
-		stop.active = !this.job.isStopped();
-		this.addRenderableWidget(stop);
+		cancel.active = !this.job.isStopped();
+		this.addRenderableWidget(cancel);
 	}
 
 	@Override
