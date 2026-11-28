@@ -5,6 +5,7 @@ import com.google.gson.JsonParser;
 import com.mojang.serialization.Dynamic;
 import dev.creeperkatze.exchange.Exchange;
 import dev.creeperkatze.exchange.dh.DhStates;
+import io.airlift.compress.zstd.ZstdDecompressor;
 import io.airlift.compress.zstd.ZstdInputStream;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongList;
@@ -18,7 +19,6 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.util.datafix.DataFixers;
 import net.minecraft.util.datafix.fixes.References;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jspecify.annotations.Nullable;
 import org.rocksdb.ColumnFamilyDescriptor;
 import org.rocksdb.ColumnFamilyHandle;
 import org.rocksdb.ColumnFamilyOptions;
@@ -31,13 +31,14 @@ import org.rocksdb.RocksIterator;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 // Reads Voxy's storage without Voxy installed
@@ -47,6 +48,8 @@ public final class VoxyReader implements AutoCloseable {
 	private static final int BLOCK_STATE_MAPPING = 1;
 	private static final int BIOME_MAPPING = 2;
 	private static final int HEADER_BYTES = 16;
+	private static final VarHandle SHORTS = MethodHandles.byteArrayViewVarHandle(short[].class, ByteOrder.LITTLE_ENDIAN);
+	private static final VarHandle LONGS = MethodHandles.byteArrayViewVarHandle(long[].class, ByteOrder.LITTLE_ENDIAN);
 
 	private enum Compression {
 		NONE,
@@ -60,6 +63,7 @@ public final class VoxyReader implements AutoCloseable {
 	private final Compression compression;
 	private final String[] blocks;
 	private final String[] biomes;
+	private final ThreadLocal<Scratch> scratch = ThreadLocal.withInitial(Scratch::new);
 
 	private VoxyReader(RocksDB database, List<ColumnFamilyHandle> handles, ColumnFamilyHandle sections, ColumnFamilyHandle mappings, Compression compression) throws IOException {
 		this.database = database;
@@ -192,8 +196,8 @@ public final class VoxyReader implements AutoCloseable {
 		return keys;
 	}
 
-	// Indexed like VoxyIds.index. Null if Voxy never saved the section.
-	public long @Nullable [] read(long key) throws IOException {
+	// Decodes into voxels that are indexed like VoxyIds.index but have one layer per block of the dimension. False if Voxy never saved the section.
+	public boolean read(long key, long[] voxels, int firstLayer, int layers) throws IOException {
 		byte[] stored;
 		try {
 			stored = this.database.get(this.sections, key(key));
@@ -201,39 +205,83 @@ public final class VoxyReader implements AutoCloseable {
 			throw new IOException(e);
 		}
 		if (stored == null) {
-			return null;
+			return false;
 		}
-		ByteBuffer data = ByteBuffer.wrap(this.decompress(stored)).order(ByteOrder.LITTLE_ENDIAN);
-		if (data.getLong() != key) {
+		Scratch scratch = this.scratch.get();
+		int size = this.decompress(stored, scratch);
+		byte[] data = scratch.data;
+		if (size < HEADER_BYTES || (long) LONGS.get(data, 0) != key) {
 			throw new IOException("Voxy section " + Long.toHexString(key) + " holds another section");
 		}
-		int paletteSize = (int) (data.getLong() & 0xFFFF);
+		int paletteSize = (int) ((long) LONGS.get(data, Long.BYTES) & 0xFFFF);
 		int paletteStart = HEADER_BYTES + VoxyIds.SECTION_VOLUME * Short.BYTES;
-		long[] palette = new long[paletteSize];
+		if (size < paletteStart + paletteSize * Long.BYTES) {
+			throw new IOException("Voxy section " + Long.toHexString(key) + " is cut off");
+		}
+		long[] palette = scratch.palette(paletteSize);
 		for (int i = 0; i < paletteSize; i++) {
-			palette[i] = data.getLong(paletteStart + i * Long.BYTES);
+			palette[i] = (long) LONGS.get(data, paletteStart + i * Long.BYTES);
 		}
-		long[] voxels = new long[VoxyIds.SECTION_VOLUME];
-		for (int i = 0; i < voxels.length; i++) {
-			int entry = Short.toUnsignedInt(data.getShort(HEADER_BYTES + i * Short.BYTES));
-			voxels[i] = entry < paletteSize ? palette[entry] : 0;
+		int from = Math.max(0, -firstLayer);
+		int to = Math.min(VoxyIds.SECTION, layers - firstLayer);
+		for (int layer = from; layer < to; layer++) {
+			int source = HEADER_BYTES + layer * VoxyIds.LAYER * Short.BYTES;
+			int target = (firstLayer + layer) * VoxyIds.LAYER;
+			for (int i = 0; i < VoxyIds.LAYER; i++) {
+				int entry = Short.toUnsignedInt((short) SHORTS.get(data, source + i * Short.BYTES));
+				voxels[target + i] = entry < paletteSize ? palette[entry] : 0;
+			}
 		}
-		return voxels;
+		return true;
 	}
 
-	private byte[] decompress(byte[] stored) throws IOException {
-		return switch (this.compression) {
-			case NONE -> stored;
+	// Leaves the decompressed bytes in scratch.data and returns how many there are
+	private int decompress(byte[] stored, Scratch scratch) throws IOException {
+		switch (this.compression) {
+			case NONE -> {
+				scratch.data = stored;
+				return stored.length;
+			}
 			case ZSTD -> {
-				try (InputStream in = new ZstdInputStream(new ByteArrayInputStream(stored))) {
-					yield in.readAllBytes();
+				long size = ZstdDecompressor.getDecompressedSize(stored, 0, stored.length);
+				if (size < 0) {
+					try (InputStream in = new ZstdInputStream(new ByteArrayInputStream(stored))) {
+						scratch.data = in.readAllBytes();
+					}
+					return scratch.data.length;
 				}
+				byte[] data = scratch.data(Math.toIntExact(size));
+				return scratch.zstd.decompress(stored, 0, stored.length, data, 0, data.length);
 			}
 			case LZ4 -> {
 				int size = ByteBuffer.wrap(stored).order(ByteOrder.LITTLE_ENDIAN).getInt();
-				yield LZ4Factory.fastestInstance().fastDecompressor().decompress(Arrays.copyOfRange(stored, 4, stored.length), size);
+				LZ4Factory.fastestInstance().fastDecompressor().decompress(stored, Integer.BYTES, scratch.data(size), 0, size);
+				return size;
 			}
-		};
+			default -> throw new IllegalStateException();
+		}
+	}
+
+	private static final class Scratch {
+		final ZstdDecompressor zstd = new ZstdDecompressor();
+		byte[] data = new byte[0];
+		private long[] palette = new long[0];
+		private byte[] buffer = new byte[0];
+
+		byte[] data(int size) {
+			if (this.buffer.length < size) {
+				this.buffer = new byte[size];
+			}
+			this.data = this.buffer;
+			return this.buffer;
+		}
+
+		long[] palette(int size) {
+			if (this.palette.length < size) {
+				this.palette = new long[size];
+			}
+			return this.palette;
+		}
 	}
 
 	// Voxy stores keys big endian to sort them by level

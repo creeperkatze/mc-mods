@@ -12,7 +12,8 @@ import java.util.HexFormat;
 // Mirrors Voxy's ids and voxel layout
 public final class VoxyIds {
 	public static final int SECTION = 32;
-	public static final int SECTION_VOLUME = SECTION * SECTION * SECTION;
+	public static final int LAYER = SECTION * SECTION;
+	public static final int SECTION_VOLUME = LAYER * SECTION;
 
 	private VoxyIds() {
 	}
